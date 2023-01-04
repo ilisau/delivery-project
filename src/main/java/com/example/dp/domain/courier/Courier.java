@@ -15,6 +15,7 @@ public class Courier {
     private LocalDate createdAt;
     private LocalDateTime lastActiveAt;
     private CourierStatus status;
+    private String phoneNumber;
 
     @Override
     public boolean equals(Object o) {

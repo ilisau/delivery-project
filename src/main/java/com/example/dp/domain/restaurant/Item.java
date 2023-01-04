@@ -13,6 +13,7 @@ public class Item {
     private Double price;
     private ItemType type;
     private Boolean available;
+    private Restaurant restaurant;
 
     @Override
     public boolean equals(Object o) {
