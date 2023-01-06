@@ -2,6 +2,7 @@ package com.example.dp.web.dto.user;
 
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,5 +13,5 @@ public class UserDto {
     private String email;
     private String phoneNumber;
     private CartDto cart;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 }

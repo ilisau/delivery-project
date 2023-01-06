@@ -11,5 +11,4 @@ public class ItemDto {
     private String description;
     private Double price;
     private ItemType type;
-    private RestaurantDto restaurant;
 }

@@ -79,7 +79,6 @@ create table if not exists restaurants_items
 create table if not exists carts
 (
     id      bigserial not null,
-    user_id bigserial not null,
     primary key (id)
 );
 
@@ -114,27 +113,19 @@ create table if not exists users_addresses
 
 create table if not exists orders
 (
-    id            bigserial      not null,
-    user_id       bigserial      not null,
-    address_id    bigserial      not null,
-    restaurant_id bigserial      not null,
-    cart_id       bigserial      not null,
+    id            bigserial   not null,
+    user_id       bigserial   not null,
+    address_id    bigserial   not null,
+    restaurant_id bigserial   not null,
+    cart_id       bigserial   not null,
     status        varchar(45) not null,
     courier_id    bigserial,
     created_at    timestamp   not null,
     delivered_at  timestamp,
     primary key (id),
     constraint FK_orders_users foreign key (user_id) references users (id) on delete cascade,
-    constraint FK_orders_addresses foreign key (address_id) references addresses (id),
+    constraint FK_orders_addresses foreign key (address_id) references addresses (id) on delete cascade,
     constraint FK_orders_restaurants foreign key (restaurant_id) references restaurants (id) on delete cascade,
-    constraint FK_orders_carts foreign key (cart_id) references carts (id),
+    constraint FK_orders_carts foreign key (cart_id) references carts (id) on delete cascade,
     constraint FK_orders_couriers foreign key (courier_id) references couriers (id)
-);
-
-create table if not exists users_orders
-(
-    user_id  bigserial not null,
-    order_id bigserial not null,
-    constraint FK_users_orders_orders foreign key (order_id) references orders (id) on delete cascade,
-    constraint FK_users_orders_users foreign key (user_id) references users (id) on delete cascade
 );

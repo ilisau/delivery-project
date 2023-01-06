@@ -9,5 +9,4 @@ public class EmployeeDto {
     private Long id;
     private String name;
     private EmployeePosition position;
-    private RestaurantDto restaurant;
 }

@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 public class User {
@@ -15,12 +16,23 @@ public class User {
     protected String password;
     protected String phoneNumber;
     protected List<Address> addresses;
-    protected List<Order> orders;
     protected Cart cart;
     protected LocalDate createdAt;
 
     public User() {
         this.addresses = new ArrayList<>();
-        this.orders = new ArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

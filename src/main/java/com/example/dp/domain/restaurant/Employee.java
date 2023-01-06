@@ -10,7 +10,6 @@ public class Employee {
     private Long id;
     private String name;
     private EmployeePosition position;
-    private Restaurant restaurant;
 
     @Override
     public boolean equals(Object o) {

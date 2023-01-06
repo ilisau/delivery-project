@@ -1,6 +1,7 @@
 package com.example.dp.domain.restaurant;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.Objects;
 
@@ -13,7 +14,6 @@ public class Item {
     private Double price;
     private ItemType type;
     private Boolean available;
-    private Restaurant restaurant;
 
     @Override
     public boolean equals(Object o) {
