@@ -1,8 +1,7 @@
-package com.example.dp.web.dto.mapper;
+package com.example.dp.web.mapper;
 
 import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
-import com.example.dp.web.dto.restaurant.RestaurantDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

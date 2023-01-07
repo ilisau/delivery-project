@@ -1,14 +1,11 @@
 package com.example.dp.repository.impl;
 
 import com.example.dp.domain.exception.ResourceMappingException;
-import com.example.dp.domain.user.Cart;
 import com.example.dp.domain.user.User;
 import com.example.dp.repository.UserRepository;
 import com.example.dp.repository.impl.mappers.UserRowMapper;
 import com.example.dp.web.dto.user.CreateUserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -22,7 +19,6 @@ import java.util.Optional;
 public class UserRepositoryImpl implements UserRepository {
 
     private final DataSource dataSource;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     private static final String FIND_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
     private static final String FIND_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
@@ -31,6 +27,9 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String CREATE = "INSERT INTO users (name, email, phone_number, password, created_at) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String ADD_ADDRESS = "INSERT INTO users_addresses (user_id, address_id) VALUES (?, ?)";
     private static final String DELETE_ADDRESS = "DELETE FROM users_addresses WHERE user_id = ? AND address_id = ?";
+    private static final String SET_CART = "UPDATE users SET cart_id = ? WHERE id = ?";
+    private static final String ADD_ORDER = "INSERT INTO users_orders (user_id, order_id) VALUES (?, ?)";
+    private static final String DELETE_ORDER = "DELETE FROM users_orders WHERE user_id = ? AND order_id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM users WHERE id = ?";
 
     @Override

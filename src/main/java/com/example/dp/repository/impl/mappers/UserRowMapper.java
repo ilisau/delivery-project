@@ -19,7 +19,7 @@ public abstract class UserRowMapper implements RowMapper<User> {
         user.setEmail(resultSet.getString("email"));
         user.setPassword(resultSet.getString("password"));
         user.setPhoneNumber(resultSet.getString("phone_number"));
-        user.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+        user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
         return user;
     }
 
@@ -33,7 +33,7 @@ public abstract class UserRowMapper implements RowMapper<User> {
             user.setEmail(resultSet.getString("email"));
             user.setPassword(resultSet.getString("password"));
             user.setPhoneNumber(resultSet.getString("phone_number"));
-            user.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+            user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
             users.add(user);
         }
         return users;

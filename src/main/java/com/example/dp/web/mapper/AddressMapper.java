@@ -1,4 +1,4 @@
-package com.example.dp.web.dto.mapper;
+package com.example.dp.web.mapper;
 
 import com.example.dp.domain.user.Address;
 import com.example.dp.web.dto.user.AddressDto;

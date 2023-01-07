@@ -5,11 +5,9 @@ import com.example.dp.domain.user.Cart;
 import com.example.dp.domain.user.User;
 import com.example.dp.repository.CartRepository;
 import com.example.dp.repository.impl.mappers.CartRowMapper;
-import com.example.dp.web.dto.mapper.CreateCartMapper;
 import com.example.dp.web.dto.user.CreateCartDto;
+import com.example.dp.web.mapper.CreateCartMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -29,7 +27,6 @@ public class CartRepositoryImpl implements CartRepository {
     private static final String FIND_BY_ID = "SELECT * FROM carts WHERE id = ?";
     private static final String FIND_ALL_BY_USER_ID = "SELECT * FROM carts WHERE user_id = ?";
     private static final String FIND_BY_USER_ID = "SELECT * FROM carts WHERE user_id = ? ORDER BY id DESC LIMIT 1";
-    private static final String UPDATE_BY_ID = "UPDATE carts SET user_id = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO carts (user_id) VALUES (?)";
     private static final String DELETE_BY_ID = "DELETE FROM carts WHERE id = ?";
 
@@ -71,15 +68,8 @@ public class CartRepositoryImpl implements CartRepository {
 
     @Override
     public Cart save(Cart cart) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_BY_ID)) {
-            statement.setLong(1, cart.getUser().getId());
-            statement.setLong(2, cart.getId());
-            statement.executeUpdate();
-            return cart;
-        } catch (Exception e) {
-            throw new ResourceMappingException("Exception while saving cart :: " + cart);
-        }
+        //now has no sense without editable fields
+        return cart;
     }
 
     @Override

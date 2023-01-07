@@ -10,5 +10,4 @@ public class CartDto {
 
     private Long id;
     private List<ItemDto> items;
-    private UserDto user;
 }

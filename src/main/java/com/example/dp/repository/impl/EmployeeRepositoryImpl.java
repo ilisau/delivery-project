@@ -5,8 +5,8 @@ import com.example.dp.domain.restaurant.Employee;
 import com.example.dp.domain.restaurant.EmployeePosition;
 import com.example.dp.repository.EmployeeRepository;
 import com.example.dp.repository.impl.mappers.EmployeeRowMapper;
-import com.example.dp.web.dto.mapper.CreateEmployeeMapper;
 import com.example.dp.web.dto.restaurant.CreateEmployeeDto;
+import com.example.dp.web.mapper.CreateEmployeeMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +84,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Employee create(CreateEmployeeDto createEmployeeDto) {
+        //TODO set restaurant
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, createEmployeeDto.getName());

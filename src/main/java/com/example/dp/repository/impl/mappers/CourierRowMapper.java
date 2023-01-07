@@ -20,7 +20,7 @@ public abstract class CourierRowMapper implements RowMapper<Courier> {
         courier.setLastName(resultSet.getString("last_name"));
         courier.setPhoneNumber(resultSet.getString("phone_number"));
         courier.setStatus(CourierStatus.valueOf(resultSet.getString("status")));
-        courier.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+        courier.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
         courier.setLastActiveAt(resultSet.getTimestamp("last_active_at").toLocalDateTime());
         return courier;
     }
@@ -35,7 +35,7 @@ public abstract class CourierRowMapper implements RowMapper<Courier> {
             courier.setLastName(resultSet.getString("last_name"));
             courier.setPhoneNumber(resultSet.getString("phone_number"));
             courier.setStatus(CourierStatus.valueOf(resultSet.getString("status")));
-            courier.setCreatedAt(resultSet.getDate("created_at").toLocalDate());
+            courier.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
             courier.setLastActiveAt(resultSet.getTimestamp("last_active_at").toLocalDateTime());
             couriers.add(courier);
         }

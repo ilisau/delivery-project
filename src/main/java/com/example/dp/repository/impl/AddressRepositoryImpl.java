@@ -4,8 +4,8 @@ import com.example.dp.domain.exception.ResourceMappingException;
 import com.example.dp.domain.user.Address;
 import com.example.dp.repository.AddressRepository;
 import com.example.dp.repository.impl.mappers.AddressRowMapper;
-import com.example.dp.web.dto.mapper.CreateAddressMapper;
 import com.example.dp.web.dto.user.CreateAddressDto;
+import com.example.dp.web.mapper.CreateAddressMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     private final DataSource dataSource;
 
     private static final String FIND_BY_ID = "SELECT * FROM addresses WHERE id = ?";
-    private static final String UPDATE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
+    private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
 
@@ -42,7 +42,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     @Override
     public Address save(Address address) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID)) {
             statement.setString(1, address.getStreetName());
             statement.setInt(2, address.getHouseNumber());
             statement.setInt(3, address.getFloorNumber());

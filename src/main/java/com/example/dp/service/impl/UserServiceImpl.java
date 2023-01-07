@@ -4,11 +4,8 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.user.User;
 import com.example.dp.repository.UserRepository;
 import com.example.dp.service.UserService;
-import com.example.dp.web.dto.mapper.UserMapper;
 import com.example.dp.web.dto.user.CreateUserDto;
-import com.example.dp.web.dto.user.UserDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

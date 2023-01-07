@@ -4,11 +4,8 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.repository.RestaurantRepository;
 import com.example.dp.service.RestaurantService;
-import com.example.dp.web.dto.mapper.RestaurantMapper;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
-import com.example.dp.web.dto.restaurant.RestaurantDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -5,15 +5,11 @@ import com.example.dp.domain.courier.CourierStatus;
 import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.repository.CourierRepository;
 import com.example.dp.service.CourierService;
-import com.example.dp.web.dto.courier.CourierDto;
 import com.example.dp.web.dto.courier.CreateCourierDto;
-import com.example.dp.web.dto.mapper.CourierMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.example.dp.web.dto.mapper;
+package com.example.dp.web.mapper;
 
 import com.example.dp.domain.restaurant.Employee;
 import com.example.dp.web.dto.restaurant.EmployeeDto;

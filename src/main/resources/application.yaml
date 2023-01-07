@@ -6,6 +6,6 @@ spring:
     driver-class-name: org.postgresql.Driver
   sql:
     init:
-      mode: never
-      data-locations: classpath:data.sql
+      mode: always
+#      data-locations: classpath:data.sql
       continue-on-error: true

@@ -6,7 +6,7 @@ import com.example.dp.domain.exception.ResourceMappingException;
 import com.example.dp.repository.CourierRepository;
 import com.example.dp.repository.impl.mappers.CourierRowMapper;
 import com.example.dp.web.dto.courier.CreateCourierDto;
-import com.example.dp.web.dto.mapper.CreateCourierMapper;
+import com.example.dp.web.mapper.CreateCourierMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -89,7 +88,7 @@ public class CourierRepositoryImpl implements CourierRepository {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             Courier courier = CreateCourierMapper.INSTANCE.toEntity(createCourierDto);
-            courier.setCreatedAt(LocalDate.now());
+            courier.setCreatedAt(LocalDateTime.now());
             courier.setLastActiveAt(LocalDateTime.now());
             courier.setStatus(CourierStatus.AVAILABLE);
 

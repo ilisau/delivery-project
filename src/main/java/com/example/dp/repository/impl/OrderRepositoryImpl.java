@@ -5,8 +5,8 @@ import com.example.dp.domain.user.Order;
 import com.example.dp.domain.user.OrderStatus;
 import com.example.dp.repository.OrderRepository;
 import com.example.dp.repository.impl.mappers.OrderRowMapper;
-import com.example.dp.web.dto.mapper.CreateOrderMapper;
 import com.example.dp.web.dto.user.CreateOrderDto;
+import com.example.dp.web.mapper.CreateOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +23,12 @@ public class OrderRepositoryImpl implements OrderRepository {
     private final DataSource dataSource;
 
     private static final String FIND_BY_ID = "SELECT * FROM orders WHERE id = ?";
-    private static final String GET_ALL_BY_USER_ID = "SELECT * FROM orders WHERE user_id = ?";
+    private static final String GET_ALL_BY_USER_ID = "SELECT * FROM users_orders WHERE user_id = ?";
     private static final String GET_ALL_BY_ADDRESS_ID = "SELECT * FROM orders WHERE address_id = ?";
     private static final String GET_ALL_BY_RESTAURANT_ID = "SELECT * FROM orders WHERE restaurant_id = ?";
     private static final String GET_ALL_BY_COURIER_ID = "SELECT * FROM orders WHERE courier_id = ?";
     private static final String SAVE_BY_ID = "UPDATE orders SET courier_id = ?, status = ?, delivered_at = ? WHERE id = ?";
-    private static final String CREATE = "INSERT INTO orders (user_id, address_id, restaurant_id, cart_id, status, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String CREATE = "INSERT INTO orders (address_id, restaurant_id, cart_id, status, created_at) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM orders WHERE id = ?";
 
     @Override
@@ -113,12 +113,11 @@ public class OrderRepositoryImpl implements OrderRepository {
             Order order = CreateOrderMapper.INSTANCE.toEntity(createOrderDto);
             order.setStatus(OrderStatus.ORDERED);
             order.setCreatedAt(LocalDateTime.now());
-            statement.setLong(1, createOrderDto.getUserId());
-            statement.setLong(2, createOrderDto.getAddressId());
-            statement.setLong(3, createOrderDto.getRestaurantId());
-            statement.setLong(4, createOrderDto.getCartId());
-            statement.setString(5, order.getStatus().name());
-            statement.setTimestamp(6, Timestamp.valueOf(order.getCreatedAt()));
+            statement.setLong(1, createOrderDto.getAddressId());
+            statement.setLong(2, createOrderDto.getRestaurantId());
+            statement.setLong(3, createOrderDto.getCartId());
+            statement.setString(4, order.getStatus().name());
+            statement.setTimestamp(5, Timestamp.valueOf(order.getCreatedAt()));
             statement.executeUpdate();
             ResultSet key = statement.getGeneratedKeys();
             key.next();

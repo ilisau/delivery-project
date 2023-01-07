@@ -14,10 +14,10 @@ values ('Lenina', '1', '1', '1'),
 insert into restaurants_addresses (restaurant_id, address_id)
 values (1, 1);
 
-insert into employees (name, position, restaurant_id)
-values ('John', 'COOK', 1),
-       ('Michael', 'COOK', 1),
-       ('Bob', 'MANAGER', 1);
+insert into employees (name, position)
+values ('John', 'COOK'),
+       ('Michael', 'COOK'),
+       ('Bob', 'MANAGER');
 
 insert into restaurants_employees (restaurant_id, employee_id)
 values (1, 1),
@@ -33,10 +33,10 @@ values ('Peter', 'peter@gmail.com', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4o
 insert into users_addresses (user_id, address_id)
 values (1, 2);
 
-insert into items (name, description, price, type, available, restaurant_id)
-values ('Burger', 'Burger', 100, 'BURGER', true, 1),
-       ('Fries', 'Fries', 50, 'FRIES', true, 1),
-       ('Coca-Cola', 'Coca-Cola', 50, 'DRINK', true, 1);
+insert into items (name, description, price, type)
+values ('Burger', 'Burger', 100, 'BURGER'),
+       ('Fries', 'Fries', 50, 'FRIES'),
+       ('Coca-Cola', 'Coca-Cola', 50, 'DRINK');
 
 insert into restaurants_items (restaurant_id, item_id)
 values (1, 1),
@@ -47,5 +47,8 @@ insert into carts_items (cart_id, item_id)
 values (1, 1),
        (1, 2);
 
-insert into orders (user_id, address_id, restaurant_id, cart_id, status, courier_id, created_at, delivered_at)
-values (1, 2, 1, 1, 'DELIVERED', 1, '2022-12-01 00:00:00', '2022-12-01 00:00:00');
+insert into orders (address_id, restaurant_id, cart_id, status, courier_id, created_at, delivered_at)
+values (2, 1, 1, 'DELIVERED', 1, '2022-12-01 00:00:00', '2022-12-01 00:00:00');
+
+insert into users_orders (user_id, order_id)
+values (1, 1);

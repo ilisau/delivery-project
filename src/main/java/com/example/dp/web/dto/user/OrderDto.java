@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 public class OrderDto {
 
     private Long id;
-    private UserDto user;
     private AddressDto address;
     private RestaurantDto restaurant;
     private CartDto cart;

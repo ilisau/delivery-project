@@ -18,7 +18,7 @@ public abstract class ItemRowMapper implements RowMapper<Item> {
         item.setId(resultSet.getLong("id"));
         item.setName(resultSet.getString("name"));
         item.setDescription(resultSet.getString("description"));
-        item.setPrice(resultSet.getDouble("price"));
+        item.setPrice(resultSet.getBigDecimal("price"));
         item.setType(ItemType.valueOf(resultSet.getString("type")));
         item.setAvailable(resultSet.getBoolean("available"));
         return item;
@@ -32,7 +32,7 @@ public abstract class ItemRowMapper implements RowMapper<Item> {
             item.setId(resultSet.getLong("id"));
             item.setName(resultSet.getString("name"));
             item.setDescription(resultSet.getString("description"));
-            item.setPrice(resultSet.getDouble("price"));
+            item.setPrice(resultSet.getBigDecimal("price"));
             item.setType(ItemType.valueOf(resultSet.getString("type")));
             item.setAvailable(resultSet.getBoolean("available"));
             items.add(item);

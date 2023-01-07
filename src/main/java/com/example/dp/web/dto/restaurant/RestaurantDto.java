@@ -12,4 +12,5 @@ public class RestaurantDto {
     private String name;
     private String description;
     private List<AddressDto> addresses;
+    private List<ItemDto> items;
 }

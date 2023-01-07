@@ -4,8 +4,8 @@ import com.example.dp.domain.exception.ResourceMappingException;
 import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.repository.RestaurantRepository;
 import com.example.dp.repository.impl.mappers.RestaurantRowMapper;
-import com.example.dp.web.dto.mapper.CreateRestaurantMapper;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
+import com.example.dp.web.mapper.CreateRestaurantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -71,6 +71,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
     @Override
     public Restaurant create(CreateRestaurantDto dto) {
+        //todo set addresses
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, dto.getName());

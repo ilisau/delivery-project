@@ -6,21 +6,21 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import static com.example.dp.config.ApplicationConstants.*;
+import java.math.BigDecimal;
 
 @Data
 public class CreateItemDto {
 
     @NotNull(message = "Name is required")
-    @Length(min = MIN_FIELD_LENGTH, max = MAX_FIELD_LENGTH, message = "Name must be between {min} and {max} characters")
+    @Length(min = 3, max = 45, message = "Name must be between {min} and {max} characters")
     private String name;
 
-    @Length(max = MAX_BIG_FIELD_LENGTH, message = "Description must be less than {max} characters")
+    @Length(max = 255, message = "Description must be less than {max} characters")
     private String description;
 
     @NotNull(message = "Price is required")
     @Min(value = 0, message = "Price must be greater than or equal to {value}")
-    private Double price;
+    private BigDecimal price;
 
     @NotNull(message = "Type is required")
     private ItemType type;

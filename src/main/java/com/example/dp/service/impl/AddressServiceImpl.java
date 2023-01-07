@@ -4,12 +4,8 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.user.Address;
 import com.example.dp.repository.AddressRepository;
 import com.example.dp.service.AddressService;
-import com.example.dp.web.dto.mapper.AddressMapper;
-import com.example.dp.web.dto.mapper.CreateAddressMapper;
-import com.example.dp.web.dto.user.AddressDto;
 import com.example.dp.web.dto.user.CreateAddressDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

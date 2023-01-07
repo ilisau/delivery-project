@@ -6,14 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
-import static com.example.dp.config.ApplicationConstants.MAX_FIELD_LENGTH;
-import static com.example.dp.config.ApplicationConstants.MIN_FIELD_LENGTH;
-
 @Data
 public class CreateEmployeeDto {
 
     @NotNull(message = "Name is required")
-    @Length(min = MIN_FIELD_LENGTH, max = MAX_FIELD_LENGTH, message = "Name must be between {min} and {max} characters")
+    @Length(min = 3, max = 45, message = "Name must be between {min} and {max} characters")
     private String name;
 
     @NotNull(message = "Position is required")

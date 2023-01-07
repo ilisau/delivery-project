@@ -5,8 +5,8 @@ import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.restaurant.ItemType;
 import com.example.dp.repository.ItemRepository;
 import com.example.dp.repository.impl.mappers.ItemRowMapper;
-import com.example.dp.web.dto.mapper.CreateItemMapper;
 import com.example.dp.web.dto.restaurant.CreateItemDto;
+import com.example.dp.web.mapper.CreateItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -87,7 +87,7 @@ public class ItemRepositoryImpl implements ItemRepository {
              PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID)) {
             statement.setString(1, itemDto.getName());
             statement.setString(2, itemDto.getDescription());
-            statement.setDouble(3, itemDto.getPrice());
+            statement.setBigDecimal(3, itemDto.getPrice());
             statement.setString(4, itemDto.getType().name());
             statement.setBoolean(5, itemDto.getAvailable());
             statement.setLong(6, itemDto.getId());
@@ -100,11 +100,12 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item create(CreateItemDto itemDto) {
+        //TODO set restaurant
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE)) {
             statement.setString(1, itemDto.getName());
             statement.setString(2, itemDto.getDescription());
-            statement.setDouble(3, itemDto.getPrice());
+            statement.setBigDecimal(3, itemDto.getPrice());
             statement.setString(4, itemDto.getType().name());
             statement.setBoolean(5, true);
             statement.executeUpdate();

@@ -1,8 +1,7 @@
-package com.example.dp.web.dto.mapper;
+package com.example.dp.web.mapper;
 
 import com.example.dp.domain.user.Order;
 import com.example.dp.web.dto.user.CreateOrderDto;
-import com.example.dp.web.dto.user.OrderDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
