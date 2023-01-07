@@ -38,8 +38,8 @@ public class CourierRepositoryImpl implements CourierRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet courierResultSet = statement.executeQuery();
-            return Optional.of(CourierRowMapper.mapRow(courierResultSet));
-        } catch (Exception e) {
+            return Optional.ofNullable(CourierRowMapper.mapRow(courierResultSet));
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting courier by id :: " + id);
         }
     }

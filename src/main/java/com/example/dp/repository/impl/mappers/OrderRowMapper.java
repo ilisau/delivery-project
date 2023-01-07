@@ -13,13 +13,16 @@ public abstract class OrderRowMapper implements RowMapper<Order> {
 
     @SneakyThrows
     public static Order mapRow(ResultSet resultSet) {
-        resultSet.next();
-        Order order = new Order();
-        order.setId(resultSet.getLong("id"));
-        order.setStatus(OrderStatus.valueOf(resultSet.getString("status")));
-        order.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-        order.setDeliveredAt(resultSet.getTimestamp("delivered_at").toLocalDateTime());
-        return order;
+        if (resultSet.next()) {
+            Order order = new Order();
+            order.setId(resultSet.getLong("id"));
+            order.setStatus(OrderStatus.valueOf(resultSet.getString("status")));
+            order.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+            order.setDeliveredAt(resultSet.getTimestamp("delivered_at").toLocalDateTime());
+            return order;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

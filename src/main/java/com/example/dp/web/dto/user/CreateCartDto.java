@@ -1,13 +1,12 @@
 package com.example.dp.web.dto.user;
 
-import com.example.dp.web.dto.restaurant.ItemDto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
+@AllArgsConstructor
 public class CreateCartDto {
 
     @NotNull(message = "User id is required")

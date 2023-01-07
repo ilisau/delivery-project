@@ -12,14 +12,17 @@ public abstract class AddressRowMapper implements RowMapper<Address> {
 
     @SneakyThrows
     public static Address mapRow(ResultSet resultSet) {
-        resultSet.next();
-        Address address = new Address();
-        address.setId(resultSet.getLong("id"));
-        address.setStreetName(resultSet.getString("street_name"));
-        address.setHouseNumber(resultSet.getInt("house_number"));
-        address.setFloorNumber(resultSet.getInt("floor_number"));
-        address.setFlatNumber(resultSet.getInt("flat_number"));
-        return address;
+        if (resultSet.next()) {
+            Address address = new Address();
+            address.setId(resultSet.getLong("id"));
+            address.setStreetName(resultSet.getString("street_name"));
+            address.setHouseNumber(resultSet.getInt("house_number"));
+            address.setFloorNumber(resultSet.getInt("floor_number"));
+            address.setFlatNumber(resultSet.getInt("flat_number"));
+            return address;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

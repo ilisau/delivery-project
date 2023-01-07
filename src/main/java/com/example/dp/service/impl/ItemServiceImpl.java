@@ -5,23 +5,30 @@ import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.restaurant.ItemType;
 import com.example.dp.repository.ItemRepository;
 import com.example.dp.service.ItemService;
+import com.example.dp.service.RestaurantService;
 import com.example.dp.web.dto.restaurant.CreateItemDto;
-import com.example.dp.web.dto.restaurant.ItemDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
+    private final RestaurantService restaurantService;
 
     @Override
     public Item getById(Long id) throws ResourceNotFoundException {
-        return itemRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + id));
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + id));
+    }
+
+    @Override
+    public Map<Item, Long> getAllByCartId(Long cartId) throws ResourceNotFoundException {
+        return itemRepository.getAllByCartId(cartId);
     }
 
     @Override
@@ -46,8 +53,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item create(CreateItemDto createItemDto) throws ResourceNotFoundException {
-        //TODO add item to restaurant
-        return itemRepository.create(createItemDto);
+        Item item = itemRepository.create(createItemDto);
+        restaurantService.addItemById(createItemDto.getRestaurantId(), item.getId());
+        return item;
     }
 
     @Override

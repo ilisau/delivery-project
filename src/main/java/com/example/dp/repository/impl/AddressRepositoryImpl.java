@@ -10,10 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +21,8 @@ public class AddressRepositoryImpl implements AddressRepository {
     private final DataSource dataSource;
 
     private static final String FIND_BY_ID = "SELECT * FROM addresses WHERE id = ?";
+    private static final String FIND_ALL_BY_USER_ID = "SELECT * FROM users_addresses WHERE user_id = ?";
+    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT * FROM restaurants_addresses WHERE restaurant_id = ?";
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
@@ -33,9 +33,33 @@ public class AddressRepositoryImpl implements AddressRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet addressResultSet = statement.executeQuery();
-            return Optional.of(AddressRowMapper.mapRow(addressResultSet));
-        } catch (Exception e) {
+            return Optional.ofNullable(AddressRowMapper.mapRow(addressResultSet));
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting address by id :: " + id);
+        }
+    }
+
+    @Override
+    public List<Address> getAllByUserId(Long userId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)) {
+            statement.setLong(1, userId);
+            ResultSet addressResultSet = statement.executeQuery();
+            return AddressRowMapper.mapRows(addressResultSet);
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting addresses by user id :: " + userId);
+        }
+    }
+
+    @Override
+    public List<Address> getAllByRestaurantId(Long restaurantId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID)) {
+            statement.setLong(1, restaurantId);
+            ResultSet addressResultSet = statement.executeQuery();
+            return AddressRowMapper.mapRows(addressResultSet);
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting addresses by restaurant id :: " + restaurantId);
         }
     }
 

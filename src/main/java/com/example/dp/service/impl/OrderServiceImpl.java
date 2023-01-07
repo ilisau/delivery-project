@@ -4,10 +4,9 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.user.Order;
 import com.example.dp.repository.OrderRepository;
 import com.example.dp.service.OrderService;
+import com.example.dp.service.UserService;
 import com.example.dp.web.dto.user.CreateOrderDto;
-import com.example.dp.web.dto.user.OrderDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,10 +16,12 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserService userService;
 
     @Override
     public Order getById(Long id) throws ResourceNotFoundException {
-        return orderRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Order not found for this id :: " + id));
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found for this id :: " + id));
     }
 
     @Override
@@ -50,6 +51,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order create(CreateOrderDto createOrderDto) {
+        Order order = orderRepository.create(createOrderDto);
+        userService.addOrderById(createOrderDto.getUserId(), order.getId());
+        userService.setCartById(createOrderDto.getUserId());
         return orderRepository.create(createOrderDto);
     }
 

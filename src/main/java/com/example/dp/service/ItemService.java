@@ -4,13 +4,15 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.restaurant.ItemType;
 import com.example.dp.web.dto.restaurant.CreateItemDto;
-import com.example.dp.web.dto.restaurant.ItemDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ItemService {
 
     Item getById(Long id) throws ResourceNotFoundException;
+
+    Map<Item, Long> getAllByCartId(Long cartId) throws ResourceNotFoundException;
 
     List<Item> getAllByType(ItemType type);
 

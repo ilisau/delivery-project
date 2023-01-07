@@ -37,7 +37,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
             ResultSet ordersResultSet = statement.executeQuery();
-            return Optional.of(OrderRowMapper.mapRow(ordersResultSet));
+            return Optional.ofNullable(OrderRowMapper.mapRow(ordersResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting order by id :: " + id);
         }

@@ -37,7 +37,7 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_ID);
             statement.setLong(1, id);
-            return Optional.of(UserRowMapper.mapRow(statement.executeQuery()));
+            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
         } catch (SQLException e) {
             throw new ResourceMappingException("User not found for this id :: " + id);
         }
@@ -48,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_EMAIL);
             statement.setString(1, email);
-            return Optional.of(UserRowMapper.mapRow(statement.executeQuery()));
+            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
         } catch (SQLException e) {
             throw new ResourceMappingException("User not found for this email :: " + email);
         }
@@ -59,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_PHONE_NUMBER);
             statement.setString(1, phoneNumber);
-            return Optional.of(UserRowMapper.mapRow(statement.executeQuery()));
+            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
         } catch (SQLException e) {
             throw new ResourceMappingException("User not found for this phone number :: " + phoneNumber);
         }
@@ -110,6 +110,42 @@ public class UserRepositoryImpl implements UserRepository {
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while deleting address from user with id :: " + userId);
+        }
+    }
+
+    @Override
+    public void addOrderById(Long userId, Long orderId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(ADD_ORDER)) {
+            statement.setLong(1, userId);
+            statement.setLong(2, orderId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while adding order to user with id :: " + userId);
+        }
+    }
+
+    @Override
+    public void deleteOrderById(Long userId, Long orderId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(DELETE_ORDER)) {
+            statement.setLong(1, userId);
+            statement.setLong(2, orderId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while deleting order from user with id :: " + userId);
+        }
+    }
+
+    @Override
+    public void setCartById(Long userId, Long cartId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(SET_CART)) {
+            statement.setLong(1, cartId);
+            statement.setLong(2, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while setting cart for user with id :: " + userId);
         }
     }
 

@@ -19,7 +19,8 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public Courier getById(Long id) throws ResourceNotFoundException {
-        return courierRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Courier not found for this id :: " + id));
+        return courierRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Courier not found for this id :: " + id));
     }
 
     @Override

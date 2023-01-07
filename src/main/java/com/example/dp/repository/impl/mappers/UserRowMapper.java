@@ -12,15 +12,18 @@ public abstract class UserRowMapper implements RowMapper<User> {
 
     @SneakyThrows
     public static User mapRow(ResultSet resultSet) {
-        resultSet.next();
-        User user = new User();
-        user.setId(resultSet.getLong("id"));
-        user.setName(resultSet.getString("name"));
-        user.setEmail(resultSet.getString("email"));
-        user.setPassword(resultSet.getString("password"));
-        user.setPhoneNumber(resultSet.getString("phone_number"));
-        user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-        return user;
+        if (resultSet.next()) {
+            User user = new User();
+            user.setId(resultSet.getLong("id"));
+            user.setName(resultSet.getString("name"));
+            user.setEmail(resultSet.getString("email"));
+            user.setPassword(resultSet.getString("password"));
+            user.setPhoneNumber(resultSet.getString("phone_number"));
+            user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+            return user;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

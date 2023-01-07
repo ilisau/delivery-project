@@ -2,15 +2,17 @@ package com.example.dp.repository;
 
 import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.restaurant.ItemType;
-import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.web.dto.restaurant.CreateItemDto;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface ItemRepository {
 
     Optional<Item> findById(Long id);
+
+    Map<Item, Long> getAllByCartId(Long cartId);
 
     List<Item> getAllByType(ItemType type);
 

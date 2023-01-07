@@ -12,10 +12,13 @@ public abstract class CartRowMapper implements RowMapper<Cart> {
 
     @SneakyThrows
     public static Cart mapRow(ResultSet resultSet) {
-        resultSet.next();
-        Cart cart = new Cart();
-        cart.setId(resultSet.getLong("id"));
-        return cart;
+        if (resultSet.next()) {
+            Cart cart = new Cart();
+            cart.setId(resultSet.getLong("id"));
+            return cart;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

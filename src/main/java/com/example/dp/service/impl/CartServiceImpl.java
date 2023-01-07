@@ -4,40 +4,30 @@ import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.user.Cart;
 import com.example.dp.repository.CartRepository;
 import com.example.dp.service.CartService;
-import com.example.dp.service.UserService;
-import com.example.dp.web.dto.user.CartDto;
+import com.example.dp.service.ItemService;
 import com.example.dp.web.dto.user.CreateCartDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-    private final UserService userService;
+    private final ItemService itemService;
 
     @Override
     public Cart getById(Long id) throws ResourceNotFoundException {
-        Cart cart = cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Cart not found for this id :: " + id));
-        //TODO set items and user
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for this id :: " + id));
+        cart.setItems(itemService.getAllByCartId(id));
         return cart;
     }
 
     @Override
-    public List<Cart> getAllByUserId(Long userId) throws ResourceNotFoundException {
-        List<Cart> carts = cartRepository.getAllByUser(userService.getById(userId));
-        //TODO set items and user
-        return carts;
-    }
-
-    @Override
-    public Cart getByUserId(Long userId) throws ResourceNotFoundException {
-        Cart cart = cartRepository.getByUser(userService.getById(userId));
-        //TODO set items and user
+    public Cart getByUserId(Long id) throws ResourceNotFoundException {
+        Cart cart = cartRepository.getByUserId(id);
+        cart.setItems(itemService.getAllByCartId(cart.getId()));
         return cart;
     }
 

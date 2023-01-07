@@ -37,7 +37,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet restaurantsResultSet = statement.executeQuery();
-            return Optional.of(RestaurantRowMapper.mapRow(restaurantsResultSet));
+            return Optional.ofNullable(RestaurantRowMapper.mapRow(restaurantsResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting restaurant by id :: " + id);
         }
@@ -71,7 +71,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
     @Override
     public Restaurant create(CreateRestaurantDto dto) {
-        //todo set addresses
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, dto.getName());

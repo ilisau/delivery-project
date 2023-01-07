@@ -12,12 +12,15 @@ public abstract class RestaurantRowMapper implements RowMapper<Restaurant> {
 
     @SneakyThrows
     public static Restaurant mapRow(ResultSet resultSet) {
-        resultSet.next();
-        Restaurant restaurant = new Restaurant();
-        restaurant.setId(resultSet.getLong("id"));
-        restaurant.setName(resultSet.getString("name"));
-        restaurant.setDescription(resultSet.getString("description"));
-        return restaurant;
+        if (resultSet.next()) {
+            Restaurant restaurant = new Restaurant();
+            restaurant.setId(resultSet.getLong("id"));
+            restaurant.setName(resultSet.getString("name"));
+            restaurant.setDescription(resultSet.getString("description"));
+            return restaurant;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

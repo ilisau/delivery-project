@@ -8,6 +8,8 @@ import com.example.dp.web.dto.user.CreateAddressDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
@@ -16,7 +18,18 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address getById(Long id) throws ResourceNotFoundException {
-        return addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address not found for this id :: " + id));
+        return addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found for this id :: " + id));
+    }
+
+    @Override
+    public List<Address> getAllByUserId(Long userId) {
+        return addressRepository.getAllByUserId(userId);
+    }
+
+    @Override
+    public List<Address> getAllByRestaurantId(Long restaurantId) {
+        return addressRepository.getAllByRestaurantId(restaurantId);
     }
 
     @Override

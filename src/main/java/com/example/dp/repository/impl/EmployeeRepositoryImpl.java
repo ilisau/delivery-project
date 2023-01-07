@@ -37,7 +37,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet employeeResultSet = statement.executeQuery();
-            return Optional.of(EmployeeRowMapper.mapRow(employeeResultSet));
+            return Optional.ofNullable(EmployeeRowMapper.mapRow(employeeResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting employee by id :: " + id);
         }
@@ -84,7 +84,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     @Override
     public Employee create(CreateEmployeeDto createEmployeeDto) {
-        //TODO set restaurant
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, createEmployeeDto.getName());

@@ -3,11 +3,11 @@ package com.example.dp.web.dto.user;
 import com.example.dp.web.dto.restaurant.ItemDto;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 public class CartDto {
 
     private Long id;
-    private List<ItemDto> items;
+    private Map<ItemDto, Long> items;
 }

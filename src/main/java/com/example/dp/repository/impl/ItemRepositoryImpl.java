@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     private final DataSource dataSource;
 
     private static final String FIND_BY_ID = "SELECT * FROM items WHERE id = ?";
+    private static final String FIND_ALL_BY_CART_ID = "SELECT * FROM carts_items JOIN items ON carts_items.item_id = items.id WHERE carts_items.cart_id = ?";
     private static final String FIND_ALL_BY_TYPE = "SELECT * FROM items WHERE type = ?";
     private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT * FROM restaurants_items JOIN items ON restaurants_items.item_id = items.id WHERE restaurants_items.restaurant_id = ?";
     private static final String FIND_ALL_BY_RESTAURANT_ID_AND_TYPE = "SELECT * FROM restaurants_items JOIN items ON restaurants_items.item_id = items.id WHERE restaurants_items.restaurant_id = ? AND items.type = ?";
@@ -38,9 +40,21 @@ public class ItemRepositoryImpl implements ItemRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet itemResultSet = statement.executeQuery();
-            return Optional.of(ItemRowMapper.mapRow(itemResultSet));
+            return Optional.ofNullable(ItemRowMapper.mapRow(itemResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting item by id :: " + id);
+        }
+    }
+
+    @Override
+    public Map<Item, Long> getAllByCartId(Long cartId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_CART_ID)) {
+            statement.setLong(1, cartId);
+            ResultSet itemResultSet = statement.executeQuery();
+            return ItemRowMapper.mapRowsToMap(itemResultSet);
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting items by cart id :: " + cartId);
         }
     }
 
@@ -100,7 +114,6 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item create(CreateItemDto itemDto) {
-        //TODO set restaurant
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE)) {
             statement.setString(1, itemDto.getName());

@@ -1,6 +1,5 @@
 package com.example.dp.repository;
 
-import com.example.dp.domain.user.Cart;
 import com.example.dp.domain.user.User;
 import com.example.dp.web.dto.user.CreateUserDto;
 
@@ -21,6 +20,12 @@ public interface UserRepository {
     void addAddress(Long userId, Long addressId);
 
     void deleteAddress(Long userId, Long addressId);
+
+    void addOrderById(Long userId, Long orderId);
+
+    void deleteOrderById(Long userId, Long orderId);
+
+    void setCartById(Long userId, Long cartId);
 
     void delete(Long id);
 }

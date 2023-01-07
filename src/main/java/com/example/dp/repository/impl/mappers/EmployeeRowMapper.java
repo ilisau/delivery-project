@@ -13,12 +13,15 @@ public abstract class EmployeeRowMapper implements RowMapper<Employee> {
 
     @SneakyThrows
     public static Employee mapRow(ResultSet resultSet) {
-        resultSet.next();
-        Employee employee = new Employee();
-        employee.setId(resultSet.getLong("id"));
-        employee.setName(resultSet.getString("name"));
-        employee.setPosition(EmployeePosition.valueOf(resultSet.getString("position")));
-        return employee;
+        if (resultSet.next()) {
+            Employee employee = new Employee();
+            employee.setId(resultSet.getLong("id"));
+            employee.setName(resultSet.getString("name"));
+            employee.setPosition(EmployeePosition.valueOf(resultSet.getString("position")));
+            return employee;
+        } else {
+            return null;
+        }
     }
 
     @SneakyThrows

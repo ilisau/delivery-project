@@ -5,6 +5,7 @@ import com.example.dp.domain.restaurant.Employee;
 import com.example.dp.domain.restaurant.EmployeePosition;
 import com.example.dp.repository.EmployeeRepository;
 import com.example.dp.service.EmployeeService;
+import com.example.dp.service.RestaurantService;
 import com.example.dp.web.dto.restaurant.CreateEmployeeDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.util.List;
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final RestaurantService restaurantService;
 
     @Override
     public Employee getById(Long id) throws ResourceNotFoundException {
-        return employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + id));
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + id));
     }
 
     @Override
@@ -39,8 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee create(CreateEmployeeDto createEmployeeDto) throws ResourceNotFoundException {
-        //TODO set restaurant
         Employee employee = employeeRepository.create(createEmployeeDto);
+        restaurantService.addEmployeeById(employee.getId(), createEmployeeDto.getRestaurantId());
         return employee;
     }
 

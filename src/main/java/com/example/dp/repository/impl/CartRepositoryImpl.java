@@ -2,7 +2,6 @@ package com.example.dp.repository.impl;
 
 import com.example.dp.domain.exception.ResourceMappingException;
 import com.example.dp.domain.user.Cart;
-import com.example.dp.domain.user.User;
 import com.example.dp.repository.CartRepository;
 import com.example.dp.repository.impl.mappers.CartRowMapper;
 import com.example.dp.web.dto.user.CreateCartDto;
@@ -11,11 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.List;
+import java.sql.*;
 import java.util.Optional;
 
 @Service
@@ -25,9 +20,8 @@ public class CartRepositoryImpl implements CartRepository {
     private final DataSource dataSource;
 
     private static final String FIND_BY_ID = "SELECT * FROM carts WHERE id = ?";
-    private static final String FIND_ALL_BY_USER_ID = "SELECT * FROM carts WHERE user_id = ?";
-    private static final String FIND_BY_USER_ID = "SELECT * FROM carts WHERE user_id = ? ORDER BY id DESC LIMIT 1";
-    private static final String CREATE = "INSERT INTO carts (user_id) VALUES (?)";
+    private static final String FIND_BY_USER_ID = "SELECT * FROM users JOIN carts ON users.cart_id = carts.id WHERE users.id = 1;";
+    private static final String CREATE = "INSERT INTO carts VALUES (default)";
     private static final String DELETE_BY_ID = "DELETE FROM carts WHERE id = ?";
 
     @Override
@@ -36,33 +30,21 @@ public class CartRepositoryImpl implements CartRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
             statement.setLong(1, id);
             ResultSet cartResultSet = statement.executeQuery();
-            return Optional.of(CartRowMapper.mapRow(cartResultSet));
-        } catch (Exception e) {
+            return Optional.ofNullable(CartRowMapper.mapRow(cartResultSet));
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting cart by id :: " + id);
         }
     }
 
     @Override
-    public List<Cart> getAllByUser(User user) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID)) {
-            statement.setLong(1, user.getId());
-            ResultSet cartResultSet = statement.executeQuery();
-            return CartRowMapper.mapRows(cartResultSet);
-        } catch (Exception e) {
-            throw new ResourceMappingException("Exception while getting carts by user id :: " + user.getId());
-        }
-    }
-
-    @Override
-    public Cart getByUser(User user) {
+    public Cart getByUserId(Long id) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID)) {
-            statement.setLong(1, user.getId());
+            statement.setLong(1, id);
             ResultSet cartResultSet = statement.executeQuery();
             return CartRowMapper.mapRow(cartResultSet);
         } catch (Exception e) {
-            throw new ResourceMappingException("Exception while getting cart by user id :: " + user.getId());
+            throw new ResourceMappingException("Exception while getting cart by user id :: " + id);
         }
     }
 

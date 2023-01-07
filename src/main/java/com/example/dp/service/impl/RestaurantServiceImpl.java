@@ -5,6 +5,7 @@ import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.repository.RestaurantRepository;
 import com.example.dp.service.RestaurantService;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
+import com.example.dp.web.dto.user.AddressDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,14 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant getById(Long id) throws ResourceNotFoundException {
-        return restaurantRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for this id :: " + id));
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for this id :: " + id));
     }
 
     @Override
     public Restaurant getByName(String name) throws ResourceNotFoundException {
-        return restaurantRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for this name :: " + name));
+        return restaurantRepository.findByName(name)
+                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for this name :: " + name));
     }
 
     @Override
@@ -32,7 +35,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public Restaurant create(CreateRestaurantDto createRestaurantDto) {
-        return restaurantRepository.create(createRestaurantDto);
+        Restaurant restaurant = restaurantRepository.create(createRestaurantDto);
+        for (AddressDto dto : createRestaurantDto.getAddresses()) {
+            restaurantRepository.addAddressById(restaurant.getId(), dto.getId());
+        }
+        return restaurant;
     }
 
     @Override
