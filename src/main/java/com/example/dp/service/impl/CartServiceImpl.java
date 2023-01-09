@@ -1,6 +1,7 @@
 package com.example.dp.service.impl;
 
 import com.example.dp.domain.exception.ResourceNotFoundException;
+import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.user.Cart;
 import com.example.dp.repository.CartRepository;
 import com.example.dp.service.CartService;
@@ -39,6 +40,21 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart create(CreateCartDto createCartDto) {
         return cartRepository.create(createCartDto);
+    }
+
+    @Override
+    public void clearById(Long id) {
+        cartRepository.clear(id);
+    }
+
+    @Override
+    public void addItemById(Long id, Long itemId, long quantity) {
+        cartRepository.addItemById(id, itemId, quantity);
+    }
+
+    @Override
+    public void deleteItemById(Long id, Long itemId, long quantity) {
+        cartRepository.deleteItemById(id, itemId, quantity);
     }
 
     @Override

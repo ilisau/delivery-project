@@ -20,9 +20,9 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT * FROM addresses WHERE id = ?";
-    private static final String FIND_ALL_BY_USER_ID = "SELECT * FROM users_addresses WHERE user_id = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT * FROM restaurants_addresses WHERE restaurant_id = ?";
+    private static final String FIND_BY_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM addresses WHERE id = ?";
+    private static final String FIND_ALL_BY_USER_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM users_addresses JOIN addresses ON users_addresses.address_id = addresses.id WHERE user_id = ?";
+    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM restaurants_addresses JOIN addresses ON restaurants_addresses.address_id = addresses.id WHERE restaurant_id = ?";
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";

@@ -14,5 +14,11 @@ public interface CartService {
 
     Cart create(CreateCartDto createCartDto);
 
+    void clearById(Long id);
+
+    void addItemById(Long id, Long itemId, long quantity);
+
+    void deleteItemById(Long id, Long itemId, long quantity);
+
     void deleteById(Long id);
 }

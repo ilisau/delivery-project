@@ -22,11 +22,11 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT * FROM orders WHERE id = ?";
-    private static final String GET_ALL_BY_USER_ID = "SELECT * FROM users_orders WHERE user_id = ?";
-    private static final String GET_ALL_BY_ADDRESS_ID = "SELECT * FROM orders WHERE address_id = ?";
-    private static final String GET_ALL_BY_RESTAURANT_ID = "SELECT * FROM orders WHERE restaurant_id = ?";
-    private static final String GET_ALL_BY_COURIER_ID = "SELECT * FROM orders WHERE courier_id = ?";
+    private static final String FIND_BY_ID = "SELECT id, status, created_at, delivered_at FROM orders WHERE id = ?";
+    private static final String GET_ALL_BY_USER_ID = "SELECT orders.id as id, orders.status as status, orders.created_at as created_at, orders.delivered_at as delivered_at FROM users_orders JOIN orders ON users_orders.order_id = orders.id WHERE user_id = ?";
+    private static final String GET_ALL_BY_ADDRESS_ID = "SELECT id, status, created_at, delivered_at FROM orders WHERE address_id = ?";
+    private static final String GET_ALL_BY_RESTAURANT_ID = "SELECT id, status, created_at, delivered_at FROM orders WHERE restaurant_id = ?";
+    private static final String GET_ALL_BY_COURIER_ID = "SELECT id, status, created_at, delivered_at FROM orders WHERE courier_id = ?";
     private static final String SAVE_BY_ID = "UPDATE orders SET courier_id = ?, status = ?, delivered_at = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO orders (address_id, restaurant_id, cart_id, status, created_at) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM orders WHERE id = ?";

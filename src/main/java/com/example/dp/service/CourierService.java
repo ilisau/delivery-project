@@ -12,6 +12,8 @@ public interface CourierService {
 
     Courier getById(Long id) throws ResourceNotFoundException;
 
+    Courier getByOrderId(Long id) throws ResourceNotFoundException;
+
     List<Courier> getAll();
 
     List<Courier> getAllByStatus(CourierStatus status);

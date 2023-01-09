@@ -19,8 +19,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT * FROM restaurants WHERE id = ?";
-    private static final String FIND_BY_NAME = "SELECT * FROM restaurants WHERE name = ?";
+    private static final String FIND_BY_ID = "SELECT id, name, description FROM restaurants WHERE id = ?";
+    private static final String FIND_BY_NAME = "SELECT id, name, description FROM restaurants WHERE name = ?";
     private static final String SAVE_BY_ID = "UPDATE restaurants SET name = ?, description = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO restaurants (name, description) VALUES (?, ?)";
     private static final String ADD_EMPLOYEE_BY_ID = "INSERT INTO restaurants_employees (restaurant_id, employee_id) VALUES (?, ?)";

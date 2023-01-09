@@ -24,6 +24,12 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
+    public Courier getByOrderId(Long id) throws ResourceNotFoundException {
+        return courierRepository.findByOrderId(id)
+                .orElseThrow(()  -> new ResourceNotFoundException("Courier not found for this order :: " + id));
+    }
+
+    @Override
     public List<Courier> getAll() {
         return courierRepository.getAll();
     }

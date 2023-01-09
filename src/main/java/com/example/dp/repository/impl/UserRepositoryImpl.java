@@ -20,9 +20,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_USER_BY_ID = "SELECT * FROM users WHERE id = ?";
-    private static final String FIND_USER_BY_EMAIL = "SELECT * FROM users WHERE email = ?";
-    private static final String FIND_USER_BY_PHONE_NUMBER = "SELECT * FROM users WHERE phone_number = ?";
+    private static final String FIND_USER_BY_ID = "SELECT id, name, email, phone_number, password, created_at FROM users WHERE id = ?";
+    private static final String FIND_USER_BY_EMAIL = "SELECT id, name, email, phone_number, password, created_at FROM users WHERE email = ?";
+    private static final String FIND_USER_BY_PHONE_NUMBER = "SELECT id, name, email, phone_number, password, created_at FROM users WHERE phone_number = ?";
     private static final String SAVE_BY_ID = "UPDATE users SET name = ?, email = ?, phone_number = ?, password = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO users (name, email, phone_number, password, created_at) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String ADD_ADDRESS = "INSERT INTO users_addresses (user_id, address_id) VALUES (?, ?)";

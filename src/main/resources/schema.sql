@@ -85,7 +85,8 @@ create table if not exists carts_items
     item_id bigint not null,
     quantity bigint not null,
     constraint fk_carts_items_carts foreign key (cart_id) references carts (id) on delete cascade,
-    constraint fk_carts_items_items foreign key (item_id) references items (id) on delete cascade
+    constraint fk_carts_items_items foreign key (item_id) references items (id) on delete cascade,
+    primary key (cart_id, item_id)
 );
 
 create table if not exists users

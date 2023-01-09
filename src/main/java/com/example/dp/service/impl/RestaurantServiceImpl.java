@@ -3,6 +3,9 @@ package com.example.dp.service.impl;
 import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.repository.RestaurantRepository;
+import com.example.dp.service.AddressService;
+import com.example.dp.service.EmployeeService;
+import com.example.dp.service.ItemService;
 import com.example.dp.service.RestaurantService;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
 import com.example.dp.web.dto.user.AddressDto;
@@ -14,12 +17,18 @@ import org.springframework.stereotype.Service;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-
+    private final ItemService itemService;
+    private final AddressService addressService;
+    private final EmployeeService employeeService;
 
     @Override
     public Restaurant getById(Long id) throws ResourceNotFoundException {
-        return restaurantRepository.findById(id)
+        Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found for this id :: " + id));
+        restaurant.setItems(itemService.getAllByRestaurantId(id));
+        restaurant.setAddresses(addressService.getAllByRestaurantId(id));
+        restaurant.setEmployees(employeeService.getAllByRestaurantId(id));
+        return restaurant;
     }
 
     @Override

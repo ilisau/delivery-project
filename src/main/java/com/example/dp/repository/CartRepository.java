@@ -15,5 +15,11 @@ public interface CartRepository {
 
     Cart create(CreateCartDto createCartDto);
 
+    void clear(Long id);
+
+    void addItemById(Long id, Long itemId, long quantity);
+
+    void deleteItemById(Long id, Long itemId, long quantity);
+
     void delete(Long id);
 }

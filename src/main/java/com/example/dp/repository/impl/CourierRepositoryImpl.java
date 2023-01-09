@@ -25,9 +25,10 @@ public class CourierRepositoryImpl implements CourierRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT * FROM couriers WHERE id = ?";
-    private static final String FIND_ALL = "SELECT * FROM couriers";
-    private static final String FIND_ALL_BY_STATUS = "SELECT * FROM couriers WHERE status = ?";
+    private static final String FIND_BY_ID = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers WHERE id = ?";
+    private static final String FIND_BY_ORDER_ID = "SELECT c.id, c.first_name, c.last_name, c.phone_number, c.created_at, c.last_active_at, c.status FROM orders JOIN couriers c on courier_id = c.id WHERE orders.id = ?";
+    private static final String FIND_ALL = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers";
+    private static final String FIND_ALL_BY_STATUS = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers WHERE status = ?";
     private static final String UPDATE_BY_ID = "UPDATE couriers SET first_name = ?, last_name = ?, status = ?, phone_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM couriers WHERE id = ?";
@@ -41,6 +42,18 @@ public class CourierRepositoryImpl implements CourierRepository {
             return Optional.ofNullable(CourierRowMapper.mapRow(courierResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting courier by id :: " + id);
+        }
+    }
+
+    @Override
+    public Optional<Courier> findByOrderId(Long id) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ORDER_ID)) {
+            statement.setLong(1, id);
+            ResultSet courierResultSet = statement.executeQuery();
+            return Optional.ofNullable(CourierRowMapper.mapRow(courierResultSet));
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting courier by order id :: " + id);
         }
     }
 

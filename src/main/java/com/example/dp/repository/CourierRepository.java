@@ -11,6 +11,8 @@ public interface CourierRepository {
 
     Optional<Courier> findById(Long id);
 
+    Optional<Courier> findByOrderId(Long id);
+
     List<Courier> getAll();
 
     List<Courier> getAllByStatus(CourierStatus status);

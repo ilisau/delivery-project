@@ -16,10 +16,46 @@ public class RestaurantController {
 
     private final RestaurantService restaurantService;
 
+    @PutMapping
+    public void save(@Valid @RequestBody RestaurantDto dto) {
+        Restaurant restaurant = RestaurantMapper.INSTANCE.toEntity(dto);
+        restaurantService.save(restaurant);
+    }
+
     @PostMapping
     public RestaurantDto create(@Valid @RequestBody CreateRestaurantDto createRestaurantDto) {
         Restaurant restaurant = restaurantService.create(createRestaurantDto);
         return RestaurantMapper.INSTANCE.toDto(restaurant);
+    }
+
+    @PostMapping("/{id}/add-employee/{employeeId}")
+    public void addEmployeeById(@PathVariable Long id, @PathVariable Long employeeId) {
+        restaurantService.addEmployeeById(id, employeeId);
+    }
+
+    @PostMapping("/{id}/delete-employee/{employeeId}")
+    public void deleteEmployeeById(@PathVariable Long id, @PathVariable Long employeeId) {
+        restaurantService.deleteEmployeeById(id, employeeId);
+    }
+
+    @PostMapping("/{id}/add-item/{itemId}")
+    public void addItemById(@PathVariable Long id, @PathVariable Long itemId) {
+        restaurantService.addItemById(id, itemId);
+    }
+
+    @PostMapping("/{id}/delete-item/{itemId}")
+    public void deleteItemById(@PathVariable Long id, @PathVariable Long itemId) {
+        restaurantService.deleteItemById(id, itemId);
+    }
+
+    @PostMapping("/{id}/add-address/{addressId}")
+    public void addAddressById(@PathVariable Long id, @PathVariable Long addressId) {
+        restaurantService.addAddressById(id, addressId);
+    }
+
+    @PostMapping("/{id}/delete-address/{addressId}")
+    public void deleteAddressById(@PathVariable Long id, @PathVariable Long addressId) {
+        restaurantService.deleteAddressById(id, addressId);
     }
 
     @GetMapping("/{id}")
