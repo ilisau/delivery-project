@@ -25,10 +25,46 @@ public class CourierRepositoryImpl implements CourierRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers WHERE id = ?";
-    private static final String FIND_BY_ORDER_ID = "SELECT c.id, c.first_name, c.last_name, c.phone_number, c.created_at, c.last_active_at, c.status FROM orders JOIN couriers c on courier_id = c.id WHERE orders.id = ?";
-    private static final String FIND_ALL = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers";
-    private static final String FIND_ALL_BY_STATUS = "SELECT id, first_name, last_name, phone_number, created_at, last_active_at, status FROM couriers WHERE status = ?";
+    private static final String FIND_BY_ID = """
+            SELECT id         as courier_id,
+                   first_name as courier_first_name,
+                   last_name as courier_last_name,
+                   phone_number as courier_phone_number,
+                   created_at as courier_created_at,
+                   last_active_at as courier_last_active_at,
+                   status     as courier_status
+            FROM couriers
+            WHERE id = ?""";
+    private static final String FIND_BY_ORDER_ID = """
+            SELECT c.id             as courier_id,
+                   c.first_name     as courier_first_name,
+                   c.last_name      as courier_last_name,
+                   c.phone_number   as courier_phone_number,
+                   c.created_at     as courier_created_at,
+                   c.last_active_at as courier_last_active_at,
+                   c.status         as courier_status
+            FROM orders o
+                     JOIN couriers c on o.courier_id = c.id
+            WHERE o.id = ?""";
+    private static final String FIND_ALL = """
+            SELECT id         as courier_id,
+                    first_name as courier_first_name,
+                    last_name as courier_last_name,
+                    phone_number as courier_phone_number,
+                    created_at as courier_created_at,
+                    last_active_at as courier_last_active_at,
+                    status     as courier_status
+            FROM couriers""";
+    private static final String FIND_ALL_BY_STATUS = """
+            SELECT id         as courier_id,
+                               first_name as courier_first_name,
+                               last_name as courier_last_name,
+                               phone_number as courier_phone_number,
+                               created_at as courier_created_at,
+                               last_active_at as courier_last_active_at,
+                               status     as courier_status
+                        FROM couriers
+                        WHERE status = ?""";
     private static final String UPDATE_BY_ID = "UPDATE couriers SET first_name = ?, last_name = ?, status = ?, phone_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM couriers WHERE id = ?";
@@ -63,7 +99,7 @@ public class CourierRepositoryImpl implements CourierRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_ALL)) {
             ResultSet courierResultSet = statement.executeQuery();
             return CourierRowMapper.mapRows(courierResultSet);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting all couriers");
         }
     }
@@ -75,7 +111,7 @@ public class CourierRepositoryImpl implements CourierRepository {
             statement.setString(1, status.name());
             ResultSet courierResultSet = statement.executeQuery();
             return CourierRowMapper.mapRows(courierResultSet);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting all couriers by status :: " + status);
         }
     }
@@ -127,7 +163,7 @@ public class CourierRepositoryImpl implements CourierRepository {
              PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setLong(1, id);
             statement.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while deleting courier by id :: " + id);
         }
     }

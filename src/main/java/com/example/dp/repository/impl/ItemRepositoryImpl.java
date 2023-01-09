@@ -25,11 +25,55 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id, name, description, price, type, available FROM items WHERE id = ?";
-    private static final String FIND_ALL_BY_CART_ID = "SELECT items.id as id, items.name as name, items.description as description, items.price as price, items.type as type, items.available as available, quantity FROM carts_items JOIN items ON carts_items.item_id = items.id WHERE carts_items.cart_id = ?";
-    private static final String FIND_ALL_BY_TYPE = "SELECT id, name, description, price, type, available FROM items WHERE type = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT items.id as id, items.name as name, items.description as description, items.price as price, items.type as type, items.available as available FROM restaurants_items JOIN items ON restaurants_items.item_id = items.id WHERE restaurants_items.restaurant_id = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID_AND_TYPE = "SELECT items.id as id, items.name as name, items.description as description, items.price as price, items.type as type, items.available as available FROM restaurants_items JOIN items ON restaurants_items.item_id = items.id WHERE restaurants_items.restaurant_id = ? AND items.type = ?";
+    private static final String FIND_BY_ID = """
+            SELECT id          as item_id,
+                   name        as item_name,
+                   description as item_description,
+                   price       as item_price,
+                   type        as item_type,
+                   available   as item_available
+            FROM items
+            WHERE id = ?""";
+    private static final String FIND_ALL_BY_CART_ID = """
+            SELECT i.id          as item_id,
+                   i.name        as item_name,
+                   i.description as item_description,
+                   i.price       as item_price,
+                   i.type        as item_type,
+                   i.available   as item_available,
+                   quantity      as item_quantity
+            FROM carts_items
+                     JOIN items i ON carts_items.item_id = i.id
+            WHERE carts_items.cart_id = ?""";
+    private static final String FIND_ALL_BY_TYPE = """
+            SELECT id          as item_id,
+                   name        as item_name,
+                   description as item_description,
+                   price       as item_price,
+                   type        as item_type,
+                   available   as item_available
+            FROM items
+            WHERE type = ?""";
+    private static final String FIND_ALL_BY_RESTAURANT_ID = """
+            SELECT i.id          as item_id,
+                   i.name        as item_name,
+                   i.description as item_description,
+                   i.price       as item_price,
+                   i.type        as item_type,
+                   i.available   as item_available
+            FROM restaurants_items
+                     JOIN items i ON restaurants_items.item_id = i.id
+            WHERE restaurants_items.restaurant_id = ?""";
+    private static final String FIND_ALL_BY_RESTAURANT_ID_AND_TYPE = """
+            SELECT i.id          as item_id,
+                   i.name        as item_name,
+                   i.description as item_description,
+                   i.price       as item_price,
+                   i.type        as item_type,
+                   i.available   as item_available
+            FROM restaurants_items
+                     JOIN items i ON restaurants_items.item_id = i.id
+            WHERE restaurants_items.restaurant_id = ? AND type = ?""";
     private static final String SAVE_BY_ID = "UPDATE items SET name = ?, description = ?, price = ?, type = ?, available = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO items (name, description, price, type, available) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM items WHERE id = ?";

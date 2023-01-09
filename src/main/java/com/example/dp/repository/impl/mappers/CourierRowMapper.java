@@ -15,17 +15,18 @@ public abstract class CourierRowMapper implements RowMapper<Courier> {
     public static Courier mapRow(ResultSet resultSet) {
         if (resultSet.next()) {
             Courier courier = new Courier();
-            courier.setId(resultSet.getLong("id"));
-            courier.setFirstName(resultSet.getString("first_name"));
-            courier.setLastName(resultSet.getString("last_name"));
-            courier.setPhoneNumber(resultSet.getString("phone_number"));
-            courier.setStatus(CourierStatus.valueOf(resultSet.getString("status")));
-            courier.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-            courier.setLastActiveAt(resultSet.getTimestamp("last_active_at").toLocalDateTime());
-            return courier;
-        } else {
-            return null;
+            courier.setId(resultSet.getLong("courier_id"));
+            if (!resultSet.wasNull()) {
+                courier.setFirstName(resultSet.getString("courier_first_name"));
+                courier.setLastName(resultSet.getString("courier_last_name"));
+                courier.setPhoneNumber(resultSet.getString("courier_phone_number"));
+                courier.setStatus(CourierStatus.valueOf(resultSet.getString("courier_status")));
+                courier.setCreatedAt(resultSet.getTimestamp("courier_created_at").toLocalDateTime());
+                courier.setLastActiveAt(resultSet.getTimestamp("courier_last_active_at").toLocalDateTime());
+                return courier;
+            }
         }
+        return null;
     }
 
     @SneakyThrows
@@ -33,14 +34,16 @@ public abstract class CourierRowMapper implements RowMapper<Courier> {
         List<Courier> couriers = new ArrayList<>();
         while(resultSet.next()) {
             Courier courier = new Courier();
-            courier.setId(resultSet.getLong("id"));
-            courier.setFirstName(resultSet.getString("first_name"));
-            courier.setLastName(resultSet.getString("last_name"));
-            courier.setPhoneNumber(resultSet.getString("phone_number"));
-            courier.setStatus(CourierStatus.valueOf(resultSet.getString("status")));
-            courier.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-            courier.setLastActiveAt(resultSet.getTimestamp("last_active_at").toLocalDateTime());
-            couriers.add(courier);
+            courier.setId(resultSet.getLong("courier_id"));
+            if (!resultSet.wasNull()) {
+                courier.setFirstName(resultSet.getString("courier_first_name"));
+                courier.setLastName(resultSet.getString("courier_last_name"));
+                courier.setPhoneNumber(resultSet.getString("courier_phone_number"));
+                courier.setStatus(CourierStatus.valueOf(resultSet.getString("courier_status")));
+                courier.setCreatedAt(resultSet.getTimestamp("courier_created_at").toLocalDateTime());
+                courier.setLastActiveAt(resultSet.getTimestamp("courier_last_active_at").toLocalDateTime());
+                couriers.add(courier);
+            }
         }
         return couriers;
     }

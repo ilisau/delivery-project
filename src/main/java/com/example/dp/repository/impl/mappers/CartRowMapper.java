@@ -1,34 +1,27 @@
 package com.example.dp.repository.impl.mappers;
 
+import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.user.Cart;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 public abstract class CartRowMapper implements RowMapper<Cart> {
 
     @SneakyThrows
     public static Cart mapRow(ResultSet resultSet) {
+        Cart cart = new Cart();
+        Map<Item, Long> items = ItemRowMapper.mapRowsToMap(resultSet);
+        resultSet.beforeFirst();
         if (resultSet.next()) {
-            Cart cart = new Cart();
-            cart.setId(resultSet.getLong("id"));
-            return cart;
-        } else {
-            return null;
+            cart.setId(resultSet.getLong("cart_id"));
+            if (!resultSet.wasNull()) {
+                cart.setItems(items);
+                return cart;
+            }
         }
-    }
-
-    @SneakyThrows
-    public static List<Cart> mapRows(ResultSet resultSet) {
-        List<Cart> carts = new ArrayList<>();
-        while (resultSet.next()) {
-            Cart cart = new Cart();
-            cart.setId(resultSet.getLong("id"));
-            carts.add(cart);
-        }
-        return carts;
+        return null;
     }
 }

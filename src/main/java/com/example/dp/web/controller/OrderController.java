@@ -47,14 +47,6 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/by-restaurant/{id}")
-    public List<OrderDto> getAllByRestaurantId(@PathVariable Long id) {
-        List<Order> orders = orderService.getAllByRestaurantId(id);
-        return orders.stream()
-                .map(OrderMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
-    }
-
     @GetMapping("/by-courier/{id}")
     public List<OrderDto> getAllByCourierId(@PathVariable Long id) {
         List<Order> orders = orderService.getAllByCourierId(id);

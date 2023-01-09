@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,8 +20,83 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id, name, description FROM restaurants WHERE id = ?";
-    private static final String FIND_BY_NAME = "SELECT id, name, description FROM restaurants WHERE name = ?";
+    private static final String GET_ALL = """
+            SELECT r.id           as restaurant_id,
+                   r.name         as restaurant_name,
+                   r.description  as restaurant_description,
+                   a.id           as address_id,
+                   a.street_name  as address_street_name,
+                   a.house_number as address_house_number,
+                   a.floor_number as address_floor_number,
+                   a.flat_number  as address_flat_number,
+                   e.id           as employee_id,
+                   e.name         as employee_name,
+                   e.position     as employee_position,
+                   i.id           as item_id,
+                   i.name         as item_name,
+                   i.description  as item_description,
+                   i.type         as item_type,
+                   i.price        as item_price,
+                   i.available    as item_available
+            FROM restaurants r
+                     JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                     JOIN addresses a on ra.address_id = a.id
+                     JOIN restaurants_employees re on r.id = re.restaurant_id
+                     JOIN employees e on re.employee_id = e.id
+                     JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                     JOIN items i on restaurants_items.item_id = i.id""";
+    private static final String FIND_BY_ID = """
+            SELECT r.id           as restaurant_id,
+                                  r.name         as restaurant_name,
+                                  r.description  as restaurant_description,
+                                  a.id           as address_id,
+                                  a.street_name  as address_street_name,
+                                  a.house_number as address_house_number,
+                                  a.floor_number as address_floor_number,
+                                  a.flat_number  as address_flat_number,
+                                  e.id           as employee_id,
+                                  e.name         as employee_name,
+                                  e.position     as employee_position,
+                                  i.id as item_id,
+                                  i.name as item_name,
+                                  i.description as item_description,
+                                  i.type as item_type,
+                                  i.price as item_price,
+                                  i.available as item_available
+                           FROM restaurants r
+                                    JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                                    JOIN addresses a on ra.address_id = a.id
+                                    JOIN restaurants_employees re on r.id = re.restaurant_id
+                                    JOIN employees e on re.employee_id = e.id
+                                    JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                                    JOIN items i on restaurants_items.item_id = i.id
+                           WHERE r.id = ?""";
+    private static final String FIND_BY_NAME = """
+            SELECT r.id           as restaurant_id,
+                   r.name         as restaurant_name,
+                   r.description  as restaurant_description,
+                   a.id           as address_id,
+                   a.street_name  as address_street_name,
+                   a.house_number as address_house_number,
+                   a.floor_number as address_floor_number,
+                   a.flat_number  as address_flat_number,
+                   e.id           as employee_id,
+                   e.name         as employee_name,
+                   e.position     as employee_position,
+                   i.id as item_id,
+                   i.name as item_name,
+                   i.description as item_description,
+                   i.type as item_type,
+                   i.price as item_price,
+                   i.available as item_available
+            FROM restaurants r
+                     JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                     JOIN addresses a on ra.address_id = a.id
+                     JOIN restaurants_employees re on r.id = re.restaurant_id
+                     JOIN employees e on re.employee_id = e.id
+                     JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                     JOIN items i on restaurants_items.item_id = i.id
+            WHERE r.name = ?""";
     private static final String SAVE_BY_ID = "UPDATE restaurants SET name = ?, description = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO restaurants (name, description) VALUES (?, ?)";
     private static final String ADD_EMPLOYEE_BY_ID = "INSERT INTO restaurants_employees (restaurant_id, employee_id) VALUES (?, ?)";
@@ -32,9 +108,20 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     private static final String DELETE_BY_ID = "DELETE FROM restaurants WHERE id = ?";
 
     @Override
+    public List<Restaurant> getAll() {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_ALL, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            ResultSet resultSet = statement.executeQuery();
+            return RestaurantRowMapper.mapRows(resultSet);
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting all restaurants");
+        }
+    }
+
+    @Override
     public Optional<Restaurant> findById(Long id) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setLong(1, id);
             ResultSet restaurantsResultSet = statement.executeQuery();
             return Optional.ofNullable(RestaurantRowMapper.mapRow(restaurantsResultSet));
@@ -49,7 +136,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
              PreparedStatement statement = connection.prepareStatement(FIND_BY_NAME)) {
             statement.setString(1, name);
             ResultSet restaurantsResultSet = statement.executeQuery();
-            return Optional.of(RestaurantRowMapper.mapRow(restaurantsResultSet));
+            return Optional.ofNullable(RestaurantRowMapper.mapRow(restaurantsResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting restaurant by name :: " + name);
         }

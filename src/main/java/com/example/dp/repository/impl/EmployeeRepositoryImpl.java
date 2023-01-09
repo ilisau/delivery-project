@@ -24,9 +24,27 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id, name, position FROM employees WHERE id = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT employees.id as id, employees.name as name, employees.position as position FROM restaurants_employees JOIN employees ON employee_id = employees.id WHERE restaurants_employees.restaurant_id = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID_AND_POSITION = "SELECT employees.id as id, employees.name as name, employees.position as position FROM restaurants_employees JOIN employees ON employee_id = employees.id WHERE restaurants_employees.restaurant_id = ? AND employees.position = ?";
+    private static final String FIND_BY_ID = """
+            SELECT id       as employee_id,
+                   name     as employee_name,
+                   position as employee_position
+            FROM employees
+            WHERE id = ?""";
+    private static final String FIND_ALL_BY_RESTAURANT_ID = """
+            SELECT employees.id       as employee_id,
+                   employees.name     as employee_name,
+                   employees.position as employee_position
+            FROM restaurants_employees
+                     JOIN employees ON employee_id = employees.id
+            WHERE restaurants_employees.restaurant_id = ?""";
+    private static final String FIND_ALL_BY_RESTAURANT_ID_AND_POSITION = """
+            SELECT e.id       as employee_id,
+                   e.name     as employee_name,
+                   e.position as employee_position
+            FROM restaurants_employees
+                     JOIN employees e ON employee_id = e.id
+            WHERE restaurants_employees.restaurant_id = ?
+              AND e.position = ?""";
     private static final String SAVE_BY_ID = "UPDATE employees SET name = ?, position = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO employees (name, position) VALUES (?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM employees WHERE id = ?";

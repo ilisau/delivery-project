@@ -3,9 +3,12 @@ package com.example.dp.repository;
 import com.example.dp.domain.restaurant.Restaurant;
 import com.example.dp.web.dto.restaurant.CreateRestaurantDto;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface RestaurantRepository {
+
+    List<Restaurant> getAll();
 
     Optional<Restaurant> findById(Long id);
 

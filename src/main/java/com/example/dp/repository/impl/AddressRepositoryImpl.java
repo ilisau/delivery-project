@@ -20,9 +20,9 @@ public class AddressRepositoryImpl implements AddressRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM addresses WHERE id = ?";
-    private static final String FIND_ALL_BY_USER_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM users_addresses JOIN addresses ON users_addresses.address_id = addresses.id WHERE user_id = ?";
-    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT id, street_name, house_number, floor_number, flat_number FROM restaurants_addresses JOIN addresses ON restaurants_addresses.address_id = addresses.id WHERE restaurant_id = ?";
+    private static final String FIND_BY_ID = "SELECT id as address_id, street_name as address_street_name, house_number as address_house_number, floor_number as address_floor_number, flat_number as address_flat_number FROM addresses WHERE id = ?";
+    private static final String FIND_ALL_BY_USER_ID = "SELECT id as address_id, street_name as address_street_name, house_number as address_house_number, floor_number as address_floor_number, flat_number as address_flat_number FROM users_addresses JOIN addresses ON users_addresses.address_id = addresses.id WHERE user_id = ?";
+    private static final String FIND_ALL_BY_RESTAURANT_ID = "SELECT id as address_id,  street_name as address_street_name, house_number as address_house_number, floor_number as address_floor_number, flat_number as address_flat_number FROM restaurants_addresses JOIN addresses ON restaurants_addresses.address_id = addresses.id WHERE restaurant_id = ?";
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
@@ -74,7 +74,7 @@ public class AddressRepositoryImpl implements AddressRepository {
             statement.setLong(5, address.getId());
             statement.executeUpdate();
             return address;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving address :: " + address);
         }
     }
@@ -93,7 +93,7 @@ public class AddressRepositoryImpl implements AddressRepository {
             Address address = CreateAddressMapper.INSTANCE.toEntity(addressDto);
             address.setId(key.getLong(1));
             return address;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating address :: " + addressDto);
         }
     }
@@ -104,7 +104,7 @@ public class AddressRepositoryImpl implements AddressRepository {
              PreparedStatement statement = connection.prepareStatement(DELETE_BY_ID)) {
             statement.setLong(1, id);
             statement.executeUpdate();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new ResourceMappingException("Exception while deleting address by id :: " + id);
         }
     }

@@ -19,9 +19,36 @@ public class CartRepositoryImpl implements CartRepository {
 
     private final DataSource dataSource;
 
-    private static final String FIND_BY_ID = "SELECT id FROM carts WHERE id = ?";
-    private static final String FIND_BY_USER_ID = "SELECT carts.id as id FROM users JOIN carts ON users.cart_id = carts.id WHERE users.id = ?";
-    private static final String CREATE = "INSERT INTO carts VALUES (default)";
+    private static final String FIND_BY_ID = """
+            SELECT c.id          as cart_id,
+                   i.id          as item_id,
+                   i.name        as item_name,
+                   i.description as item_description,
+                   i.price       as item_price,
+                   i.type        as item_type,
+                   i.available   as item_available,
+                   ci.quantity   as item_quantity
+            FROM carts c
+                     JOIN carts_items ci
+                          ON c.id = ci.cart_id
+                     JOIN items i on i.id = ci.item_id
+            WHERE c.id = ?""";
+    private static final String FIND_BY_USER_ID = """
+            SELECT c.id          as cart_id,
+                   i.id          as item_id,
+                   i.name        as item_name,
+                   i.description as item_description,
+                   i.price       as item_price,
+                   i.type        as item_type,
+                   i.available   as item_available,
+                   ci.quantity   as item_quantity
+            FROM users u
+                     JOIN carts c ON u.cart_id = c.id
+                     JOIN carts_items ci
+                          ON c.id = ci.cart_id
+                     JOIN items i on i.id = ci.item_id
+            WHERE u.id = ?""";
+    private static final String CREATE = "INSERT INTO carts VALUES (default);";
     private static final String CLEAR = "DELETE FROM carts_items WHERE cart_id = ?";
     private static final String ADD_ITEM_BY_ID = "INSERT INTO carts_items AS ci (cart_id, item_id, quantity) VALUES(?, ?, ?) ON CONFLICT (cart_id, item_id) DO UPDATE SET quantity = ci.quantity + ?";
     private static final String DELETE_ITEM_BY_ID = "UPDATE carts_items SET quantity = quantity - ? WHERE cart_id = ? AND item_id = ?;" +
@@ -31,7 +58,7 @@ public class CartRepositoryImpl implements CartRepository {
     @Override
     public Optional<Cart> findById(Long id) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setLong(1, id);
             ResultSet cartResultSet = statement.executeQuery();
             return Optional.ofNullable(CartRowMapper.mapRow(cartResultSet));
@@ -41,12 +68,12 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public Cart getByUserId(Long id) {
+    public Optional<Cart> getByUserId(Long id) {
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID)) {
+             PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             statement.setLong(1, id);
             ResultSet cartResultSet = statement.executeQuery();
-            return CartRowMapper.mapRow(cartResultSet);
+            return Optional.ofNullable(CartRowMapper.mapRow(cartResultSet));
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting cart by user id :: " + id);
         }
@@ -62,7 +89,6 @@ public class CartRepositoryImpl implements CartRepository {
     public Cart create(CreateCartDto createCartDto) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setLong(1, createCartDto.getUserId());
             statement.executeUpdate();
             ResultSet key = statement.getGeneratedKeys();
             key.next();

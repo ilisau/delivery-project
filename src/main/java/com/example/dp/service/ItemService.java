@@ -1,6 +1,5 @@
 package com.example.dp.service;
 
-import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.restaurant.Item;
 import com.example.dp.domain.restaurant.ItemType;
 import com.example.dp.web.dto.restaurant.CreateItemDto;
@@ -10,9 +9,9 @@ import java.util.Map;
 
 public interface ItemService {
 
-    Item getById(Long id) throws ResourceNotFoundException;
+    Item getById(Long id);
 
-    Map<Item, Long> getAllByCartId(Long cartId) throws ResourceNotFoundException;
+    Map<Item, Long> getAllByCartId(Long cartId);
 
     List<Item> getAllByType(ItemType type);
 
@@ -22,7 +21,7 @@ public interface ItemService {
 
     Item save(Item item);
 
-    Item create(CreateItemDto createItemDto) throws ResourceNotFoundException;
+    Item create(CreateItemDto createItemDto);
 
     void deleteById(Long id);
 }

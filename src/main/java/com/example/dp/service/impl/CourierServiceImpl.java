@@ -18,15 +18,15 @@ public class CourierServiceImpl implements CourierService {
     private final CourierRepository courierRepository;
 
     @Override
-    public Courier getById(Long id) throws ResourceNotFoundException {
+    public Courier getById(Long id) {
         return courierRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Courier not found for this id :: " + id));
     }
 
     @Override
-    public Courier getByOrderId(Long id) throws ResourceNotFoundException {
+    public Courier getByOrderId(Long id) {
         return courierRepository.findByOrderId(id)
-                .orElseThrow(()  -> new ResourceNotFoundException("Courier not found for this order :: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Courier not found for this order :: " + id));
     }
 
     @Override
@@ -46,6 +46,7 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public Courier create(CreateCourierDto createCourierDto) {
+        //TODO check if already exists
         return courierRepository.create(createCourierDto);
     }
 

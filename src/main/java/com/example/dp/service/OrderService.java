@@ -1,23 +1,19 @@
 package com.example.dp.service;
 
-import com.example.dp.domain.exception.ResourceNotFoundException;
 import com.example.dp.domain.user.Order;
 import com.example.dp.web.dto.user.CreateOrderDto;
-import com.example.dp.web.dto.user.OrderDto;
 
 import java.util.List;
 
 public interface OrderService {
 
-    Order getById(Long id) throws ResourceNotFoundException;
+    Order getById(Long id);
 
-    List<Order> getAllByUserId(Long id) throws ResourceNotFoundException;
+    List<Order> getAllByUserId(Long id);
 
-    List<Order> getAllByAddressId(Long id) throws ResourceNotFoundException;
+    List<Order> getAllByAddressId(Long id);
 
-    List<Order> getAllByRestaurantId(Long id) throws ResourceNotFoundException;
-
-    List<Order> getAllByCourierId(Long id) throws ResourceNotFoundException;
+    List<Order> getAllByCourierId(Long id);
 
     Order save(Order order);
 

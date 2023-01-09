@@ -47,8 +47,8 @@ insert into carts_items (cart_id, item_id, quantity)
 values (1, 1, 3),
        (1, 2, 2);
 
-insert into orders (address_id, restaurant_id, cart_id, status, courier_id, created_at, delivered_at)
-values (2, 1, 1, 'DELIVERED', 1, '2022-12-01 00:00:00', '2022-12-01 00:00:00');
+insert into orders (address_id, cart_id, status, courier_id, created_at, delivered_at)
+values (2, 1, 'DELIVERED', 1, '2022-12-01 00:00:00', '2022-12-01 00:00:00');
 
 insert into users_orders (user_id, order_id)
 values (1, 1);

@@ -21,13 +21,13 @@ public class ItemServiceImpl implements ItemService {
     private final RestaurantService restaurantService;
 
     @Override
-    public Item getById(Long id) throws ResourceNotFoundException {
+    public Item getById(Long id) {
         return itemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item not found for this id :: " + id));
     }
 
     @Override
-    public Map<Item, Long> getAllByCartId(Long cartId) throws ResourceNotFoundException {
+    public Map<Item, Long> getAllByCartId(Long cartId) {
         return itemRepository.getAllByCartId(cartId);
     }
 
@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item create(CreateItemDto createItemDto) throws ResourceNotFoundException {
+    public Item create(CreateItemDto createItemDto) {
         Item item = itemRepository.create(createItemDto);
         restaurantService.addItemById(createItemDto.getRestaurantId(), item.getId());
         return item;

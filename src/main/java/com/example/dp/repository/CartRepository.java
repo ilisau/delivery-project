@@ -9,7 +9,7 @@ public interface CartRepository {
 
     Optional<Cart> findById(Long id);
 
-    Cart getByUserId(Long id);
+    Optional<Cart> getByUserId(Long id);
 
     Cart save(Cart cart);
 

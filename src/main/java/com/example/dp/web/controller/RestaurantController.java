@@ -9,12 +9,23 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequestMapping("/api/v1/restaurants")
 @RestController
 @RequiredArgsConstructor
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+
+    @GetMapping
+    public List<RestaurantDto> getAll() {
+        List<Restaurant> restaurants = restaurantService.getAll();
+        return restaurants.stream()
+                .map(RestaurantMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
 
     @PutMapping
     public void save(@Valid @RequestBody RestaurantDto dto) {

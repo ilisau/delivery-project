@@ -114,7 +114,6 @@ create table if not exists orders
 (
     id            bigserial,
     address_id    bigint   not null,
-    restaurant_id bigint   not null,
     cart_id       bigint   not null,
     courier_id    bigint null,
     status        varchar(45) not null,
@@ -122,7 +121,6 @@ create table if not exists orders
     delivered_at  timestamp null,
     primary key (id),
     constraint fk_orders_addresses foreign key (address_id) references addresses (id) on delete cascade,
-    constraint fk_orders_restaurants foreign key (restaurant_id) references restaurants (id) on delete cascade,
     constraint fk_orders_carts foreign key (cart_id) references carts (id) on delete cascade,
     constraint fk_orders_couriers foreign key (courier_id) references couriers (id)
 );

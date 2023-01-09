@@ -20,7 +20,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final RestaurantService restaurantService;
 
     @Override
-    public Employee getById(Long id) throws ResourceNotFoundException {
+    public Employee getById(Long id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + id));
     }
@@ -43,6 +43,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee create(CreateEmployeeDto createEmployeeDto) throws ResourceNotFoundException {
         Employee employee = employeeRepository.create(createEmployeeDto);
+        //TODO check if already exists
         restaurantService.addEmployeeById(employee.getId(), createEmployeeDto.getRestaurantId());
         return employee;
     }
