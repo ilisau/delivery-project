@@ -1,0 +1,34 @@
+package com.solvd.dp.web.dto.restaurant;
+
+import com.solvd.dp.web.dto.OnCreate;
+import com.solvd.dp.web.dto.OnUpdate;
+import com.solvd.dp.web.dto.user.AddressDto;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
+
+@Data
+public class RestaurantDto {
+
+    @Null(message = "Id must be null", groups = {OnCreate.class})
+    @NotNull(message = "Id must not be null", groups = {OnUpdate.class})
+    private Long id;
+
+    @NotNull(message = "Name is required", groups = {OnCreate.class, OnUpdate.class})
+    @Length(min = 3, max = 45, message = "Name must be between {min} and {max} characters", groups = {OnCreate.class, OnUpdate.class})
+    private String name;
+
+    @Max(value = 255, message = "Description must be less than {value} characters", groups = {OnCreate.class, OnUpdate.class})
+    private String description;
+
+    @NotEmpty(message = "Address is required", groups = {OnCreate.class})
+    private List<AddressDto> addresses;
+
+    private List<ItemDto> items;
+
+}
