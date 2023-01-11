@@ -19,9 +19,9 @@ public interface ItemRepository {
 
     List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type);
 
-    Item save(Item item);
+    void save(Item item);
 
-    Item create(Item item);
+    void create(Item item);
 
     void delete(Long id);
 

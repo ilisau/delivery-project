@@ -21,16 +21,18 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CourierRepositoryImpl implements CourierRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_BY_ORDER_ID = """
-            SELECT c.id             as courier_id,
-                   c.first_name     as courier_first_name,
-                   c.last_name      as courier_last_name,
-                   c.phone_number   as courier_phone_number,
-                   c.created_at     as courier_created_at,
-                   c.last_active_at as courier_last_active_at,
-                   c.status         as courier_status
-            FROM orders o
-                     LEFT JOIN couriers c on o.courier_id = c.id
+            SELECT c.id            as courier_id,
+                    c.first_name     as courier_first_name,
+                    c.last_name      as courier_last_name,
+                    c.phone_number   as courier_phone_number,
+                    c.created_at     as courier_created_at,
+                    c.last_active_at as courier_last_active_at,
+                    c.status         as courier_status
+            FROM couriers c
+            LEFT JOIN orders o on c.id = o.courier_id
             WHERE o.id = ?""";
     private static final String FIND_BY_ID = """
             SELECT id         as courier_id,
@@ -43,7 +45,6 @@ public class CourierRepositoryImpl implements CourierRepository {
             FROM couriers
             WHERE id = ?""";
     private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM couriers WHERE first_name = ? OR last_name = ? OR phone_number = ?)";
-    private final DataSourceConfig dataSourceConfig;
     private static final String FIND_ALL = """
             SELECT id         as courier_id,
                     first_name as courier_first_name,
@@ -123,7 +124,7 @@ public class CourierRepositoryImpl implements CourierRepository {
     }
 
     @Override
-    public Courier save(Courier courier) {
+    public void save(Courier courier) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(UPDATE_BY_ID);
@@ -133,14 +134,13 @@ public class CourierRepositoryImpl implements CourierRepository {
             statement.setString(4, courier.getPhoneNumber());
             statement.setLong(5, courier.getId());
             statement.executeUpdate();
-            return courier;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving courier :: " + courier);
         }
     }
 
     @Override
-    public Courier create(Courier courier) {
+    public void create(Courier courier) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -159,7 +159,6 @@ public class CourierRepositoryImpl implements CourierRepository {
                 key.next();
                 courier.setId(key.getLong(1));
             }
-            return courier;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating courier :: " + courier);
         }

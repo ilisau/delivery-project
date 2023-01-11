@@ -16,9 +16,9 @@ public interface CartService {
 
     void clearById(Long id);
 
-    void addItemById(Long cartId, Long itemId, long quantity);
+    void addItemById(Long cartId, Long itemId, Long quantity);
 
-    void deleteItemById(Long cartId, Long itemId, long quantity);
+    void deleteItemById(Long cartId, Long itemId, Long quantity);
 
     void delete(Long id);
 

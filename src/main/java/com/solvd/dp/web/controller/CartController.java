@@ -46,20 +46,14 @@ public class CartController {
     @PostMapping("/{id}/items/{itemId}")
     public void addItemById(@PathVariable Long id,
                             @PathVariable Long itemId,
-                            @RequestParam(name = "quantity", required = false) Long quantity) {
-        if (quantity == null || quantity < 1) {
-            quantity = 1L;
-        }
+                            @RequestParam(required = false) Long quantity) {
         cartService.addItemById(id, itemId, quantity);
     }
 
     @DeleteMapping("/{id}/items/{itemId}")
     public void deleteItemById(@PathVariable Long id,
                                @PathVariable Long itemId,
-                               @RequestParam(name = "quantity", required = false) Long quantity) {
-        if (quantity == null || quantity < 1) {
-            quantity = 1L;
-        }
+                               @RequestParam(required = false) Long quantity) {
         cartService.deleteItemById(id, itemId, quantity);
     }
 

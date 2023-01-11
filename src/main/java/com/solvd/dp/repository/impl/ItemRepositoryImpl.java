@@ -18,6 +18,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_ALL_BY_CART_ID = """
             SELECT i.id          as item_id,
                    i.name        as item_name,
@@ -68,7 +70,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                      LEFT JOIN items i ON restaurants_items.item_id = i.id
             WHERE restaurants_items.restaurant_id = ?
             AND type = ?""";
-    private final DataSourceConfig dataSourceConfig;
     private static final String SAVE_BY_ID = "UPDATE items SET name = ?, description = ?, price = ?, type = ?, available = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO items (name, description, price, type, available) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM items WHERE id = ?";
@@ -145,7 +146,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item save(Item itemDto) {
+    public void save(Item itemDto) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
@@ -156,14 +157,13 @@ public class ItemRepositoryImpl implements ItemRepository {
             statement.setBoolean(5, itemDto.getAvailable());
             statement.setLong(6, itemDto.getId());
             statement.executeUpdate();
-            return itemDto;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving item :: " + itemDto);
         }
     }
 
     @Override
-    public Item create(Item item) {
+    public void create(Item item) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -177,7 +177,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                 key.next();
                 item.setId(key.getLong(1));
             }
-            return item;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating item :: " + item);
         }

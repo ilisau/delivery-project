@@ -15,6 +15,10 @@ public interface OrderService {
 
     List<Order> getAllByCourierId(Long courierId);
 
+    List<Order> getAllByRestaurantId(Long restaurantId);
+
+    List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
+
     Order save(Order order);
 
     Order create(Order order, Long userId);

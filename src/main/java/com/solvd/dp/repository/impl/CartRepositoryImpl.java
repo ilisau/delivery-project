@@ -15,6 +15,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartRepositoryImpl implements CartRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_BY_ID = """
             SELECT c.id          as cart_id,
                    i.id          as item_id,
@@ -25,8 +27,7 @@ public class CartRepositoryImpl implements CartRepository {
                    i.available   as item_available,
                    ci.quantity   as item_quantity
             FROM carts c
-                     LEFT JOIN carts_items ci
-                          ON c.id = ci.cart_id
+                     JOIN carts_items ci ON c.id = ci.cart_id
                      LEFT JOIN items i on i.id = ci.item_id
             WHERE c.id = ?""";
     private static final String FIND_BY_USER_ID = """
@@ -39,9 +40,8 @@ public class CartRepositoryImpl implements CartRepository {
                    i.available   as item_available,
                    ci.quantity   as item_quantity
             FROM users u
-                     LEFT JOIN carts c ON u.cart_id = c.id
-                     LEFT JOIN carts_items ci
-                          ON c.id = ci.cart_id
+                     JOIN carts c ON u.cart_id = c.id
+                     LEFT JOIN carts_items ci ON c.id = ci.cart_id
                      LEFT JOIN items i on i.id = ci.item_id
             WHERE u.id = ?""";
     private static final String SET_CART = "UPDATE users SET cart_id = ? WHERE id = ?";
@@ -49,7 +49,6 @@ public class CartRepositoryImpl implements CartRepository {
     private static final String DELETE_ITEM_BY_ID = """
             UPDATE carts_items SET quantity = quantity - ? WHERE cart_id = ? AND item_id = ?;
             DELETE FROM carts_items WHERE cart_id = ? AND item_id = ? AND quantity <= 0""";
-    private final DataSourceConfig dataSourceConfig;
     private static final String CREATE = "INSERT INTO carts VALUES (default);";
     private static final String CLEAR = "DELETE FROM carts_items WHERE cart_id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM carts WHERE id = ?";
@@ -83,13 +82,12 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public Cart save(Cart cart) {
+    public void save(Cart cart) {
         //now has no sense without editable fields
-        return cart;
     }
 
     @Override
-    public Cart create(Cart cart) {
+    public void create(Cart cart) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -98,7 +96,6 @@ public class CartRepositoryImpl implements CartRepository {
                 key.next();
                 cart.setId(key.getLong(1));
             }
-            return cart;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating cart :: " + cart);
         }

@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
-    private static final String SET_COURIER_BY_ID = "UPDATE orders SET courier_id = ? WHERE id = ?";
+    private final DataSourceConfig dataSourceConfig;
 
     private static final String FIND_BY_ID = """
             SELECT o.id         as order_id,
@@ -110,15 +110,12 @@ public class OrderRepositoryImpl implements OrderRepository {
             ORDER BY o.id""";
     private static final String SAVE_BY_ID = "UPDATE orders SET courier_id = ?, status = ?, delivered_at = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO orders (address_id, cart_id, status, created_at) VALUES (?, ?, ?, ?)";
-    private static final String CHANGE_STATUS = "UPDATE orders SET status = ? WHERE id = ?";
     private static final String IS_ORDER_ASSIGNED = "SELECT courier_id IS NOT NULL FROM orders WHERE id = ?";
     private static final String ASSIGN_ORDER = "UPDATE orders SET courier_id = ? WHERE id = ?";
     private static final String UPDATE_STATUS = "UPDATE orders SET status = ? WHERE id = ?";
     private static final String SET_DELIVERED_AT = "UPDATE orders SET delivered_at = ? WHERE id = ?";
     private static final String ADD_ORDER = "INSERT INTO users_orders (user_id, order_id) VALUES (?, ?)";
-    private static final String DELETE_ORDER = "DELETE FROM users_orders WHERE user_id = ? AND order_id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM orders WHERE id = ?";
-    private final DataSourceConfig dataSourceConfig;
 
     @Override
     public Optional<Order> findById(Long id) {
@@ -226,7 +223,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public Order save(Order order) {
+    public void save(Order order) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
@@ -235,14 +232,13 @@ public class OrderRepositoryImpl implements OrderRepository {
             statement.setTimestamp(3, Timestamp.valueOf(order.getDeliveredAt()));
             statement.setLong(4, order.getId());
             statement.executeUpdate();
-            return order;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving order :: " + order);
         }
     }
 
     @Override
-    public Order create(Order order) {
+    public void create(Order order) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -257,22 +253,8 @@ public class OrderRepositoryImpl implements OrderRepository {
                 key.next();
                 order.setId(key.getLong(1));
             }
-            return order;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating order :: " + order);
-        }
-    }
-
-    @Override
-    public void changeStatus(Long id, OrderStatus status) {
-        try {
-            Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(CHANGE_STATUS);
-            statement.setString(1, status.name());
-            statement.setLong(2, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while changing order status :: " + id);
         }
     }
 
@@ -331,7 +313,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void addOrderById(Long userId, Long orderId) {
+    public void addOrderById(Long orderId, Long userId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(ADD_ORDER);
@@ -340,19 +322,6 @@ public class OrderRepositoryImpl implements OrderRepository {
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while adding order to user with id :: " + userId);
-        }
-    }
-
-    @Override
-    public void deleteOrderById(Long userId, Long orderId) {
-        try {
-            Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(DELETE_ORDER);
-            statement.setLong(1, userId);
-            statement.setLong(2, orderId);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while deleting order from user with id :: " + userId);
         }
     }
 

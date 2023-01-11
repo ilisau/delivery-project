@@ -25,10 +25,10 @@ values (1, 1),
        (1, 3);
 
 insert into carts
-values (default);
+values (default), (default);
 
 insert into users (name, email, password, phone_number, cart_id, created_at)
-values ('Peter', 'peter@gmail.com', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4oH3pK8hhOOfPwMzbA2', '1234', 1, '2022-12-01 00:00:00');
+values ('Peter', 'peter@gmail.com', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4oH3pK8hhOOfPwMzbA2', '1234', 2, '2022-12-01 00:00:00');
 
 insert into users_addresses (user_id, address_id)
 values (1, 2);

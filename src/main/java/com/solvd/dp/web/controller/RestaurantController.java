@@ -45,18 +45,15 @@ public class RestaurantController {
         return RestaurantMapper.INSTANCE.toDto(restaurant);
     }
 
-    @DeleteMapping("/{id}/employees/{employeeId}")
-    public void deleteEmployeeById(@PathVariable Long id, @PathVariable Long employeeId) {
-        restaurantService.deleteEmployeeById(id, employeeId);
-    }
-
     @DeleteMapping("/{id}/items/{itemId}")
-    public void deleteItemById(@PathVariable Long id, @PathVariable Long itemId) {
+    public void deleteItemById(@PathVariable Long id,
+                               @PathVariable Long itemId) {
         restaurantService.deleteItemById(id, itemId);
     }
 
     @PostMapping("/{id}/addresses/{addressId}")
-    public void addAddressById(@PathVariable Long id, @PathVariable Long addressId) {
+    public void addAddressById(@PathVariable Long id,
+                               @PathVariable Long addressId) {
         restaurantService.addAddressById(id, addressId);
     }
 

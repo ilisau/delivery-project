@@ -12,9 +12,9 @@ public interface UserRepository {
 
     Optional<User> findByPhoneNumber(String phoneNumber);
 
-    User save(User user);
+    void save(User user);
 
-    User create(User user, Long cartId);
+    void create(User user, Long cartId);
 
     void addAddress(Long userId, Long addressId);
 

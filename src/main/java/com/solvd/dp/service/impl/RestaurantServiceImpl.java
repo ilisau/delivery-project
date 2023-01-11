@@ -5,11 +5,13 @@ import com.solvd.dp.domain.exception.ResourceNotFoundException;
 import com.solvd.dp.domain.restaurant.Restaurant;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.repository.RestaurantRepository;
+import com.solvd.dp.service.AddressService;
 import com.solvd.dp.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +19,7 @@ import java.util.List;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
+    private final AddressService addressService;
 
     @Override
     @Transactional(readOnly = true)
@@ -42,21 +45,23 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Transactional
     public Restaurant save(Restaurant restaurant) {
         //TODO if restaurant with this name exists
-        return restaurantRepository.save(restaurant);
+        restaurantRepository.save(restaurant);
+        return restaurant;
     }
 
     @Override
     @Transactional
     public Restaurant create(Restaurant restaurant) {
-        if (restaurantRepository.employeeExists(restaurant)) {
+        if (restaurantRepository.exists(restaurant)) {
             throw new ResourceAlreadyExistsException("Restaurant already exists :: " + restaurant.getName());
         }
-        restaurant = restaurantRepository.create(restaurant);
+        restaurantRepository.create(restaurant);
+        restaurant.setItems(new ArrayList<>());
         for (Address address : restaurant.getAddresses()) {
+            addressService.create(address);
             restaurantRepository.addAddressById(restaurant.getId(), address.getId());
         }
-        return restaurantRepository.findById(restaurant.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Restaurant not found"));
+        return restaurant;
     }
 
     @Override

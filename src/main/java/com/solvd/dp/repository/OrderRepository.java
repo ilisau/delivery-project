@@ -20,11 +20,9 @@ public interface OrderRepository {
 
     List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
 
-    Order save(Order order);
+    void save(Order order);
 
-    Order create(Order order);
-
-    void changeStatus(Long id, OrderStatus status);
+    void create(Order order);
 
     boolean isOrderAssigned(Long id);
 
@@ -34,9 +32,7 @@ public interface OrderRepository {
 
     void setDelivered(Long id);
 
-    void addOrderById(Long userId, Long orderId);
-
-    void deleteOrderById(Long userId, Long orderId);
+    void addOrderById(Long orderId, Long userId);
 
     void delete(Long id);
 

@@ -54,16 +54,16 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public Item save(Item item) {
-        return itemRepository.save(item);
+        itemRepository.save(item);
+        return item;
     }
 
     @Override
     @Transactional
     public Item create(Item item, Long restaurantId) {
-        item = itemRepository.create(item);
+        itemRepository.create(item);
         restaurantService.addItemById(restaurantId, item.getId());
-        return itemRepository.findById(item.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Item not found"));
+        return item;
     }
 
     @Override

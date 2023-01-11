@@ -32,7 +32,8 @@ public class EmployeeController {
 
     @PostMapping
     @Validated(OnCreate.class)
-    public EmployeeDto create(@PathVariable Long restaurantId, @Valid @RequestBody EmployeeDto employeeDto) {
+    public EmployeeDto create(@PathVariable Long restaurantId,
+                              @Valid @RequestBody EmployeeDto employeeDto) {
         Employee employeeToBeCreated = EmployeeMapper.INSTANCE.toEntity(employeeDto);
         Employee employee = employeeService.create(employeeToBeCreated, restaurantId);
         return EmployeeMapper.INSTANCE.toDto(employee);
@@ -40,7 +41,7 @@ public class EmployeeController {
 
     @GetMapping
     public List<EmployeeDto> getAllByRestaurantId(@PathVariable Long restaurantId,
-                                                  @RequestParam(name = "position", required = false) EmployeePosition position) {
+                                                  @RequestParam(required = false) EmployeePosition position) {
         List<Employee> employees;
         if (position != null) {
             employees = employeeService.getAllByRestaurantIdAndPosition(restaurantId, position);

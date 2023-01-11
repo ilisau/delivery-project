@@ -13,9 +13,9 @@ public interface RestaurantRepository {
 
     Optional<Restaurant> findByName(String name);
 
-    Restaurant save(Restaurant restaurant);
+    void save(Restaurant restaurant);
 
-    Restaurant create(Restaurant restaurant);
+    void create(Restaurant restaurant);
 
     void addEmployeeById(Long restaurantId, Long employeeId);
 
@@ -29,7 +29,7 @@ public interface RestaurantRepository {
 
     void deleteAddressById(Long restaurantId, Long addressId);
 
-    boolean employeeExists(Restaurant restaurant);
+    boolean exists(Restaurant restaurant);
 
     boolean employeeExists(Long restaurantId, Long employeeId);
 

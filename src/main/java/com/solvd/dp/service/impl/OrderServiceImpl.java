@@ -4,6 +4,7 @@ import com.solvd.dp.domain.exception.ResourceNotFoundException;
 import com.solvd.dp.domain.user.Order;
 import com.solvd.dp.domain.user.OrderStatus;
 import com.solvd.dp.repository.OrderRepository;
+import com.solvd.dp.service.AddressService;
 import com.solvd.dp.service.CartService;
 import com.solvd.dp.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartService cartService;
+    private final AddressService addressService;
 
     @Override
     @Transactional(readOnly = true)
@@ -45,16 +47,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Order> getAllByRestaurantId(Long restaurantId) {
+        return orderRepository.getAllByRestaurantId(restaurantId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status) {
+        return orderRepository.getAllByRestaurantIdAndStatus(restaurantId, status);
+    }
+
+    @Override
     @Transactional
     public Order save(Order order) {
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        return order;
     }
 
     @Override
     @Transactional
     public Order create(Order order, Long userId) {
-        order = orderRepository.create(order);
-        orderRepository.addOrderById(userId, order.getId());
+        if (order.getAddress().getId() == null) {
+            addressService.create(order.getAddress());
+        }
+        order.setCart(cartService.getByUserId(userId));
+        orderRepository.create(order);
+        orderRepository.addOrderById(order.getId(), userId);
         cartService.setEmptyByUserId(userId);
         return orderRepository.findById(order.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));

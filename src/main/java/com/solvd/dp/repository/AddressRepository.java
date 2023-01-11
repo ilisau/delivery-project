@@ -13,9 +13,9 @@ public interface AddressRepository {
 
     List<Address> getAllByRestaurantId(Long restaurantId);
 
-    Address save(Address address);
+    void save(Address address);
 
-    Address create(Address address);
+    void create(Address address);
 
     void delete(Long id);
 

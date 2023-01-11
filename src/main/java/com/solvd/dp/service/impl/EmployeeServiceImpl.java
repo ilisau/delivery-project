@@ -42,7 +42,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public Employee save(Employee employee) {
-        return employeeRepository.save(employee);
+        employeeRepository.save(employee);
+        return employee;
     }
 
     @Override
@@ -51,8 +52,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (employeeRepository.exists(employee, restaurantId)) {
             throw new ResourceAlreadyExistsException("Employee already exists :: " + employee);
         }
-        employee = employeeRepository.create(employee);
-        restaurantService.addEmployeeById(employee.getId(), restaurantId);
+        employeeRepository.create(employee);
+        restaurantService.addEmployeeById(restaurantId, employee.getId());
         return employee;
     }
 

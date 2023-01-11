@@ -24,7 +24,7 @@ public class CourierController {
     private final CourierService courierService;
 
     @GetMapping
-    public List<CourierDto> getAll(@RequestParam(name = "status", required = false) CourierStatus status) {
+    public List<CourierDto> getAll(@RequestParam(required = false) CourierStatus status) {
         List<Courier> couriers;
         if (status == null) {
             couriers = courierService.getAll();
@@ -52,7 +52,8 @@ public class CourierController {
     }
 
     @PutMapping("/{id}/orders/{orderId}")
-    public void assignOrder(@PathVariable Long id, @PathVariable Long orderId) {
+    public void assignOrder(@PathVariable Long id,
+                            @PathVariable Long orderId) {
         courierService.assignOrder(id, orderId);
     }
 

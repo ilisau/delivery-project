@@ -53,7 +53,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User save(User user) {
         //TODO CHECK if user with such phone or email exists
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user;
     }
 
     @Override
@@ -62,8 +63,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.exists(user)) {
             throw new ResourceAlreadyExistsException("User already exists :: " + user);
         }
-        Cart cart = cartService.create(new Cart());
-        user = userRepository.create(user, cart.getId());
+        Cart cart = new Cart();
+        cartService.create(cart);
+        userRepository.create(user, cart.getId());
         User createdUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         createdUser.setOrders(new ArrayList<>());

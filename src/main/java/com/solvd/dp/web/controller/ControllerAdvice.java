@@ -52,9 +52,9 @@ public class ControllerAdvice {
         return e.getMessage();
     }
 
-    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
+    @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalStateException(IllegalStateException e) {
+    public String handleIllegalArgumentException(IllegalArgumentException e) {
         return e.getMessage();
     }
 

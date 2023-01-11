@@ -24,7 +24,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestParam(name = "type") ItemType type) {
+    public List<ItemDto> getAll(@RequestParam ItemType type) {
         List<Item> items = itemService.getAllByType(type);
         return items.stream()
                 .map(ItemMapper.INSTANCE::toDto)
@@ -40,7 +40,7 @@ public class ItemController {
 
     @GetMapping("/restaurants/{restaurantId}")
     public List<ItemDto> getAllByRestaurantId(@PathVariable Long restaurantId,
-                                              @RequestParam(name = "type", required = false) ItemType type) {
+                                              @RequestParam(required = false) ItemType type) {
         List<Item> items;
         if (type == null) {
             items = itemService.getAllByRestaurantId(restaurantId);
@@ -54,7 +54,8 @@ public class ItemController {
 
     @PostMapping("/restaurants/{restaurantId}")
     @Validated(OnCreate.class)
-    public ItemDto create(@PathVariable Long restaurantId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto create(@PathVariable Long restaurantId,
+                          @Valid @RequestBody ItemDto itemDto) {
         Item itemToBeCreated = ItemMapper.INSTANCE.toEntity(itemDto);
         Item item = itemService.create(itemToBeCreated, restaurantId);
         return ItemMapper.INSTANCE.toDto(item);

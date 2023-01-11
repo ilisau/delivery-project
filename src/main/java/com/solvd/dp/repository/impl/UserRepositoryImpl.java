@@ -16,6 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_USER_BY_ID = """
             SELECT u.id   as user_id,
                    u.name as user_name,
@@ -64,7 +66,6 @@ public class UserRepositoryImpl implements UserRepository {
     private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ? OR phone_number = ?)";
     private static final String CREATE = "INSERT INTO users (name, email, phone_number, password, created_at, cart_id) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String SAVE_BY_ID = "UPDATE users SET name = ?, email = ?, phone_number = ?, password = ? WHERE id = ?";
-    private final DataSourceConfig dataSourceConfig;
     private static final String ADD_ADDRESS = "INSERT INTO users_addresses (user_id, address_id) VALUES (?, ?)";
     private static final String DELETE_ADDRESS = "DELETE FROM users_addresses WHERE user_id = ? AND address_id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM users WHERE id = ?";
@@ -112,7 +113,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User save(User user) {
+    public void save(User user) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             //TODO set hashed password
@@ -123,14 +124,13 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(4, user.getPassword());
             statement.setLong(5, user.getId());
             statement.executeUpdate();
-            return user;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving user :: " + user.getId());
         }
     }
 
     @Override
-    public User create(User user, Long cartId) {
+    public void create(User user, Long cartId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -150,7 +150,6 @@ public class UserRepositoryImpl implements UserRepository {
                 key.next();
                 user.setId(key.getLong(1));
             }
-            return user;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating user :: " + user.getId());
         }

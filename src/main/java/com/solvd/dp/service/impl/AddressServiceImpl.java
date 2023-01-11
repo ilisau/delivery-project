@@ -38,13 +38,15 @@ public class AddressServiceImpl implements AddressService {
     @Override
     @Transactional
     public Address save(Address address) {
-        return addressRepository.save(address);
+        addressRepository.save(address);
+        return address;
     }
 
     @Override
     @Transactional
     public Address create(Address address) {
-        return addressRepository.create(address);
+        addressRepository.create(address);
+        return address;
     }
 
     @Override

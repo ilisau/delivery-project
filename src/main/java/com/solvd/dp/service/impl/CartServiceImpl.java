@@ -31,20 +31,22 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Cart save(Cart cart) {
-        return cartRepository.save(cart);
+        cartRepository.save(cart);
+        return cart;
     }
 
     @Override
     @Transactional
     public Cart create(Cart cart) {
-        return cartRepository.create(cart);
+        cartRepository.create(cart);
+        return cart;
     }
 
     @Override
     @Transactional
     public void setEmptyByUserId(Long userId) {
-        Cart cartToBeCreated = new Cart();
-        Cart cart = cartRepository.create(cartToBeCreated);
+        Cart cart = new Cart();
+        cartRepository.create(cart);
         cartRepository.setByUserId(cart.getId(), userId);
     }
 
@@ -56,13 +58,25 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addItemById(Long cartId, Long itemId, long quantity) {
+    public void addItemById(Long cartId, Long itemId, Long quantity) {
+        if (quantity == null) {
+            quantity = 1L;
+        }
+        if (quantity < 1) {
+            throw new IllegalArgumentException("Amount of items can't be negative");
+        }
         cartRepository.addItemById(cartId, itemId, quantity);
     }
 
     @Override
     @Transactional
-    public void deleteItemById(Long cartId, Long itemId, long quantity) {
+    public void deleteItemById(Long cartId, Long itemId, Long quantity) {
+        if (quantity == null) {
+            quantity = 1L;
+        }
+        if (quantity < 1) {
+            throw new IllegalArgumentException("Amount of items can't be negative");
+        }
         cartRepository.deleteItemById(cartId, itemId, quantity);
     }
 

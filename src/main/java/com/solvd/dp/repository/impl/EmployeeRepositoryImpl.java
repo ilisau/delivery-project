@@ -20,6 +20,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_ALL_BY_RESTAURANT_ID = """
             SELECT employees.id       as employee_id,
                    employees.name     as employee_name,
@@ -41,8 +43,14 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                      LEFT JOIN employees e ON employee_id = e.id
             WHERE restaurants_employees.restaurant_id = ?
             AND e.position = ?""";
-    private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM restaurants_employees WHERE employee_id = ? AND restaurant_id = ?)";
-    private final DataSourceConfig dataSourceConfig;
+    private static final String IS_EXISTS = """
+            SELECT EXISTS(
+                SELECT 1
+                FROM restaurants_employees re
+                JOIN employees e on re.employee_id = e.id
+                WHERE e.name = ?
+                  AND re.restaurant_id = ?
+                )""";
     private static final String SAVE_BY_ID = "UPDATE employees SET name = ?, position = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO employees (name, position) VALUES (?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM employees WHERE id = ?";
@@ -91,7 +99,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public Employee save(Employee employee) {
+    public void save(Employee employee) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
@@ -99,14 +107,13 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             statement.setString(2, employee.getPosition().name());
             statement.setLong(3, employee.getId());
             statement.executeUpdate();
-            return employee;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving employee :: " + employee);
         }
     }
 
     @Override
-    public Employee create(Employee employee) {
+    public void create(Employee employee) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
@@ -117,7 +124,6 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 key.next();
                 employee.setId(key.getLong(1));
             }
-            return employee;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating employee :: " + employee);
         }
@@ -128,7 +134,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);
-            statement.setLong(1, employee.getId());
+            statement.setString(1, employee.getName());
             statement.setLong(2, restaurantId);
             try (ResultSet rs = statement.executeQuery()) {
                 rs.next();

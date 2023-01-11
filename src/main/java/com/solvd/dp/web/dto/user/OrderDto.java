@@ -21,7 +21,7 @@ public class OrderDto {
     @NotNull(message = "Address id is required", groups = {OnCreate.class, OnUpdate.class})
     private AddressDto address;
 
-    @NotNull(message = "Cart id is required", groups = {OnCreate.class})
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CartDto cart;
 
     @NotNull(message = "Status must not be null", groups = {OnUpdate.class})

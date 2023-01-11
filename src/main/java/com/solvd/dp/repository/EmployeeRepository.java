@@ -14,9 +14,9 @@ public interface EmployeeRepository {
 
     List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position);
 
-    Employee save(Employee employee);
+    void save(Employee employee);
 
-    Employee create(Employee employee);
+    void create(Employee employee);
 
     boolean exists(Employee employee, Long restaurantId);
 

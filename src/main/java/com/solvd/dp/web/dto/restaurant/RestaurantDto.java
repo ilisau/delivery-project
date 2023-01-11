@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.dp.web.dto.OnCreate;
 import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.user.AddressDto;
-import jakarta.validation.constraints.Max;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -28,6 +28,7 @@ public class RestaurantDto {
     private String description;
 
     @NotEmpty(message = "Address is required", groups = {OnCreate.class})
+    @Valid
     private List<AddressDto> addresses;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

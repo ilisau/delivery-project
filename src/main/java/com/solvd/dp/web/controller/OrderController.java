@@ -40,7 +40,8 @@ public class OrderController {
 
     @PostMapping("/users/{userId}")
     @Validated(OnCreate.class)
-    public OrderDto create(@PathVariable Long userId, @Valid @RequestBody OrderDto dto) {
+    public OrderDto create(@PathVariable Long userId,
+                           @Valid @RequestBody OrderDto dto) {
         Order orderToBeCreated = OrderMapper.INSTANCE.toEntity(dto);
         Order order = orderService.create(orderToBeCreated, userId);
         return OrderMapper.INSTANCE.toDto(order);
@@ -62,6 +63,20 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/restaurants/{id}")
+    public List<OrderDto> getAllByRestaurantId(@PathVariable Long id,
+                                               @RequestParam(required = false) OrderStatus status) {
+        List<Order> orders;
+        if (status == null) {
+            orders = orderService.getAllByRestaurantId(id);
+        } else {
+            orders = orderService.getAllByRestaurantIdAndStatus(id, status);
+        }
+        return orders.stream()
+                .map(OrderMapper.INSTANCE::toDto)
+                .collect(Collectors.toList());
+    }
+
     @GetMapping("/{id}")
     public OrderDto getById(@PathVariable Long id) {
         Order order = orderService.getById(id);
@@ -69,7 +84,8 @@ public class OrderController {
     }
 
     @PutMapping("/{id}/status/{status}")
-    public void updateStatus(@PathVariable Long id, @PathVariable OrderStatus status) {
+    public void updateStatus(@PathVariable Long id,
+                             @PathVariable OrderStatus status) {
         orderService.updateStatus(id, status);
     }
 

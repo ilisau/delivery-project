@@ -3,7 +3,6 @@ package com.solvd.dp.repository.impl;
 import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Restaurant;
-import com.solvd.dp.domain.user.Order;
 import com.solvd.dp.repository.RestaurantRepository;
 import com.solvd.dp.repository.impl.mappers.RestaurantRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +16,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RestaurantRepositoryImpl implements RestaurantRepository {
+
+    private final DataSourceConfig dataSourceConfig;
 
     private static final String GET_ALL = """
             SELECT id as restaurant_id
@@ -82,7 +83,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     private static final String ADD_ITEM_BY_ID = "INSERT INTO restaurants_items (restaurant_id, item_id) VALUES (?, ?)";
     private static final String DELETE_ITEM_BY_ID = "DELETE FROM restaurants_items WHERE restaurant_id = ? AND item_id = ?";
     private static final String ADD_ADDRESS_BY_ID = "INSERT INTO restaurants_addresses (restaurant_id, address_id) VALUES (?, ?)";
-    private final DataSourceConfig dataSourceConfig;
     private static final String DELETE_ADDRESS_BY_ID = "DELETE FROM restaurants_addresses WHERE restaurant_id = ? AND address_id = ?";
     private static final String DELETE_BY_ID = "DELETE FROM restaurants WHERE id = ?";
 
@@ -132,7 +132,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     }
 
     @Override
-    public Restaurant save(Restaurant restaurantDto) {
+    public void save(Restaurant restaurantDto) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
@@ -140,14 +140,13 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
             statement.setString(2, restaurantDto.getDescription());
             statement.setLong(3, restaurantDto.getId());
             statement.executeUpdate();
-            return restaurantDto;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving restaurant :: " + restaurantDto);
         }
     }
 
     @Override
-    public Restaurant create(Restaurant restaurant) {
+    public void create(Restaurant restaurant) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -158,7 +157,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                 key.next();
                 restaurant.setId(key.getLong(1));
             }
-            return restaurant;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating restaurant :: " + restaurant);
         }
@@ -243,7 +241,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     }
 
     @Override
-    public boolean employeeExists(Restaurant restaurant) {
+    public boolean exists(Restaurant restaurant) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);

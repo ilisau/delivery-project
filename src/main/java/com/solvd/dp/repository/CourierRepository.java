@@ -16,9 +16,9 @@ public interface CourierRepository {
 
     List<Courier> getAllByStatus(CourierStatus status);
 
-    Courier save(Courier courier);
+    void save(Courier courier);
 
-    Courier create(Courier courier);
+    void create(Courier courier);
 
     boolean exists(Courier courier);
 

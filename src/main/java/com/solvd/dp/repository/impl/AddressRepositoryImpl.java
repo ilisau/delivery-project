@@ -16,6 +16,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AddressRepositoryImpl implements AddressRepository {
 
+    private final DataSourceConfig dataSourceConfig;
+
     private static final String FIND_BY_ID = """
             SELECT id as address_id,
                    street_name as address_street_name,
@@ -45,7 +47,6 @@ public class AddressRepositoryImpl implements AddressRepository {
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
-    private final DataSourceConfig dataSourceConfig;
 
     @Override
     public Optional<Address> findById(Long id) {
@@ -90,7 +91,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     }
 
     @Override
-    public Address save(Address address) {
+    public void save(Address address) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
@@ -108,14 +109,13 @@ public class AddressRepositoryImpl implements AddressRepository {
             }
             statement.setLong(5, address.getId());
             statement.executeUpdate();
-            return address;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving address :: " + address);
         }
     }
 
     @Override
-    public Address create(Address address) {
+    public void create(Address address) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
@@ -136,7 +136,6 @@ public class AddressRepositoryImpl implements AddressRepository {
                 key.next();
                 address.setId(key.getLong(1));
             }
-            return address;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating address :: " + address);
         }
