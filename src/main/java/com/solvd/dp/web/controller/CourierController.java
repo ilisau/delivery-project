@@ -64,7 +64,7 @@ public class CourierController {
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        courierService.deleteById(id);
+        courierService.delete(id);
     }
 
 }

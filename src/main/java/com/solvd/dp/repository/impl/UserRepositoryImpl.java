@@ -75,7 +75,9 @@ public class UserRepositoryImpl implements UserRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setLong(1, id);
-            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(UserRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting user by id :: " + id);
         }
@@ -87,7 +89,9 @@ public class UserRepositoryImpl implements UserRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_EMAIL);
             statement.setString(1, email);
-            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(UserRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting user by email :: " + email);
         }
@@ -99,7 +103,9 @@ public class UserRepositoryImpl implements UserRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_USER_BY_PHONE_NUMBER);
             statement.setString(1, phoneNumber);
-            return Optional.ofNullable(UserRowMapper.mapRow(statement.executeQuery()));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(UserRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting user by phone number :: " + phoneNumber);
         }
@@ -140,9 +146,10 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setTimestamp(5, Timestamp.valueOf(user.getCreatedAt()));
             statement.setLong(6, cartId);
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            user.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                user.setId(key.getLong(1));
+            }
             return user;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating user :: " + user.getId());
@@ -176,15 +183,16 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean isExists(User user) {
+    public boolean exists(User user) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPhoneNumber());
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if user exists :: " + user.getId());
         }

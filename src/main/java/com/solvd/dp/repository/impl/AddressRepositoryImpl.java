@@ -53,8 +53,9 @@ public class AddressRepositoryImpl implements AddressRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
-            ResultSet addressResultSet = statement.executeQuery();
-            return Optional.ofNullable(AddressRowMapper.mapRow(addressResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(AddressRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting address by id :: " + id);
         }
@@ -66,8 +67,9 @@ public class AddressRepositoryImpl implements AddressRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_USER_ID);
             statement.setLong(1, userId);
-            ResultSet addressResultSet = statement.executeQuery();
-            return AddressRowMapper.mapRows(addressResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return AddressRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting addresses by user id :: " + userId);
         }
@@ -79,8 +81,9 @@ public class AddressRepositoryImpl implements AddressRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID);
             statement.setLong(1, restaurantId);
-            ResultSet addressResultSet = statement.executeQuery();
-            return AddressRowMapper.mapRows(addressResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return AddressRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting addresses by restaurant id :: " + restaurantId);
         }
@@ -129,9 +132,10 @@ public class AddressRepositoryImpl implements AddressRepository {
                 statement.setNull(4, Types.INTEGER);
             }
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            address.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                address.setId(key.getLong(1));
+            }
             return address;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating address :: " + address);

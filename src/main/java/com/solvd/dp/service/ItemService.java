@@ -14,14 +14,14 @@ public interface ItemService {
 
     List<Item> getAllByType(ItemType type);
 
-    List<Item> getAllByRestaurantId(Long id);
+    List<Item> getAllByRestaurantId(Long restaurantId);
 
-    List<Item> getAllByRestaurantIdAndType(Long id, ItemType type);
+    List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type);
 
     Item save(Item item);
 
     Item create(Item item, Long restaurantId);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
 }

@@ -9,7 +9,7 @@ public interface CourierService {
 
     Courier getById(Long id);
 
-    Courier getByOrderId(Long id);
+    Courier getByOrderId(Long orderId);
 
     List<Courier> getAll();
 
@@ -21,6 +21,6 @@ public interface CourierService {
 
     void assignOrder(Long courierId, Long orderId);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
 }

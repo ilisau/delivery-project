@@ -37,11 +37,4 @@ public abstract class RestaurantRowMapper implements RowMapper<Restaurant> {
         return null;
     }
 
-    @SneakyThrows
-    public static List<Restaurant> mapRows(ResultSet resultSet) {
-        Set<Restaurant> restaurants = new HashSet<>();
-        //TODO implement
-        return restaurants.stream().toList();
-    }
-
 }

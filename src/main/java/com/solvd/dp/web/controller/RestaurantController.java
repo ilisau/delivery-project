@@ -73,7 +73,7 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        restaurantService.deleteById(id);
+        restaurantService.delete(id);
     }
 
 }

@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User create(User user) {
-        if (userRepository.isExists(user)) {
+        if (userRepository.exists(user)) {
             throw new ResourceAlreadyExistsException("User already exists :: " + user);
         }
         Cart cart = cartService.create(new Cart());
@@ -72,19 +72,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void addAddress(Long userId, Long addressId) {
+    public void addAddressById(Long userId, Long addressId) {
         userRepository.addAddress(userId, addressId);
     }
 
     @Override
     @Transactional
-    public void deleteAddress(Long userId, Long addressId) {
+    public void deleteAddressById(Long userId, Long addressId) {
         userRepository.deleteAddress(userId, addressId);
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         userRepository.delete(id);
     }
 

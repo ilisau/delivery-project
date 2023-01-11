@@ -10,7 +10,7 @@ public interface CourierRepository {
 
     Optional<Courier> findById(Long id);
 
-    Optional<Courier> findByOrderId(Long id);
+    Optional<Courier> findByOrderId(Long orderId);
 
     List<Courier> getAll();
 
@@ -20,7 +20,7 @@ public interface CourierRepository {
 
     Courier create(Courier courier);
 
-    boolean isExists(Courier courier);
+    boolean exists(Courier courier);
 
     void delete(Long id);
 

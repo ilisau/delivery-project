@@ -20,7 +20,7 @@ public interface UserRepository {
 
     void deleteAddress(Long userId, Long addressId);
 
-    boolean isExists(User user);
+    boolean exists(User user);
 
     void delete(Long id);
 

@@ -48,7 +48,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional
     public Restaurant create(Restaurant restaurant) {
-        if (restaurantRepository.isExists(restaurant)) {
+        if (restaurantRepository.employeeExists(restaurant)) {
             throw new ResourceAlreadyExistsException("Restaurant already exists :: " + restaurant.getName());
         }
         restaurant = restaurantRepository.create(restaurant);
@@ -61,46 +61,46 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public void addEmployeeById(Long id, Long employeeId) {
-        if (restaurantRepository.isEmployeeExists(id, employeeId)) {
-            throw new ResourceAlreadyExistsException("Employee already exists for this restaurant :: " + id);
+    public void addEmployeeById(Long restaurantId, Long employeeId) {
+        if (restaurantRepository.employeeExists(restaurantId, employeeId)) {
+            throw new ResourceAlreadyExistsException("Employee already exists for this restaurant :: " + restaurantId);
         }
-        restaurantRepository.addEmployeeById(id, employeeId);
+        restaurantRepository.addEmployeeById(restaurantId, employeeId);
     }
 
     @Override
     @Transactional
-    public void deleteEmployeeById(Long id, Long employeeId) {
-        restaurantRepository.deleteEmployeeById(id, employeeId);
+    public void deleteEmployeeById(Long restaurantId, Long employeeId) {
+        restaurantRepository.deleteEmployeeById(restaurantId, employeeId);
     }
 
     @Override
     @Transactional
-    public void addItemById(Long id, Long itemId) {
-        restaurantRepository.addItemById(id, itemId);
+    public void addItemById(Long restaurantId, Long itemId) {
+        restaurantRepository.addItemById(restaurantId, itemId);
     }
 
     @Override
     @Transactional
-    public void deleteItemById(Long id, Long itemId) {
-        restaurantRepository.deleteItemById(id, itemId);
+    public void deleteItemById(Long restaurantId, Long itemId) {
+        restaurantRepository.deleteItemById(restaurantId, itemId);
     }
 
     @Override
     @Transactional
-    public void addAddressById(Long id, Long addressId) {
-        restaurantRepository.addAddressById(id, addressId);
+    public void addAddressById(Long restaurantId, Long addressId) {
+        restaurantRepository.addAddressById(restaurantId, addressId);
     }
 
     @Override
     @Transactional
-    public void deleteAddressById(Long id, Long addressId) {
-        restaurantRepository.deleteAddressById(id, addressId);
+    public void deleteAddressById(Long restaurantId, Long addressId) {
+        restaurantRepository.deleteAddressById(restaurantId, addressId);
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         restaurantRepository.delete(id);
     }
 

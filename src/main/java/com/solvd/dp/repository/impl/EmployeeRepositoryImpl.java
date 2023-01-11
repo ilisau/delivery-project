@@ -53,37 +53,40 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
-            ResultSet employeeResultSet = statement.executeQuery();
-            return Optional.ofNullable(EmployeeRowMapper.mapRow(employeeResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(EmployeeRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting employee by id :: " + id);
         }
     }
 
     @Override
-    public List<Employee> getAllByRestaurantId(Long id) {
+    public List<Employee> getAllByRestaurantId(Long restaurantId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID);
-            statement.setLong(1, id);
-            ResultSet employeeResultSet = statement.executeQuery();
-            return EmployeeRowMapper.mapRows(employeeResultSet);
+            statement.setLong(1, restaurantId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return EmployeeRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting employees by restaurant id :: " + id);
+            throw new ResourceMappingException("Exception while getting employees by restaurant id :: " + restaurantId);
         }
     }
 
     @Override
-    public List<Employee> getAllByRestaurantIdAndPosition(Long id, EmployeePosition position) {
+    public List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID_AND_POSITION);
-            statement.setLong(1, id);
+            statement.setLong(1, restaurantId);
             statement.setString(2, position.name());
-            ResultSet employeeResultSet = statement.executeQuery();
-            return EmployeeRowMapper.mapRows(employeeResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return EmployeeRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting employees by restaurant id and position :: " + id + " :: " + position);
+            throw new ResourceMappingException("Exception while getting employees by restaurant id and position :: " + restaurantId + " :: " + position);
         }
     }
 
@@ -110,9 +113,10 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             statement.setString(1, employee.getName());
             statement.setString(2, employee.getPosition().name());
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            employee.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                employee.setId(key.getLong(1));
+            }
             return employee;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating employee :: " + employee);
@@ -120,15 +124,16 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public boolean isExists(Employee employee, Long restaurantId) {
+    public boolean exists(Employee employee, Long restaurantId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);
             statement.setLong(1, employee.getId());
             statement.setLong(2, restaurantId);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if employee exists :: " + employee);
         }

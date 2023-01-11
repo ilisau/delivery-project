@@ -10,15 +10,15 @@ public interface OrderRepository {
 
     Optional<Order> findById(Long id);
 
-    List<Order> getAllByUserId(Long id);
+    List<Order> getAllByUserId(Long userId);
 
-    List<Order> getAllByAddressId(Long id);
+    List<Order> getAllByAddressId(Long addressId);
 
-    List<Order> getAllByCourierId(Long id);
+    List<Order> getAllByCourierId(Long courierId);
 
-    List<Order> getAllByRestaurantId(Long id);
+    List<Order> getAllByRestaurantId(Long restaurantId);
 
-    List<Order> getAllByRestaurantIdAndStatus(Long id, OrderStatus status);
+    List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
 
     Order save(Order order);
 
@@ -26,13 +26,11 @@ public interface OrderRepository {
 
     void changeStatus(Long id, OrderStatus status);
 
-    void setCourierById(Long id, Long courierId);
-
-    boolean isOrderAssigned(Long orderId);
+    boolean isOrderAssigned(Long id);
 
     void assignOrder(Long orderId, Long courierId);
 
-    void updateStatus(Long orderId, OrderStatus status);
+    void updateStatus(Long id, OrderStatus status);
 
     void setDelivered(Long id);
 

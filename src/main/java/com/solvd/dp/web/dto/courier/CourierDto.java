@@ -1,5 +1,6 @@
 package com.solvd.dp.web.dto.courier;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.dp.domain.courier.CourierStatus;
 import com.solvd.dp.web.dto.OnCreate;
 import com.solvd.dp.web.dto.OnUpdate;
@@ -25,11 +26,12 @@ public class CourierDto {
     @Length(min = 3, max = 45, message = "Last name must be between {min} and {max} characters", groups = {OnCreate.class, OnUpdate.class})
     private String lastName;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime createdAt;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime lastActiveAt;
 
-    @Null(message = "Status must be null", groups = {OnCreate.class})
     @NotNull(message = "Status is required", groups = {OnUpdate.class})
     private CourierStatus status;
 

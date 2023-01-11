@@ -5,19 +5,20 @@ import com.solvd.dp.domain.user.User;
 
 public interface UserService {
 
-    User getById(Long id) throws ResourceNotFoundException;
+    User getById(Long id);
 
-    User getByEmail(String email) throws ResourceNotFoundException;
+    User getByEmail(String email);
 
-    User getByPhoneNumber(String phoneNumber) throws ResourceNotFoundException;
+    User getByPhoneNumber(String phoneNumber);
 
     User save(User user);
 
     User create(User user);
 
-    void addAddress(Long userId, Long addressId);
+    void addAddressById(Long userId, Long addressId);
 
-    void deleteAddress(Long userId, Long addressId);
+    void deleteAddressById(Long userId, Long addressId);
 
-    void deleteById(Long id);
+    void delete(Long id);
+
 }

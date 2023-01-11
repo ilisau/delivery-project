@@ -73,23 +73,25 @@ public class CourierRepositoryImpl implements CourierRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
-            ResultSet courierResultSet = statement.executeQuery();
-            return Optional.ofNullable(CourierRowMapper.mapRow(courierResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(CourierRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting courier by id :: " + id);
         }
     }
 
     @Override
-    public Optional<Courier> findByOrderId(Long id) {
+    public Optional<Courier> findByOrderId(Long orderId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ORDER_ID);
-            statement.setLong(1, id);
-            ResultSet courierResultSet = statement.executeQuery();
-            return Optional.ofNullable(CourierRowMapper.mapRow(courierResultSet));
+            statement.setLong(1, orderId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(CourierRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting courier by order id :: " + id);
+            throw new ResourceMappingException("Exception while getting courier by order id :: " + orderId);
         }
     }
 
@@ -98,8 +100,9 @@ public class CourierRepositoryImpl implements CourierRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL);
-            ResultSet courierResultSet = statement.executeQuery();
-            return CourierRowMapper.mapRows(courierResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return CourierRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting all couriers");
         }
@@ -111,8 +114,9 @@ public class CourierRepositoryImpl implements CourierRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_STATUS);
             statement.setString(1, status.name());
-            ResultSet courierResultSet = statement.executeQuery();
-            return CourierRowMapper.mapRows(courierResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return CourierRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting all couriers by status :: " + status);
         }
@@ -151,9 +155,10 @@ public class CourierRepositoryImpl implements CourierRepository {
             statement.setString(5, courier.getStatus().name());
             statement.setString(6, courier.getPhoneNumber());
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            courier.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                courier.setId(key.getLong(1));
+            }
             return courier;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating courier :: " + courier);
@@ -161,16 +166,17 @@ public class CourierRepositoryImpl implements CourierRepository {
     }
 
     @Override
-    public boolean isExists(Courier courier) {
+    public boolean exists(Courier courier) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);
             statement.setString(1, courier.getFirstName());
             statement.setString(2, courier.getLastName());
             statement.setString(3, courier.getPhoneNumber());
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if courier exists :: " + courier);
         }

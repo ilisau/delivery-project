@@ -41,14 +41,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Item> getAllByRestaurantId(Long id) {
-        return itemRepository.getAllByRestaurantId(id);
+    public List<Item> getAllByRestaurantId(Long restaurantId) {
+        return itemRepository.getAllByRestaurantId(restaurantId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Item> getAllByRestaurantIdAndType(Long id, ItemType type) {
-        return itemRepository.getAllByRestaurantIdAndType(id, type);
+    public List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type) {
+        return itemRepository.getAllByRestaurantIdAndType(restaurantId, type);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         itemRepository.delete(id);
     }
 

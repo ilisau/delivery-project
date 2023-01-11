@@ -45,7 +45,7 @@ public class AddressController {
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        addressService.deleteById(id);
+        addressService.delete(id);
     }
 
     @GetMapping("/users/{id}")

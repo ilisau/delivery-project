@@ -29,14 +29,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Employee> getAllByRestaurantId(Long id) {
-        return employeeRepository.getAllByRestaurantId(id);
+    public List<Employee> getAllByRestaurantId(Long restaurantId) {
+        return employeeRepository.getAllByRestaurantId(restaurantId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Employee> getAllByRestaurantIdAndPosition(Long id, EmployeePosition position) {
-        return employeeRepository.getAllByRestaurantIdAndPosition(id, position);
+    public List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position) {
+        return employeeRepository.getAllByRestaurantIdAndPosition(restaurantId, position);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public Employee create(Employee employee, Long restaurantId) throws ResourceNotFoundException {
-        if (employeeRepository.isExists(employee, restaurantId)) {
+        if (employeeRepository.exists(employee, restaurantId)) {
             throw new ResourceAlreadyExistsException("Employee already exists :: " + employee);
         }
         employee = employeeRepository.create(employee);
@@ -58,7 +58,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         employeeRepository.delete(id);
     }
 

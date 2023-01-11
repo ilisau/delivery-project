@@ -10,15 +10,15 @@ public interface EmployeeRepository {
 
     Optional<Employee> findById(Long id);
 
-    List<Employee> getAllByRestaurantId(Long id);
+    List<Employee> getAllByRestaurantId(Long restaurantId);
 
-    List<Employee> getAllByRestaurantIdAndPosition(Long id, EmployeePosition position);
+    List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position);
 
     Employee save(Employee employee);
 
     Employee create(Employee employee);
 
-    boolean isExists(Employee employee, Long restaurantId);
+    boolean exists(Employee employee, Long restaurantId);
 
     void delete(Long id);
 

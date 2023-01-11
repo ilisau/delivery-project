@@ -1,5 +1,6 @@
 package com.solvd.dp.web.dto.restaurant;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.solvd.dp.web.dto.OnCreate;
 import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.user.AddressDto;
@@ -23,12 +24,13 @@ public class RestaurantDto {
     @Length(min = 3, max = 45, message = "Name must be between {min} and {max} characters", groups = {OnCreate.class, OnUpdate.class})
     private String name;
 
-    @Max(value = 255, message = "Description must be less than {value} characters", groups = {OnCreate.class, OnUpdate.class})
+    @Length(max = 255, message = "Description must be less than {value} characters", groups = {OnCreate.class, OnUpdate.class})
     private String description;
 
     @NotEmpty(message = "Address is required", groups = {OnCreate.class})
     private List<AddressDto> addresses;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private List<ItemDto> items;
 
 }

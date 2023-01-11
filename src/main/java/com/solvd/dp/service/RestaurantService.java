@@ -16,18 +16,18 @@ public interface RestaurantService {
 
     Restaurant create(Restaurant restaurant);
 
-    void addEmployeeById(Long id, Long employeeId);
+    void addEmployeeById(Long restaurantId, Long employeeId);
 
-    void deleteEmployeeById(Long id, Long employeeId);
+    void deleteEmployeeById(Long restaurantId, Long employeeId);
 
-    void addItemById(Long id, Long itemId);
+    void addItemById(Long restaurantId, Long itemId);
 
-    void deleteItemById(Long id, Long itemId);
+    void deleteItemById(Long restaurantId, Long itemId);
 
-    void addAddressById(Long id, Long addressId);
+    void addAddressById(Long restaurantId, Long addressId);
 
-    void deleteAddressById(Long id, Long addressId);
+    void deleteAddressById(Long restaurantId, Long addressId);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
 }

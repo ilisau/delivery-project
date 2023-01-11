@@ -12,14 +12,14 @@ public interface CartService {
 
     Cart create(Cart cart);
 
-    void setCartToUserById(Long userId);
+    void setEmptyByUserId(Long userId);
 
     void clearById(Long id);
 
-    void addItemById(Long id, Long itemId, long quantity);
+    void addItemById(Long cartId, Long itemId, long quantity);
 
-    void deleteItemById(Long id, Long itemId, long quantity);
+    void deleteItemById(Long cartId, Long itemId, long quantity);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
 }

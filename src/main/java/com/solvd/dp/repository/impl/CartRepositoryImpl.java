@@ -60,23 +60,25 @@ public class CartRepositoryImpl implements CartRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setLong(1, id);
-            ResultSet cartResultSet = statement.executeQuery();
-            return Optional.ofNullable(CartRowMapper.mapRow(cartResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(CartRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting cart by id :: " + id);
         }
     }
 
     @Override
-    public Optional<Cart> getByUserId(Long id) {
+    public Optional<Cart> findByUserId(Long userId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_USER_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
-            ResultSet cartResultSet = statement.executeQuery();
-            return Optional.ofNullable(CartRowMapper.mapRow(cartResultSet));
+            statement.setLong(1, userId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(CartRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting cart by user id :: " + id);
+            throw new ResourceMappingException("Exception while getting cart by user id :: " + userId);
         }
     }
 
@@ -92,9 +94,10 @@ public class CartRepositoryImpl implements CartRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            cart.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                cart.setId(key.getLong(1));
+            }
             return cart;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating cart :: " + cart);
@@ -114,46 +117,46 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public void setCartByUserId(Long id, Long userId) {
+    public void setByUserId(Long cartId, Long userId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SET_CART);
-            statement.setLong(1, id);
+            statement.setLong(1, cartId);
             statement.setLong(2, userId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while setting cart by user id :: " + id);
+            throw new ResourceMappingException("Exception while setting cart by user id :: " + cartId);
         }
     }
 
     @Override
-    public void addItemById(Long id, Long itemId, long quantity) {
+    public void addItemById(Long cartId, Long itemId, long quantity) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(ADD_ITEM_BY_ID);
-            statement.setLong(1, id);
+            statement.setLong(1, cartId);
             statement.setLong(2, itemId);
             statement.setLong(3, quantity);
             statement.setLong(4, quantity);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while adding item to cart by id:: " + id + " item id ::" + itemId + " quantity :: " + quantity);
+            throw new ResourceMappingException("Exception while adding item to cart by id:: " + cartId + " item id ::" + itemId + " quantity :: " + quantity);
         }
     }
 
     @Override
-    public void deleteItemById(Long id, Long itemId, long quantity) {
+    public void deleteItemById(Long cartId, Long itemId, long quantity) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_ITEM_BY_ID);
             statement.setLong(1, quantity);
-            statement.setLong(2, id);
+            statement.setLong(2, cartId);
             statement.setLong(3, itemId);
-            statement.setLong(4, id);
+            statement.setLong(4, cartId);
             statement.setLong(5, itemId);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while deleting item from cart by id:: " + id + " item id ::" + itemId + " quantity :: " + quantity);
+            throw new ResourceMappingException("Exception while deleting item from cart by id:: " + cartId + " item id ::" + itemId + " quantity :: " + quantity);
         }
     }
 

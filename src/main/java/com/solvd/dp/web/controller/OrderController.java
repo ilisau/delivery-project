@@ -62,25 +62,20 @@ public class OrderController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping("/{id}/status/{status}")
-    public void updateStatus(@PathVariable Long id, @PathVariable OrderStatus status) {
-        orderService.updateStatus(id, status);
-    }
-
     @GetMapping("/{id}")
     public OrderDto getById(@PathVariable Long id) {
         Order order = orderService.getById(id);
         return OrderMapper.INSTANCE.toDto(order);
     }
 
-    @PutMapping("/{id}")
-    public void changeStatus(@PathVariable Long id, @RequestParam OrderStatus status) {
-        orderService.changeStatus(id, status);
+    @PutMapping("/{id}/status/{status}")
+    public void updateStatus(@PathVariable Long id, @PathVariable OrderStatus status) {
+        orderService.updateStatus(id, status);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        orderService.deleteById(id);
+        orderService.delete(id);
     }
 
 }

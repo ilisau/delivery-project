@@ -42,17 +42,17 @@ public class UserController {
 
     @PostMapping("/{id}/addresses/{addressId}")
     public void addAddress(@PathVariable Long id, @PathVariable Long addressId) {
-        userService.addAddress(id, addressId);
+        userService.addAddressById(id, addressId);
     }
 
     @DeleteMapping("/{id}/addresses/{addressId}")
     public void deleteAddress(@PathVariable Long id, @PathVariable Long addressId) {
-        userService.deleteAddress(id, addressId);
+        userService.deleteAddressById(id, addressId);
     }
 
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
-        userService.deleteById(id);
+        userService.delete(id);
     }
 
 }

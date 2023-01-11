@@ -49,7 +49,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         addressRepository.delete(id);
     }
 

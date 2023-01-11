@@ -126,96 +126,102 @@ public class OrderRepositoryImpl implements OrderRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             statement.setLong(1, id);
-            ResultSet ordersResultSet = statement.executeQuery();
-            return Optional.ofNullable(OrderRowMapper.mapRow(ordersResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(OrderRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting order by id :: " + id);
         }
     }
 
     @Override
-    public List<Order> getAllByUserId(Long id) {
+    public List<Order> getAllByUserId(Long userId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_USER_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
-            ResultSet ordersResultSet = statement.executeQuery();
-            List<Order> orders = new ArrayList<>();
-            while (ordersResultSet.next()) {
-                orders.add(findById(ordersResultSet.getLong("order_id")).get());
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_USER_ID);
+            statement.setLong(1, userId);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Order> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(findById(rs.getLong("order_id")).get());
+                }
+                return orders;
             }
-            return orders;
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting orders by user id :: " + id);
+            throw new ResourceMappingException("Exception while getting orders by user id :: " + userId);
         }
     }
 
     @Override
-    public List<Order> getAllByAddressId(Long id) {
+    public List<Order> getAllByAddressId(Long addressId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_ADDRESS_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
-            ResultSet ordersResultSet = statement.executeQuery();
-            List<Order> orders = new ArrayList<>();
-            while (ordersResultSet.next()) {
-                orders.add(findById(ordersResultSet.getLong("order_id")).get());
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_ADDRESS_ID);
+            statement.setLong(1, addressId);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Order> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(findById(rs.getLong("order_id")).get());
+                }
+                return orders;
             }
-            return orders;
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting orders by address id :: " + id);
+            throw new ResourceMappingException("Exception while getting orders by address id :: " + addressId);
         }
     }
 
     @Override
-    public List<Order> getAllByCourierId(Long id) {
+    public List<Order> getAllByCourierId(Long courierId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_COURIER_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
-            ResultSet ordersResultSet = statement.executeQuery();
-            List<Order> orders = new ArrayList<>();
-            while (ordersResultSet.next()) {
-                orders.add(findById(ordersResultSet.getLong("order_id")).get());
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_COURIER_ID);
+            statement.setLong(1, courierId);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Order> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(findById(rs.getLong("order_id")).get());
+                }
+                return orders;
             }
-            return orders;
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting orders by courier id :: " + id);
+            throw new ResourceMappingException("Exception while getting orders by courier id :: " + courierId);
         }
     }
 
     @Override
-    public List<Order> getAllByRestaurantId(Long id) {
+    public List<Order> getAllByRestaurantId(Long restaurantId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_RESTAURANT_ID, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
-            ResultSet ordersResultSet = statement.executeQuery();
-            List<Order> orders = new ArrayList<>();
-            while (ordersResultSet.next()) {
-                orders.add(findById(ordersResultSet.getLong("order_id")).get());
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_RESTAURANT_ID);
+            statement.setLong(1, restaurantId);
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Order> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(findById(rs.getLong("order_id")).get());
+                }
+                return orders;
             }
-            return orders;
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting orders by restaurant id :: " + id);
+            throw new ResourceMappingException("Exception while getting orders by restaurant id :: " + restaurantId);
         }
     }
 
     @Override
-    public List<Order> getAllByRestaurantIdAndStatus(Long id, OrderStatus status) {
+    public List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_RESTAURANT_ID_AND_STATUS, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            statement.setLong(1, id);
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_BY_RESTAURANT_ID_AND_STATUS);
+            statement.setLong(1, restaurantId);
             statement.setString(2, status.name());
-            ResultSet ordersResultSet = statement.executeQuery();
-            List<Order> orders = new ArrayList<>();
-            while (ordersResultSet.next()) {
-                orders.add(findById(ordersResultSet.getLong("order_id")).get());
+            try (ResultSet rs = statement.executeQuery()) {
+                List<Order> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(findById(rs.getLong("order_id")).get());
+                }
+                return orders;
             }
-            return orders;
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting orders by restaurant id :: " + id);
+            throw new ResourceMappingException("Exception while getting orders by restaurant id :: " + restaurantId);
         }
     }
 
@@ -247,9 +253,10 @@ public class OrderRepositoryImpl implements OrderRepository {
             statement.setString(3, order.getStatus().name());
             statement.setTimestamp(4, Timestamp.valueOf(order.getCreatedAt()));
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            order.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                order.setId(key.getLong(1));
+            }
             return order;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating order :: " + order);
@@ -270,29 +277,17 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void setCourierById(Long id, Long courierId) {
-        try {
-            Connection connection = dataSourceConfig.getConnection();
-            PreparedStatement statement = connection.prepareStatement(SET_COURIER_BY_ID);
-            statement.setLong(1, courierId);
-            statement.setLong(2, id);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while setting courier to order :: " + id);
-        }
-    }
-
-    @Override
-    public boolean isOrderAssigned(Long orderId) {
+    public boolean isOrderAssigned(Long id) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(IS_ORDER_ASSIGNED);
-            statement.setLong(1, orderId);
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            return resultSet.getBoolean(1);
+            statement.setLong(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while checking if order is assigned :: " + orderId);
+            throw new ResourceMappingException("Exception while checking if order is assigned :: " + id);
         }
     }
 
@@ -310,15 +305,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void updateStatus(Long orderId, OrderStatus status) {
+    public void updateStatus(Long id, OrderStatus status) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(UPDATE_STATUS);
             statement.setString(1, status.name());
-            statement.setLong(2, orderId);
+            statement.setLong(2, id);
             statement.executeUpdate();
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while updating order status :: " + orderId);
+            throw new ResourceMappingException("Exception while updating order status :: " + id);
         }
     }
 

@@ -9,14 +9,14 @@ public interface EmployeeService {
 
     Employee getById(Long id);
 
-    List<Employee> getAllByRestaurantId(Long id);
+    List<Employee> getAllByRestaurantId(Long restaurantId);
 
-    List<Employee> getAllByRestaurantIdAndPosition(Long id, EmployeePosition position);
+    List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position);
 
     Employee save(Employee employee);
 
     Employee create(Employee employee, Long restaurantId);
 
-    void deleteById(Long id);
+    void delete(Long id);
 
 }

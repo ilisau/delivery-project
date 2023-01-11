@@ -28,20 +28,20 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getAllByUserId(Long id) {
-        return orderRepository.getAllByUserId(id);
+    public List<Order> getAllByUserId(Long userId) {
+        return orderRepository.getAllByUserId(userId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getAllByAddressId(Long id) {
-        return orderRepository.getAllByAddressId(id);
+    public List<Order> getAllByAddressId(Long addressId) {
+        return orderRepository.getAllByAddressId(addressId);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Order> getAllByCourierId(Long id) {
-        return orderRepository.getAllByCourierId(id);
+    public List<Order> getAllByCourierId(Long courierId) {
+        return orderRepository.getAllByCourierId(courierId);
     }
 
     @Override
@@ -55,24 +55,15 @@ public class OrderServiceImpl implements OrderService {
     public Order create(Order order, Long userId) {
         order = orderRepository.create(order);
         orderRepository.addOrderById(userId, order.getId());
-        cartService.setCartToUserById(userId);
+        cartService.setEmptyByUserId(userId);
         return orderRepository.findById(order.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
     }
 
     @Override
     @Transactional
-    public void changeStatus(Long id, OrderStatus status) {
-        orderRepository.changeStatus(id, status);
-        if (status == OrderStatus.DELIVERED) {
-            orderRepository.setDelivered(id);
-        }
-    }
-
-    @Override
-    @Transactional
-    public boolean isOrderAssigned(Long orderId) {
-        return orderRepository.isOrderAssigned(orderId);
+    public boolean isOrderAssigned(Long id) {
+        return orderRepository.isOrderAssigned(id);
     }
 
     @Override
@@ -83,25 +74,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateStatus(Long orderId, OrderStatus status) {
-        orderRepository.updateStatus(orderId, status);
+    public void updateStatus(Long id, OrderStatus status) {
+        orderRepository.updateStatus(id, status);
+        if (status == OrderStatus.DELIVERED) {
+            orderRepository.setDelivered(id);
+        }
     }
 
     @Override
     @Transactional
-    public void addOrderById(Long userId, Long orderId) {
-        orderRepository.addOrderById(userId, orderId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteOrderById(Long userId, Long orderId) {
-        orderRepository.deleteOrderById(userId, orderId);
-    }
-
-    @Override
-    @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         orderRepository.delete(id);
     }
 

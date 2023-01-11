@@ -17,21 +17,21 @@ public interface RestaurantRepository {
 
     Restaurant create(Restaurant restaurant);
 
-    void addEmployeeById(Long id, Long employeeId);
+    void addEmployeeById(Long restaurantId, Long employeeId);
 
-    void deleteEmployeeById(Long id, Long employeeId);
+    void deleteEmployeeById(Long restaurantId, Long employeeId);
 
-    void addItemById(Long id, Long itemId);
+    void addItemById(Long restaurantId, Long itemId);
 
-    void deleteItemById(Long id, Long itemId);
+    void deleteItemById(Long restaurantId, Long itemId);
 
-    void addAddressById(Long id, Long addressId);
+    void addAddressById(Long restaurantId, Long addressId);
 
-    void deleteAddressById(Long id, Long addressId);
+    void deleteAddressById(Long restaurantId, Long addressId);
 
-    boolean isExists(Restaurant restaurant);
+    boolean employeeExists(Restaurant restaurant);
 
-    boolean isEmployeeExists(Long id, Long employeeId);
+    boolean employeeExists(Long restaurantId, Long employeeId);
 
     void delete(Long id);
 

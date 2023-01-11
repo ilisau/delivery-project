@@ -29,9 +29,9 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     @Transactional(readOnly = true)
-    public Courier getByOrderId(Long id) {
-        return courierRepository.findByOrderId(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Courier not found for this order :: " + id));
+    public Courier getByOrderId(Long orderId) {
+        return courierRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Courier not found for this order :: " + orderId));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CourierServiceImpl implements CourierService {
     @Override
     @Transactional
     public Courier create(Courier courier) {
-        if (courierRepository.isExists(courier)) {
+        if (courierRepository.exists(courier)) {
             throw new ResourceAlreadyExistsException("Courier already exists :: " + courier);
         }
         return courierRepository.create(courier);
@@ -74,7 +74,7 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         courierRepository.delete(id);
     }
 

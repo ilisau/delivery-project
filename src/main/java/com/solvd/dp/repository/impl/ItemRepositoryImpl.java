@@ -79,8 +79,9 @@ public class ItemRepositoryImpl implements ItemRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_BY_ID);
             statement.setLong(1, id);
-            ResultSet itemResultSet = statement.executeQuery();
-            return Optional.ofNullable(ItemRowMapper.mapRow(itemResultSet));
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(ItemRowMapper.mapRow(rs));
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting item by id :: " + id);
         }
@@ -92,8 +93,9 @@ public class ItemRepositoryImpl implements ItemRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_CART_ID);
             statement.setLong(1, cartId);
-            ResultSet itemResultSet = statement.executeQuery();
-            return ItemRowMapper.mapRowsToMap(itemResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return ItemRowMapper.mapRowsToMap(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting items by cart id :: " + cartId);
         }
@@ -105,37 +107,40 @@ public class ItemRepositoryImpl implements ItemRepository {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_TYPE);
             statement.setString(1, type.name());
-            ResultSet itemResultSet = statement.executeQuery();
-            return ItemRowMapper.mapRows(itemResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return ItemRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting items by type :: " + type);
         }
     }
 
     @Override
-    public List<Item> getAllByRestaurantId(Long id) {
+    public List<Item> getAllByRestaurantId(Long restaurantId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID);
-            statement.setLong(1, id);
-            ResultSet itemResultSet = statement.executeQuery();
-            return ItemRowMapper.mapRows(itemResultSet);
+            statement.setLong(1, restaurantId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return ItemRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting items by restaurant id :: " + id);
+            throw new ResourceMappingException("Exception while getting items by restaurant id :: " + restaurantId);
         }
     }
 
     @Override
-    public List<Item> getAllByRestaurantIdAndType(Long id, ItemType type) {
+    public List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_BY_RESTAURANT_ID_AND_TYPE);
-            statement.setLong(1, id);
+            statement.setLong(1, restaurantId);
             statement.setString(2, type.name());
-            ResultSet itemResultSet = statement.executeQuery();
-            return ItemRowMapper.mapRows(itemResultSet);
+            try (ResultSet rs = statement.executeQuery()) {
+                return ItemRowMapper.mapRows(rs);
+            }
         } catch (SQLException e) {
-            throw new ResourceMappingException("Exception while getting items by restaurant id and type :: " + id + " :: " + type);
+            throw new ResourceMappingException("Exception while getting items by restaurant id and type :: " + restaurantId + " :: " + type);
         }
     }
 
@@ -168,9 +173,10 @@ public class ItemRepositoryImpl implements ItemRepository {
             statement.setString(4, item.getType().name());
             statement.setBoolean(5, item.getAvailable());
             statement.executeUpdate();
-            ResultSet key = statement.getGeneratedKeys();
-            key.next();
-            item.setId(key.getLong(1));
+            try (ResultSet key = statement.getGeneratedKeys()) {
+                key.next();
+                item.setId(key.getLong(1));
+            }
             return item;
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating item :: " + item);

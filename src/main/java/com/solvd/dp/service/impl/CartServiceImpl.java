@@ -24,7 +24,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional(readOnly = true)
     public Cart getByUserId(Long id) {
-        return cartRepository.getByUserId(id)
+        return cartRepository.findByUserId(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart bot found for this user id :: " + id));
     }
 
@@ -42,10 +42,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void setCartToUserById(Long userId) {
+    public void setEmptyByUserId(Long userId) {
         Cart cartToBeCreated = new Cart();
         Cart cart = cartRepository.create(cartToBeCreated);
-        cartRepository.setCartByUserId(cart.getId(), userId);
+        cartRepository.setByUserId(cart.getId(), userId);
     }
 
     @Override
@@ -56,19 +56,19 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addItemById(Long id, Long itemId, long quantity) {
-        cartRepository.addItemById(id, itemId, quantity);
+    public void addItemById(Long cartId, Long itemId, long quantity) {
+        cartRepository.addItemById(cartId, itemId, quantity);
     }
 
     @Override
     @Transactional
-    public void deleteItemById(Long id, Long itemId, long quantity) {
-        cartRepository.deleteItemById(id, itemId, quantity);
+    public void deleteItemById(Long cartId, Long itemId, long quantity) {
+        cartRepository.deleteItemById(cartId, itemId, quantity);
     }
 
     @Override
     @Transactional
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         cartRepository.delete(id);
     }
 
