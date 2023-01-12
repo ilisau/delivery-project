@@ -30,13 +30,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public Cart save(Cart cart) {
-        cartRepository.save(cart);
-        return cart;
-    }
-
-    @Override
-    @Transactional
     public Cart create(Cart cart) {
         cartRepository.create(cart);
         return cart;

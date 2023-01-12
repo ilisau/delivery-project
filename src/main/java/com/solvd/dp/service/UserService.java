@@ -1,6 +1,7 @@
 package com.solvd.dp.service;
 
 import com.solvd.dp.domain.exception.ResourceNotFoundException;
+import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.domain.user.User;
 
 public interface UserService {
@@ -15,7 +16,7 @@ public interface UserService {
 
     User create(User user);
 
-    void addAddressById(Long userId, Long addressId);
+    void addAddress(Long userId, Address address);
 
     void deleteAddressById(Long userId, Long addressId);
 

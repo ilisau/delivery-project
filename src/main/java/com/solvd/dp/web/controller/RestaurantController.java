@@ -1,10 +1,13 @@
 package com.solvd.dp.web.controller;
 
 import com.solvd.dp.domain.restaurant.Restaurant;
+import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.service.RestaurantService;
 import com.solvd.dp.web.dto.OnCreate;
 import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.restaurant.RestaurantDto;
+import com.solvd.dp.web.dto.user.AddressDto;
+import com.solvd.dp.web.mapper.AddressMapper;
 import com.solvd.dp.web.mapper.RestaurantMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,10 +54,12 @@ public class RestaurantController {
         restaurantService.deleteItemById(id, itemId);
     }
 
-    @PostMapping("/{id}/addresses/{addressId}")
-    public void addAddressById(@PathVariable Long id,
-                               @PathVariable Long addressId) {
-        restaurantService.addAddressById(id, addressId);
+    @PostMapping("/{id}/addresses")
+    @Validated(OnCreate.class)
+    public void addAddress(@PathVariable Long id,
+                           @Valid @RequestBody AddressDto addressDto) {
+        Address address = AddressMapper.INSTANCE.toEntity(addressDto);
+        restaurantService.addAddressById(id, address);
     }
 
     @DeleteMapping("/{id}/addresses/{addressId}")

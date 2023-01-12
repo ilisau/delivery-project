@@ -29,14 +29,6 @@ public class AddressController {
         addressService.save(address);
     }
 
-    @PostMapping
-    @Validated(OnCreate.class)
-    public AddressDto create(@Valid @RequestBody AddressDto addressDto) {
-        Address addressToBeCreated = AddressMapper.INSTANCE.toEntity(addressDto);
-        Address address = addressService.create(addressToBeCreated);
-        return AddressMapper.INSTANCE.toDto(address);
-    }
-
     @GetMapping("/{id}")
     public AddressDto getById(@PathVariable Long id) {
         Address address = addressService.getById(id);

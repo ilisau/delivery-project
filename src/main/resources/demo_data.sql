@@ -1,7 +1,7 @@
 insert into couriers (first_name, last_name, phone_number, created_at, last_active_at, status)
 values ('John', 'Doe', '1234567890', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'AVAILABLE'),
        ('Michael', 'Depp', '12345', '2022-12-01 00:00:00', '2022-12-05 00:00:00', 'UNAVAILABLE'),
-       ('Bob', 'Jonson', '123456', '2022-11-05 00:00:00', '2022-12-03 00:00:00', 'ON_DELIVERY');
+       ('Bob', 'Jonson', '123456', '2022-11-05 00:00:00', '2022-12-03 00:00:00', 'UNAVAILABLE');
 
 insert into restaurants (name, description)
 values ('McDonalds', 'Вкусно и точка');

@@ -93,8 +93,9 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public void addAddressById(Long restaurantId, Long addressId) {
-        restaurantRepository.addAddressById(restaurantId, addressId);
+    public void addAddressById(Long restaurantId, Address address) {
+        addressService.create(address);
+        restaurantRepository.addAddressById(restaurantId, address.getId());
     }
 
     @Override

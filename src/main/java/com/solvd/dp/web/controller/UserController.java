@@ -1,10 +1,13 @@
 package com.solvd.dp.web.controller;
 
+import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.service.UserService;
 import com.solvd.dp.web.dto.OnCreate;
 import com.solvd.dp.web.dto.OnUpdate;
+import com.solvd.dp.web.dto.user.AddressDto;
 import com.solvd.dp.web.dto.user.UserDto;
+import com.solvd.dp.web.mapper.AddressMapper;
 import com.solvd.dp.web.mapper.UserMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +43,17 @@ public class UserController {
         return UserMapper.INSTANCE.toDto(user);
     }
 
-    @PostMapping("/{id}/addresses/{addressId}")
-    public void addAddress(@PathVariable Long id, @PathVariable Long addressId) {
-        userService.addAddressById(id, addressId);
+    @PostMapping("/{id}/addresses")
+    @Validated(OnCreate.class)
+    public void addAddress(@PathVariable Long id,
+                           @RequestBody AddressDto addressDto) {
+        Address address = AddressMapper.INSTANCE.toEntity(addressDto);
+        userService.addAddress(id, address);
     }
 
     @DeleteMapping("/{id}/addresses/{addressId}")
-    public void deleteAddress(@PathVariable Long id, @PathVariable Long addressId) {
+    public void deleteAddress(@PathVariable Long id,
+                              @PathVariable Long addressId) {
         userService.deleteAddressById(id, addressId);
     }
 

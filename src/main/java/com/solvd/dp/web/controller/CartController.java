@@ -18,13 +18,6 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PutMapping
-    @Validated(OnUpdate.class)
-    public void save(@Valid @RequestBody CartDto cartDto) {
-        Cart cart = CartMapper.INSTANCE.toEntity(cartDto);
-        cartService.save(cart);
-    }
-
     @GetMapping("/{id}")
     @Validated(OnUpdate.class)
     public CartDto getById(@PathVariable Long id) {
@@ -43,7 +36,7 @@ public class CartController {
         return CartMapper.INSTANCE.toDto(cart);
     }
 
-    @PostMapping("/{id}/items/{itemId}")
+    @PutMapping("/{id}/items/{itemId}")
     public void addItemById(@PathVariable Long id,
                             @PathVariable Long itemId,
                             @RequestParam(required = false) Long quantity) {

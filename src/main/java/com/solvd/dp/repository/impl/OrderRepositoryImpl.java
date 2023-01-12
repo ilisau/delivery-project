@@ -108,7 +108,7 @@ public class OrderRepositoryImpl implements OrderRepository {
             WHERE ri.restaurant_id = ?
             AND o.status = ?
             ORDER BY o.id""";
-    private static final String SAVE_BY_ID = "UPDATE orders SET courier_id = ?, status = ?, delivered_at = ? WHERE id = ?";
+    private static final String SAVE_BY_ID = "UPDATE orders SET address_id = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO orders (address_id, cart_id, status, created_at) VALUES (?, ?, ?, ?)";
     private static final String IS_ORDER_ASSIGNED = "SELECT courier_id IS NOT NULL FROM orders WHERE id = ?";
     private static final String ASSIGN_ORDER = "UPDATE orders SET courier_id = ? WHERE id = ?";
@@ -227,10 +227,8 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
-            statement.setLong(1, order.getCourier().getId());
-            statement.setString(2, order.getStatus().toString());
-            statement.setTimestamp(3, Timestamp.valueOf(order.getDeliveredAt()));
-            statement.setLong(4, order.getId());
+            statement.setLong(1, order.getAddress().getId());
+            statement.setLong(2, order.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving order :: " + order);

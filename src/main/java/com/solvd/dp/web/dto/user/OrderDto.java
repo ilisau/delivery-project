@@ -24,7 +24,7 @@ public class OrderDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private CartDto cart;
 
-    @NotNull(message = "Status must not be null", groups = {OnUpdate.class})
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OrderStatus status;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

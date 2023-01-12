@@ -82,11 +82,6 @@ public class CartRepositoryImpl implements CartRepository {
     }
 
     @Override
-    public void save(Cart cart) {
-        //now has no sense without editable fields
-    }
-
-    @Override
     public void create(Cart cart) {
         try {
             Connection connection = dataSourceConfig.getConnection();

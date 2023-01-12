@@ -10,8 +10,6 @@ public interface CartRepository {
 
     Optional<Cart> findByUserId(Long userId);
 
-    void save(Cart cart);
-
     void create(Cart cart);
 
     void clear(Long id);

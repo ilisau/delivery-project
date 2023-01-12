@@ -8,8 +8,6 @@ public interface CartService {
 
     Cart getByUserId(Long userId);
 
-    Cart save(Cart cart);
-
     Cart create(Cart cart);
 
     void setEmptyByUserId(Long userId);

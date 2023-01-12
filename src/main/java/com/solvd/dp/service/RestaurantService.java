@@ -1,6 +1,7 @@
 package com.solvd.dp.service;
 
 import com.solvd.dp.domain.restaurant.Restaurant;
+import com.solvd.dp.domain.user.Address;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface RestaurantService {
 
     void deleteItemById(Long restaurantId, Long itemId);
 
-    void addAddressById(Long restaurantId, Long addressId);
+    void addAddressById(Long restaurantId, Address address);
 
     void deleteAddressById(Long restaurantId, Long addressId);
 
