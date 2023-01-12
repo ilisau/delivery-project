@@ -4,7 +4,6 @@ import com.solvd.dp.domain.restaurant.Item;
 import com.solvd.dp.domain.restaurant.ItemType;
 import com.solvd.dp.service.ItemService;
 import com.solvd.dp.web.dto.restaurant.ItemDto;
-import com.solvd.dp.web.dto.validation.OnCreate;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +19,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+
     private final ItemMapper itemMapper;
 
     @GetMapping
@@ -32,26 +32,6 @@ public class ItemController {
     public void save(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
         Item item = itemMapper.toEntity(dto);
         itemService.save(item);
-    }
-
-    @GetMapping("/restaurants/{restaurantId}")
-    public List<ItemDto> getAllByRestaurantId(@PathVariable Long restaurantId,
-                                              @RequestParam(required = false) ItemType type) {
-        List<Item> items;
-        if (type == null) {
-            items = itemService.getAllByRestaurantId(restaurantId);
-        } else {
-            items = itemService.getAllByRestaurantIdAndType(restaurantId, type);
-        }
-        return itemMapper.toDto(items);
-    }
-
-    @PostMapping("/restaurants/{restaurantId}")
-    public ItemDto create(@PathVariable Long restaurantId,
-                          @Validated(OnCreate.class) @RequestBody ItemDto itemDto) {
-        Item itemToBeCreated = itemMapper.toEntity(itemDto);
-        Item item = itemService.create(itemToBeCreated, restaurantId);
-        return itemMapper.toDto(item);
     }
 
     @GetMapping("/{id}")

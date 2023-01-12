@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RequestMapping("/addresses")
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +16,7 @@ import java.util.List;
 public class AddressController {
 
     private final AddressService addressService;
+
     private final AddressMapper addressMapper;
 
     @PutMapping
@@ -35,18 +34,6 @@ public class AddressController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         addressService.delete(id);
-    }
-
-    @GetMapping("/users/{id}")
-    public List<AddressDto> getAllByUserId(@PathVariable Long id) {
-        List<Address> addresses = addressService.getAllByUserId(id);
-        return addressMapper.toDto(addresses);
-    }
-
-    @GetMapping("/restaurants/{id}")
-    public List<AddressDto> getAllByRestaurantId(@PathVariable Long id) {
-        List<Address> addresses = addressService.getAllByRestaurantId(id);
-        return addressMapper.toDto(addresses);
     }
 
 }

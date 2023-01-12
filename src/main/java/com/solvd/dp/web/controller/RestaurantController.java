@@ -1,13 +1,24 @@
 package com.solvd.dp.web.controller;
 
+import com.solvd.dp.domain.restaurant.Item;
+import com.solvd.dp.domain.restaurant.ItemType;
 import com.solvd.dp.domain.restaurant.Restaurant;
 import com.solvd.dp.domain.user.Address;
+import com.solvd.dp.domain.user.Order;
+import com.solvd.dp.domain.user.OrderStatus;
+import com.solvd.dp.service.AddressService;
+import com.solvd.dp.service.ItemService;
+import com.solvd.dp.service.OrderService;
 import com.solvd.dp.service.RestaurantService;
+import com.solvd.dp.web.dto.restaurant.ItemDto;
 import com.solvd.dp.web.dto.restaurant.RestaurantDto;
 import com.solvd.dp.web.dto.user.AddressDto;
+import com.solvd.dp.web.dto.user.OrderDto;
 import com.solvd.dp.web.dto.validation.OnCreate;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.AddressMapper;
+import com.solvd.dp.web.mapper.ItemMapper;
+import com.solvd.dp.web.mapper.OrderMapper;
 import com.solvd.dp.web.mapper.RestaurantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -22,8 +33,14 @@ import java.util.List;
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final AddressService addressService;
+    private final ItemService itemService;
+    private final OrderService orderService;
+
     private final AddressMapper addressMapper;
     private final RestaurantMapper restaurantMapper;
+    private final ItemMapper itemMapper;
+    private final OrderMapper orderMapper;
 
     @GetMapping
     public List<RestaurantDto> getAll() {
@@ -44,10 +61,36 @@ public class RestaurantController {
         return restaurantMapper.toDto(restaurant);
     }
 
+    @GetMapping("/{id}/items")
+    public List<ItemDto> getAllItems(@PathVariable Long id,
+                                     @RequestParam(required = false) ItemType type) {
+        List<Item> items;
+        if (type == null) {
+            items = itemService.getAllByRestaurantId(id);
+        } else {
+            items = itemService.getAllByRestaurantIdAndType(id, type);
+        }
+        return itemMapper.toDto(items);
+    }
+
+    @PostMapping("/{id}/items")
+    public ItemDto createItem(@PathVariable Long id,
+                              @Validated(OnCreate.class) @RequestBody ItemDto itemDto) {
+        Item itemToBeCreated = itemMapper.toEntity(itemDto);
+        Item item = itemService.create(itemToBeCreated, id);
+        return itemMapper.toDto(item);
+    }
+
     @DeleteMapping("/{id}/items/{itemId}")
     public void deleteItemById(@PathVariable Long id,
                                @PathVariable Long itemId) {
         restaurantService.deleteItemById(id, itemId);
+    }
+
+    @GetMapping("/{id}/addresses")
+    public List<AddressDto> getAllAddresses(@PathVariable Long id) {
+        List<Address> addresses = addressService.getAllByRestaurantId(id);
+        return addressMapper.toDto(addresses);
     }
 
     @PostMapping("/{id}/addresses")
@@ -60,6 +103,18 @@ public class RestaurantController {
     @DeleteMapping("/{id}/addresses/{addressId}")
     public void deleteAddressById(@PathVariable Long id, @PathVariable Long addressId) {
         restaurantService.deleteAddressById(id, addressId);
+    }
+
+    @GetMapping("/{id}/orders")
+    public List<OrderDto> getAllOrders(@PathVariable Long id,
+                                       @RequestParam(required = false) OrderStatus status) {
+        List<Order> orders;
+        if (status == null) {
+            orders = orderService.getAllByRestaurantId(id);
+        } else {
+            orders = orderService.getAllByRestaurantIdAndStatus(id, status);
+        }
+        return orderMapper.toDto(orders);
     }
 
     @GetMapping("/{id}")

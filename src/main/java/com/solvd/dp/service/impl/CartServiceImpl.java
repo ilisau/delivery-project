@@ -51,26 +51,30 @@ public class CartServiceImpl implements CartService {
 
     @Override
     @Transactional
-    public void addItemById(Long cartId, Long itemId, Long quantity) {
+    public void addItemById(Long userId, Long itemId, Long quantity) {
         if (quantity == null) {
             quantity = 1L;
         }
         if (quantity < 1) {
             throw new IllegalArgumentException("Amount of items can't be negative");
         }
-        cartRepository.addItemById(cartId, itemId, quantity);
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for this user id :: " + userId));
+        cartRepository.addItemById(cart.getId(), itemId, quantity);
     }
 
     @Override
     @Transactional
-    public void deleteItemById(Long cartId, Long itemId, Long quantity) {
+    public void deleteItemById(Long userId, Long itemId, Long quantity) {
         if (quantity == null) {
             quantity = 1L;
         }
         if (quantity < 1) {
             throw new IllegalArgumentException("Amount of items can't be negative");
         }
-        cartRepository.deleteItemById(cartId, itemId, quantity);
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found for this user id :: " + userId));
+        cartRepository.deleteItemById(cart.getId(), itemId, quantity);
     }
 
     @Override
