@@ -3,51 +3,49 @@ package com.solvd.dp.web.controller;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.service.UserService;
-import com.solvd.dp.web.dto.OnCreate;
-import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.user.AddressDto;
 import com.solvd.dp.web.dto.user.UserDto;
+import com.solvd.dp.web.dto.validation.OnCreate;
+import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.AddressMapper;
 import com.solvd.dp.web.mapper.UserMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 @RestController
 @RequiredArgsConstructor
 @Validated
 public class UserController {
 
     private final UserService userService;
+    private final AddressMapper addressMapper;
+    private final UserMapper userMapper;
 
     @PutMapping
-    @Validated(OnUpdate.class)
-    public void save(@Valid @RequestBody UserDto userDto) {
-        User user = UserMapper.INSTANCE.toEntity(userDto);
+    public void save(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
         userService.save(user);
     }
 
     @PostMapping
-    @Validated(OnCreate.class)
-    public UserDto create(@Valid @RequestBody UserDto userDto) {
-        User userToBeCreated = UserMapper.INSTANCE.toEntity(userDto);
+    public UserDto create(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
+        User userToBeCreated = userMapper.toEntity(userDto);
         User user = userService.create(userToBeCreated);
-        return UserMapper.INSTANCE.toDto(user);
+        return userMapper.toDto(user);
     }
 
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id) {
         User user = userService.getById(id);
-        return UserMapper.INSTANCE.toDto(user);
+        return userMapper.toDto(user);
     }
 
     @PostMapping("/{id}/addresses")
-    @Validated(OnCreate.class)
     public void addAddress(@PathVariable Long id,
-                           @RequestBody AddressDto addressDto) {
-        Address address = AddressMapper.INSTANCE.toEntity(addressDto);
+                           @Validated(OnCreate.class) @RequestBody AddressDto addressDto) {
+        Address address = addressMapper.toEntity(addressDto);
         userService.addAddress(id, address);
     }
 

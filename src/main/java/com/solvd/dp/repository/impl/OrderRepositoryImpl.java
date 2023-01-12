@@ -5,9 +5,9 @@ import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Order;
 import com.solvd.dp.domain.user.OrderStatus;
 import com.solvd.dp.repository.OrderRepository;
-import com.solvd.dp.repository.impl.mappers.OrderRowMapper;
+import com.solvd.dp.repository.mappers.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 

@@ -4,14 +4,14 @@ import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Cart;
 import com.solvd.dp.repository.CartRepository;
-import com.solvd.dp.repository.impl.mappers.CartRowMapper;
+import com.solvd.dp.repository.mappers.CartRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class CartRepositoryImpl implements CartRepository {
 

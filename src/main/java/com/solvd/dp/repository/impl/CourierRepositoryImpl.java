@@ -5,9 +5,9 @@ import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.courier.CourierStatus;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.repository.CourierRepository;
-import com.solvd.dp.repository.impl.mappers.CourierRowMapper;
+import com.solvd.dp.repository.mappers.CourierRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class CourierRepositoryImpl implements CourierRepository {
 

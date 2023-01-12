@@ -1,4 +1,4 @@
-package com.solvd.dp.repository.impl.mappers;
+package com.solvd.dp.repository.mappers;
 
 import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.restaurant.Item;
@@ -8,9 +8,7 @@ import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public abstract class RestaurantRowMapper implements RowMapper<Restaurant> {
 

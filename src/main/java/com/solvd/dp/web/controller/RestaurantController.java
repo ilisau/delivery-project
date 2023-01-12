@@ -3,49 +3,45 @@ package com.solvd.dp.web.controller;
 import com.solvd.dp.domain.restaurant.Restaurant;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.service.RestaurantService;
-import com.solvd.dp.web.dto.OnCreate;
-import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.restaurant.RestaurantDto;
 import com.solvd.dp.web.dto.user.AddressDto;
+import com.solvd.dp.web.dto.validation.OnCreate;
+import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.AddressMapper;
 import com.solvd.dp.web.mapper.RestaurantMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RequestMapping("/api/v1/restaurants")
+@RequestMapping("/restaurants")
 @RestController
 @RequiredArgsConstructor
 @Validated
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
+    private final AddressMapper addressMapper;
+    private final RestaurantMapper restaurantMapper;
 
     @GetMapping
     public List<RestaurantDto> getAll() {
         List<Restaurant> restaurants = restaurantService.getAll();
-        return restaurants.stream()
-                .map(RestaurantMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
+        return restaurantMapper.toDto(restaurants);
     }
 
     @PutMapping
-    @Validated(OnUpdate.class)
-    public void save(@Valid @RequestBody RestaurantDto dto) {
-        Restaurant restaurant = RestaurantMapper.INSTANCE.toEntity(dto);
+    public void save(@Validated(OnUpdate.class) @RequestBody RestaurantDto dto) {
+        Restaurant restaurant = restaurantMapper.toEntity(dto);
         restaurantService.save(restaurant);
     }
 
     @PostMapping
-    @Validated(OnCreate.class)
-    public RestaurantDto create(@Valid @RequestBody RestaurantDto restaurantDto) {
-        Restaurant restaurantToBeCreated = RestaurantMapper.INSTANCE.toEntity(restaurantDto);
+    public RestaurantDto create(@Validated(OnCreate.class) @RequestBody RestaurantDto restaurantDto) {
+        Restaurant restaurantToBeCreated = restaurantMapper.toEntity(restaurantDto);
         Restaurant restaurant = restaurantService.create(restaurantToBeCreated);
-        return RestaurantMapper.INSTANCE.toDto(restaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
     @DeleteMapping("/{id}/items/{itemId}")
@@ -55,10 +51,9 @@ public class RestaurantController {
     }
 
     @PostMapping("/{id}/addresses")
-    @Validated(OnCreate.class)
     public void addAddress(@PathVariable Long id,
-                           @Valid @RequestBody AddressDto addressDto) {
-        Address address = AddressMapper.INSTANCE.toEntity(addressDto);
+                           @Validated(OnCreate.class) @RequestBody AddressDto addressDto) {
+        Address address = addressMapper.toEntity(addressDto);
         restaurantService.addAddress(id, address);
     }
 
@@ -70,7 +65,7 @@ public class RestaurantController {
     @GetMapping("/{id}")
     public RestaurantDto getById(@PathVariable Long id) {
         Restaurant restaurant = restaurantService.getById(id);
-        return RestaurantMapper.INSTANCE.toDto(restaurant);
+        return restaurantMapper.toDto(restaurant);
     }
 
     @DeleteMapping("/{id}")

@@ -4,16 +4,16 @@ import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.repository.UserRepository;
-import com.solvd.dp.repository.impl.mappers.UserRowMapper;
+import com.solvd.dp.repository.mappers.UserRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 

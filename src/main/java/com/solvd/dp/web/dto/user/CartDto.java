@@ -1,9 +1,9 @@
 package com.solvd.dp.web.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.solvd.dp.web.dto.OnCreate;
-import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.restaurant.ItemDto;
+import com.solvd.dp.web.dto.validation.OnCreate;
+import com.solvd.dp.web.dto.validation.OnUpdate;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 import lombok.Data;

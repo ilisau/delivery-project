@@ -1,7 +1,7 @@
 package com.solvd.dp.web.dto.user;
 
-import com.solvd.dp.web.dto.OnCreate;
-import com.solvd.dp.web.dto.OnUpdate;
+import com.solvd.dp.web.dto.validation.OnCreate;
+import com.solvd.dp.web.dto.validation.OnUpdate;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;

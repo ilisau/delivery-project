@@ -1,4 +1,4 @@
-package com.solvd.dp.repository.impl.mappers;
+package com.solvd.dp.repository.mappers;
 
 import com.solvd.dp.domain.restaurant.Item;
 import com.solvd.dp.domain.user.Cart;

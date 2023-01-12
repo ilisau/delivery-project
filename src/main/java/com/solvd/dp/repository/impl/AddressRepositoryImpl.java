@@ -4,15 +4,15 @@ import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.repository.AddressRepository;
-import com.solvd.dp.repository.impl.mappers.AddressRowMapper;
+import com.solvd.dp.repository.mappers.AddressRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class AddressRepositoryImpl implements AddressRepository {
 

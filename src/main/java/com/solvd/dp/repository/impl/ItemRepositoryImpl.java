@@ -5,16 +5,16 @@ import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Item;
 import com.solvd.dp.domain.restaurant.ItemType;
 import com.solvd.dp.repository.ItemRepository;
-import com.solvd.dp.repository.impl.mappers.ItemRowMapper;
+import com.solvd.dp.repository.mappers.ItemRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service
+@Repository
 @RequiredArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
 

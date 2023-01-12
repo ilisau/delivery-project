@@ -3,38 +3,34 @@ package com.solvd.dp.web.controller;
 import com.solvd.dp.domain.restaurant.Item;
 import com.solvd.dp.domain.restaurant.ItemType;
 import com.solvd.dp.service.ItemService;
-import com.solvd.dp.web.dto.OnCreate;
-import com.solvd.dp.web.dto.OnUpdate;
 import com.solvd.dp.web.dto.restaurant.ItemDto;
+import com.solvd.dp.web.dto.validation.OnCreate;
+import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.ItemMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@RequestMapping("/api/v1/items")
+@RequestMapping("/items")
 @RestController
 @RequiredArgsConstructor
 @Validated
 public class ItemController {
 
     private final ItemService itemService;
+    private final ItemMapper itemMapper;
 
     @GetMapping
     public List<ItemDto> getAll(@RequestParam ItemType type) {
         List<Item> items = itemService.getAllByType(type);
-        return items.stream()
-                .map(ItemMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
+        return itemMapper.toDto(items);
     }
 
     @PutMapping
-    @Validated(OnUpdate.class)
-    public void save(@Valid @RequestBody ItemDto dto) {
-        Item item = ItemMapper.INSTANCE.toEntity(dto);
+    public void save(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
+        Item item = itemMapper.toEntity(dto);
         itemService.save(item);
     }
 
@@ -47,24 +43,21 @@ public class ItemController {
         } else {
             items = itemService.getAllByRestaurantIdAndType(restaurantId, type);
         }
-        return items.stream()
-                .map(ItemMapper.INSTANCE::toDto)
-                .collect(Collectors.toList());
+        return itemMapper.toDto(items);
     }
 
     @PostMapping("/restaurants/{restaurantId}")
-    @Validated(OnCreate.class)
     public ItemDto create(@PathVariable Long restaurantId,
-                          @Valid @RequestBody ItemDto itemDto) {
-        Item itemToBeCreated = ItemMapper.INSTANCE.toEntity(itemDto);
+                          @Validated(OnCreate.class) @RequestBody ItemDto itemDto) {
+        Item itemToBeCreated = itemMapper.toEntity(itemDto);
         Item item = itemService.create(itemToBeCreated, restaurantId);
-        return ItemMapper.INSTANCE.toDto(item);
+        return itemMapper.toDto(item);
     }
 
     @GetMapping("/{id}")
     public ItemDto getById(@PathVariable Long id) {
         Item item = itemService.getById(id);
-        return ItemMapper.INSTANCE.toDto(item);
+        return itemMapper.toDto(item);
     }
 
     @DeleteMapping("/{id}")
