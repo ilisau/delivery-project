@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -63,7 +64,7 @@ public class UserRepositoryImpl implements UserRepository {
                            created_at as user_created_at
             FROM users
             WHERE phone_number = ?""";
-    private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ? OR phone_number = ?)";
+    private static final String IS_EXISTS = "SELECT id FROM users WHERE email = ? or phone_number = ?";
     private static final String CREATE = "INSERT INTO users (name, email, phone_number, password, created_at, cart_id) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String SAVE_BY_ID = "UPDATE users SET name = ?, email = ?, phone_number = ?, password = ? WHERE id = ?";
     private static final String ADD_ADDRESS = "INSERT INTO users_addresses (user_id, address_id) VALUES (?, ?)";
@@ -189,8 +190,13 @@ public class UserRepositoryImpl implements UserRepository {
             statement.setString(1, user.getEmail());
             statement.setString(2, user.getPhoneNumber());
             try (ResultSet rs = statement.executeQuery()) {
-                rs.next();
-                return rs.getBoolean(1);
+                while (rs.next()) {
+                    Long id = rs.getLong(1);
+                    if (!Objects.equals(user.getId(), id)) {
+                        return true;
+                    }
+                }
+                return false;
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if user exists :: " + user.getId());

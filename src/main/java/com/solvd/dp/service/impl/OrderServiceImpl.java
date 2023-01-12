@@ -7,19 +7,24 @@ import com.solvd.dp.repository.OrderRepository;
 import com.solvd.dp.service.AddressService;
 import com.solvd.dp.service.CartService;
 import com.solvd.dp.service.OrderService;
-import lombok.RequiredArgsConstructor;
+import com.solvd.dp.service.UserService;
+import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor(onConstructor = @__(@Lazy))
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartService cartService;
     private final AddressService addressService;
+
+    @Lazy
+    private final UserService userService;
 
     @Override
     @Transactional(readOnly = true)
@@ -68,10 +73,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public Order create(Order order, Long userId) {
+        order.setCart(cartService.getByUserId(userId));
+        if (order.getCart().getItems().size() == 0) {
+            throw new IllegalStateException("Cart must be not empty");
+        }
         if (order.getAddress().getId() == null) {
             addressService.create(order.getAddress());
+            userService.addAddress(userId, order.getAddress());
         }
-        order.setCart(cartService.getByUserId(userId));
         orderRepository.create(order);
         orderRepository.addOrderById(order.getId(), userId);
         cartService.setEmptyByUserId(userId);

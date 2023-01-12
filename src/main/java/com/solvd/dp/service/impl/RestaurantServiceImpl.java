@@ -44,7 +44,9 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     @Transactional
     public Restaurant save(Restaurant restaurant) {
-        //TODO if restaurant with this name exists
+        if (restaurantRepository.exists(restaurant)) {
+            throw new ResourceAlreadyExistsException("Restaurant with this name already exists");
+        }
         restaurantRepository.save(restaurant);
         return restaurant;
     }
@@ -93,7 +95,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public void addAddressById(Long restaurantId, Address address) {
+    public void addAddress(Long restaurantId, Address address) {
         addressService.create(address);
         restaurantRepository.addAddressById(restaurantId, address.getId());
     }

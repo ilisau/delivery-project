@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -74,7 +75,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                      LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                      LEFT JOIN items i on restaurants_items.item_id = i.id
             WHERE r.name = ?""";
-    private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM restaurants WHERE name = ?)";
+    private static final String IS_EXISTS = "SELECT id FROM restaurants WHERE name = ?";
     private static final String IS_EMPLOYEE_EXISTS = "SELECT EXISTS(SELECT 1 FROM restaurants_employees WHERE restaurant_id = ? AND employee_id = ?)";
     private static final String SAVE_BY_ID = "UPDATE restaurants SET name = ?, description = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO restaurants (name, description) VALUES (?, ?)";
@@ -247,8 +248,11 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
             PreparedStatement statement = connection.prepareStatement(IS_EXISTS);
             statement.setString(1, restaurant.getName());
             try (ResultSet rs = statement.executeQuery()) {
-                rs.next();
-                return rs.getBoolean(1);
+                if (rs.next()) {
+                    Long id = rs.getLong(1);
+                    return !Objects.equals(restaurant.getId(), id);
+                }
+                return false;
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if restaurant exists :: " + restaurant);

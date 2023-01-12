@@ -59,7 +59,7 @@ public class RestaurantController {
     public void addAddress(@PathVariable Long id,
                            @Valid @RequestBody AddressDto addressDto) {
         Address address = AddressMapper.INSTANCE.toEntity(addressDto);
-        restaurantService.addAddressById(id, address);
+        restaurantService.addAddress(id, address);
     }
 
     @DeleteMapping("/{id}/addresses/{addressId}")

@@ -56,7 +56,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User save(User user) {
-        //TODO CHECK if user with such phone or email exists
+        if (userRepository.exists(user)) {
+            throw new ResourceAlreadyExistsException("User with this email or phone number already exists");
+        }
         userRepository.save(user);
         return user;
     }
