@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/delivery_project?currentSchema=delivery_project
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      mode: always
+#      data-locations: classpath:demo_data.sql
+      continue-on-error: false
