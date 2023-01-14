@@ -37,8 +37,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional
-    public Address save(Address address) {
-        addressRepository.save(address);
+    public Address update(Address address) {
+        addressRepository.update(address);
         return address;
     }
 

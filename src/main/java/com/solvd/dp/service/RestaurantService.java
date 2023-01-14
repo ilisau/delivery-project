@@ -13,7 +13,7 @@ public interface RestaurantService {
 
     Restaurant getByName(String name);
 
-    Restaurant save(Restaurant restaurantDto);
+    Restaurant update(Restaurant restaurantDto);
 
     Restaurant create(Restaurant restaurant);
 

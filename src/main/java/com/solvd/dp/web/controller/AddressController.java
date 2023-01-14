@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/addresses")
+@RequestMapping("/api/v1/addresses")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -22,7 +22,7 @@ public class AddressController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
-        addressService.save(address);
+        addressService.update(address);
     }
 
     @GetMapping("/{id}")

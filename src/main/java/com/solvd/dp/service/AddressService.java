@@ -12,7 +12,7 @@ public interface AddressService {
 
     List<Address> getAllByRestaurantId(Long restaurantId);
 
-    Address save(Address address);
+    Address update(Address address);
 
     Address create(Address address);
 

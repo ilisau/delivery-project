@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/couriers")
+@RequestMapping("/api/v1/couriers")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -43,7 +43,7 @@ public class CourierController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody CourierDto courierDto) {
         Courier courier = courierMapper.toEntity(courierDto);
-        courierService.save(courier);
+        courierService.update(courier);
     }
 
     @PostMapping

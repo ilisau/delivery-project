@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/restaurants/{restaurantId}/employees")
+@RequestMapping("/api/v1/restaurants/{restaurantId}/employees")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -26,7 +26,7 @@ public class EmployeeController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
-        employeeService.save(employee);
+        employeeService.update(employee);
     }
 
     @PostMapping

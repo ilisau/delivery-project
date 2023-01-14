@@ -1,9 +1,9 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.repository.AddressRepository;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.AddressRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -91,7 +91,7 @@ public class AddressRepositoryImpl implements AddressRepository {
     }
 
     @Override
-    public void save(Address address) {
+    public void update(Address address) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);

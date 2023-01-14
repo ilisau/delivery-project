@@ -19,7 +19,7 @@ public interface OrderService {
 
     List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
 
-    Order save(Order order);
+    Order update(Order order);
 
     Order create(Order order, Long userId);
 

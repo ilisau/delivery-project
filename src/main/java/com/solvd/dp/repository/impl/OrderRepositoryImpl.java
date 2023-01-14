@@ -1,9 +1,9 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Order;
 import com.solvd.dp.domain.user.OrderStatus;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.OrderRepository;
 import com.solvd.dp.repository.mappers.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -223,7 +223,7 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
-    public void save(Order order) {
+    public void update(Order order) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);

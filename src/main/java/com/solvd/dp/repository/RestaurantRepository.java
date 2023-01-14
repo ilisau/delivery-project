@@ -13,7 +13,7 @@ public interface RestaurantRepository {
 
     Optional<Restaurant> findByName(String name);
 
-    void save(Restaurant restaurant);
+    void update(Restaurant restaurant);
 
     void create(Restaurant restaurant);
 

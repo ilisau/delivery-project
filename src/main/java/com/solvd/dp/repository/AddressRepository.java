@@ -13,7 +13,7 @@ public interface AddressRepository {
 
     List<Address> getAllByRestaurantId(Long restaurantId);
 
-    void save(Address address);
+    void update(Address address);
 
     void create(Address address);
 

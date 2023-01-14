@@ -1,8 +1,8 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Restaurant;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.RestaurantRepository;
 import com.solvd.dp.repository.mappers.RestaurantRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -133,7 +133,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     }
 
     @Override
-    public void save(Restaurant restaurantDto) {
+    public void update(Restaurant restaurantDto) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);

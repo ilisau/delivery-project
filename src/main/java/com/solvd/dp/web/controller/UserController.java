@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -43,7 +43,7 @@ public class UserController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
         User user = userMapper.toEntity(userDto);
-        userService.save(user);
+        userService.update(user);
     }
 
     @PostMapping

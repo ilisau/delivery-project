@@ -19,7 +19,7 @@ public interface ItemRepository {
 
     List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type);
 
-    void save(Item item);
+    void update(Item item);
 
     void create(Item item);
 

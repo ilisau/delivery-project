@@ -1,6 +1,5 @@
 package com.solvd.dp.service;
 
-import com.solvd.dp.domain.exception.ResourceNotFoundException;
 import com.solvd.dp.domain.user.Address;
 import com.solvd.dp.domain.user.User;
 
@@ -12,7 +11,7 @@ public interface UserService {
 
     User getByPhoneNumber(String phoneNumber);
 
-    User save(User user);
+    User update(User user);
 
     User create(User user);
 

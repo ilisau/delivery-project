@@ -18,7 +18,7 @@ public interface ItemService {
 
     List<Item> getAllByRestaurantIdAndType(Long restaurantId, ItemType type);
 
-    Item save(Item item);
+    Item update(Item item);
 
     Item create(Item item, Long restaurantId);
 

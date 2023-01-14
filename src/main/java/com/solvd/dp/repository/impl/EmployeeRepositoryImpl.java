@@ -1,9 +1,9 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.restaurant.EmployeePosition;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.EmployeeRepository;
 import com.solvd.dp.repository.mappers.EmployeeRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -99,7 +99,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     }
 
     @Override
-    public void save(Employee employee) {
+    public void update(Employee employee) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);

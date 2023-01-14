@@ -20,7 +20,7 @@ public interface OrderRepository {
 
     List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
 
-    void save(Order order);
+    void update(Order order);
 
     void create(Order order);
 

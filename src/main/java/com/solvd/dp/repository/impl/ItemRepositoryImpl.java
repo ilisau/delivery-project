@@ -1,9 +1,9 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Item;
 import com.solvd.dp.domain.restaurant.ItemType;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.ItemRepository;
 import com.solvd.dp.repository.mappers.ItemRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -146,7 +146,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public void save(Item itemDto) {
+    public void update(Item itemDto) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);

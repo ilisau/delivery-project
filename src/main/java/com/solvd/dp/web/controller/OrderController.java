@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/orders")
+@RequestMapping("/api/v1/orders")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -25,7 +25,7 @@ public class OrderController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody OrderDto dto) {
         Order order = orderMapper.toEntity(dto);
-        orderService.save(order);
+        orderService.update(order);
     }
 
     @GetMapping("/{id}")

@@ -12,7 +12,7 @@ public interface UserRepository {
 
     Optional<User> findByPhoneNumber(String phoneNumber);
 
-    void save(User user);
+    void update(User user);
 
     void create(User user, Long cartId);
 

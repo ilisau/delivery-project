@@ -1,8 +1,8 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.User;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.UserRepository;
 import com.solvd.dp.repository.mappers.UserRowMapper;
 import lombok.RequiredArgsConstructor;
@@ -114,7 +114,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public void update(User user) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             //TODO set hashed password

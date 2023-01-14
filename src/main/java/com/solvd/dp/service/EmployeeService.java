@@ -13,7 +13,7 @@ public interface EmployeeService {
 
     List<Employee> getAllByRestaurantIdAndPosition(Long restaurantId, EmployeePosition position);
 
-    Employee save(Employee employee);
+    Employee update(Employee employee);
 
     Employee create(Employee employee, Long restaurantId);
 

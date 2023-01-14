@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/items")
+@RequestMapping("/api/v1/items")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -31,7 +31,7 @@ public class ItemController {
     @PutMapping
     public void save(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
         Item item = itemMapper.toEntity(dto);
-        itemService.save(item);
+        itemService.update(item);
     }
 
     @GetMapping("/{id}")

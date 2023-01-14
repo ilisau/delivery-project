@@ -15,7 +15,7 @@ public interface CourierService {
 
     List<Courier> getAllByStatus(CourierStatus status);
 
-    Courier save(Courier courier);
+    Courier update(Courier courier);
 
     Courier create(Courier courier);
 

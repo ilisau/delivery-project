@@ -1,10 +1,10 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.courier.CourierStatus;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.repository.CourierRepository;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.CourierRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -15,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -44,7 +45,7 @@ public class CourierRepositoryImpl implements CourierRepository {
                    status     as courier_status
             FROM couriers
             WHERE id = ?""";
-    private static final String IS_EXISTS = "SELECT EXISTS(SELECT 1 FROM couriers WHERE first_name = ? OR last_name = ? OR phone_number = ?)";
+    private static final String IS_EXISTS = "SELECT id FROM couriers WHERE (first_name = ? AND last_name = ?) OR phone_number = ?";
     private static final String FIND_ALL = """
             SELECT id         as courier_id,
                     first_name as courier_first_name,
@@ -124,7 +125,7 @@ public class CourierRepositoryImpl implements CourierRepository {
     }
 
     @Override
-    public void save(Courier courier) {
+    public void update(Courier courier) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(UPDATE_BY_ID);
@@ -173,8 +174,13 @@ public class CourierRepositoryImpl implements CourierRepository {
             statement.setString(2, courier.getLastName());
             statement.setString(3, courier.getPhoneNumber());
             try (ResultSet rs = statement.executeQuery()) {
-                rs.next();
-                return rs.getBoolean(1);
+                while (rs.next()) {
+                    Long id = rs.getLong(1);
+                    if (!Objects.equals(courier.getId(), id)) {
+                        return true;
+                    }
+                }
+                return false;
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if courier exists :: " + courier);

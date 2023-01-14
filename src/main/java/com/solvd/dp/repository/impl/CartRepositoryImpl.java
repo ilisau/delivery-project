@@ -1,9 +1,9 @@
 package com.solvd.dp.repository.impl;
 
-import com.solvd.dp.config.DataSourceConfig;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Cart;
 import com.solvd.dp.repository.CartRepository;
+import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.CartRowMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

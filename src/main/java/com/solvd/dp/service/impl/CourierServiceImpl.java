@@ -48,9 +48,11 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     @Transactional
-    public Courier save(Courier courier) {
-        //TODO check if courier exists
-        courierRepository.save(courier);
+    public Courier update(Courier courier) {
+        if (courierRepository.exists(courier)) {
+            throw new ResourceNotFoundException("Courier not found for this id :: " + courier.getId());
+        }
+        courierRepository.update(courier);
         return courier;
     }
 
@@ -67,11 +69,10 @@ public class CourierServiceImpl implements CourierService {
     @Override
     @Transactional
     public void assignOrder(Long courierId, Long orderId) {
-        if (!orderService.isOrderAssigned(orderId)) {
-            orderService.assignOrder(orderId, courierId);
-        } else {
+        if (orderService.isOrderAssigned(orderId)) {
             throw new ResourceAlreadyExistsException("Order already assigned");
         }
+        orderService.assignOrder(orderId, courierId);
     }
 
     @Override

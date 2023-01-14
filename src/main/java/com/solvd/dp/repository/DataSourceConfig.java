@@ -1,4 +1,4 @@
-package com.solvd.dp.config;
+package com.solvd.dp.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

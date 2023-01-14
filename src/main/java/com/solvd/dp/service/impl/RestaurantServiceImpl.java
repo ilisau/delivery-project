@@ -43,11 +43,11 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     @Transactional
-    public Restaurant save(Restaurant restaurant) {
+    public Restaurant update(Restaurant restaurant) {
         if (restaurantRepository.exists(restaurant)) {
             throw new ResourceAlreadyExistsException("Restaurant with this name already exists");
         }
-        restaurantRepository.save(restaurant);
+        restaurantRepository.update(restaurant);
         return restaurant;
     }
 

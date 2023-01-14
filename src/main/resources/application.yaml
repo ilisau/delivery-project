@@ -9,6 +9,3 @@ spring:
       mode: always
 #      data-locations: classpath:demo_data.sql
       continue-on-error: false
-server:
-  servlet:
-    context-path: /api/v1
