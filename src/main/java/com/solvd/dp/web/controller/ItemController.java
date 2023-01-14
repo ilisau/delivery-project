@@ -29,7 +29,7 @@ public class ItemController {
     }
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
         Item item = itemMapper.toEntity(dto);
         itemService.update(item);
     }

@@ -24,7 +24,7 @@ public class EmployeeController {
     private final EmployeeMapper employeeMapper;
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
         employeeService.update(employee);
     }

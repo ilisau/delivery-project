@@ -23,7 +23,7 @@ public class OrderController {
     private final OrderMapper orderMapper;
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody OrderDto dto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody OrderDto dto) {
         Order order = orderMapper.toEntity(dto);
         orderService.update(order);
     }

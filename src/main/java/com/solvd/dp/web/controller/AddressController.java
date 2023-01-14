@@ -20,7 +20,7 @@ public class AddressController {
     private final AddressMapper addressMapper;
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody AddressDto addressDto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
         addressService.update(address);
     }

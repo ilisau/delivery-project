@@ -41,7 +41,7 @@ public class CourierController {
     }
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody CourierDto courierDto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody CourierDto courierDto) {
         Courier courier = courierMapper.toEntity(courierDto);
         courierService.update(courier);
     }

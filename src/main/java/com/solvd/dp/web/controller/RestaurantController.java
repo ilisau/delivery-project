@@ -49,7 +49,7 @@ public class RestaurantController {
     }
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody RestaurantDto dto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody RestaurantDto dto) {
         Restaurant restaurant = restaurantMapper.toEntity(dto);
         restaurantService.update(restaurant);
     }

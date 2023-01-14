@@ -41,7 +41,7 @@ public class UserController {
     private final OrderMapper orderMapper;
 
     @PutMapping
-    public void save(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
+    public void update(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         userService.update(user);
     }
