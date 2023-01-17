@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+
 @Service
 @RequiredArgsConstructor
 public class CartServiceImpl implements CartService {
@@ -31,6 +33,7 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public Cart create(Cart cart) {
+        cart.setItems(new HashMap<>());
         cartRepository.create(cart);
         return cart;
     }

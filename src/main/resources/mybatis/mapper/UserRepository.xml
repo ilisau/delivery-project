@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.UserRepository">
+
+    <resultMap id="UserResultMap" type="com.solvd.dp.domain.user.User" autoMapping="false">
+        <id property="id" column="user_id" jdbcType="BIGINT"/>
+        <result property="name" column="user_name" jdbcType="VARCHAR"/>
+        <result property="email" column="user_email" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="user_phone_number" jdbcType="VARCHAR"/>
+        <result property="password" column="user_password" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="user_created_at" jdbcType="TIMESTAMP"/>
+        <association property="cart" javaType="com.solvd.dp.domain.user.Cart" autoMapping="false">
+            <id property="id" column="cart_id"/>
+            <collection property="cartItems" javaType="List" ofType="com.solvd.dp.domain.restaurant.CartItem" autoMapping="false">
+                <id property="id" column="item_id" jdbcType="BIGINT"/>
+                <result property="name" column="item_name" jdbcType="VARCHAR"/>
+                <result property="description" column="item_description" jdbcType="VARCHAR"/>
+                <result property="price" column="item_price" jdbcType="NUMERIC"/>
+                <result property="type" column="item_type" jdbcType="VARCHAR"/>
+                <result property="available" column="item_available" jdbcType="BOOLEAN"/>
+                <result property="quantity" column="item_quantity" jdbcType="BIGINT"/>
+            </collection>
+        </association>
+        <collection property="addresses" javaType="List" ofType="com.solvd.dp.domain.user.Address" autoMapping="false">
+            <id property="id" column="address_id" jdbcType="BIGINT"/>
+            <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
+            <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
+            <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
+            <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="UserResultMap" parameterType="Long">
+        SELECT u.id           as user_id,
+               u.name         as user_name,
+               u.email        as user_email,
+               u.phone_number as user_phone_number,
+               u.password     as user_password,
+               u.created_at   as user_created_at,
+               c.id           as cart_id,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available,
+               ci.quantity    as item_quantity,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number
+        FROM users u
+                 LEFT JOIN carts c on u.cart_id = c.id
+                 LEFT JOIN carts_items ci on c.id = ci.cart_id
+                 LEFT JOIN items i on ci.item_id = i.id
+                 LEFT JOIN users_addresses ua on u.id = ua.user_id
+                 LEFT JOIN addresses a on ua.address_id = a.id
+        WHERE u.id = #{id};
+    </select>
+
+    <select id="findByEmail" resultMap="UserResultMap" parameterType="String">
+        SELECT u.id           as user_id,
+               u.name         as user_name,
+               u.email        as user_email,
+               u.phone_number as user_phone_number,
+               u.password     as user_password,
+               u.created_at   as user_created_at,
+               c.id           as cart_id,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available,
+               ci.quantity    as item_quantity,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number
+        FROM users u
+                 LEFT JOIN carts c on u.cart_id = c.id
+                 LEFT JOIN carts_items ci on c.id = ci.cart_id
+                 LEFT JOIN items i on ci.item_id = i.id
+                 LEFT JOIN users_addresses ua on u.id = ua.user_id
+                 LEFT JOIN addresses a on ua.address_id = a.id
+        WHERE u.email = #{email};
+    </select>
+
+    <select id="findByPhoneNumber" resultMap="UserResultMap" parameterType="String">
+        SELECT u.id           as user_id,
+               u.name         as user_name,
+               u.email        as user_email,
+               u.phone_number as user_phone_number,
+               u.password     as user_password,
+               u.created_at   as user_created_at,
+               c.id           as cart_id,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available,
+               ci.quantity    as item_quantity,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number
+        FROM users u
+                 LEFT JOIN carts c on u.cart_id = c.id
+                 LEFT JOIN carts_items ci on c.id = ci.cart_id
+                 LEFT JOIN items i on ci.item_id = i.id
+                 LEFT JOIN users_addresses ua on u.id = ua.user_id
+                 LEFT JOIN addresses a on ua.address_id = a.id
+        WHERE u.phone_number = #{phoneNumber};
+    </select>
+
+    <update id="update" parameterType="com.solvd.dp.domain.user.User">
+        UPDATE users
+        SET name         = #{user.name},
+            email        = #{user.email},
+            phone_number = #{user.phoneNumber},
+            password     = #{user.password}
+        WHERE id = #{user.id};
+    </update>
+
+    <insert id="create" keyProperty="user.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.User">
+        INSERT INTO users (name, email, phone_number, password, created_at, cart_id)
+        VALUES (#{user.name}, #{user.email}, #{user.phoneNumber}, #{user.password}, #{user.createdAt}, #{cartId});
+    </insert>
+
+    <insert id="addAddressById">
+        INSERT INTO users_addresses (user_id, address_id)
+        VALUES (#{userId}, #{addressId})
+    </insert>
+
+    <delete id="deleteAddressById">
+        DELETE
+        FROM users_addresses
+        WHERE user_id = #{userId}
+          AND address_id = #{addressId}
+    </delete>
+
+    <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.user.User">
+        SELECT EXISTS(SELECT 1
+                      FROM users
+                      WHERE name = #{user.name} OR email = #{user.email} OR phone_number = #{user.phoneNumber});
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

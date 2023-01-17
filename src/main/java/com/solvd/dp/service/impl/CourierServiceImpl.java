@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -62,6 +63,9 @@ public class CourierServiceImpl implements CourierService {
         if (courierRepository.exists(courier)) {
             throw new ResourceAlreadyExistsException("Courier already exists :: " + courier);
         }
+        courier.setCreatedAt(LocalDateTime.now());
+        courier.setLastActiveAt(LocalDateTime.now());
+        courier.setStatus(CourierStatus.AVAILABLE);
         courierRepository.create(courier);
         return courier;
     }

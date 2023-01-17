@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.AddressRepository">
+
+    <resultMap id="AddressResultMap" type="com.solvd.dp.domain.user.Address" autoMapping="false">
+        <id property="id" column="address_id" jdbcType="BIGINT"/>
+        <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
+        <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
+        <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
+        <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findById" resultMap="AddressResultMap" parameterType="Long">
+        SELECT id           as address_id,
+               street_name  as address_street_name,
+               house_number as address_house_number,
+               floor_number as address_floor_number,
+               flat_number  as address_flat_number
+        FROM addresses
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllByUserId" resultMap="AddressResultMap" parameterType="Long">
+        SELECT id           as address_id,
+               street_name  as address_street_name,
+               house_number as address_house_number,
+               floor_number as address_floor_number,
+               flat_number  as address_flat_number
+        FROM users_addresses
+                 JOIN addresses ON users_addresses.address_id = addresses.id
+        WHERE user_id = #{userId}
+    </select>
+
+    <select id="getAllByRestaurantId" resultMap="AddressResultMap" parameterType="Long">
+        SELECT id           as address_id,
+               street_name  as address_street_name,
+               house_number as address_house_number,
+               floor_number as address_floor_number,
+               flat_number  as address_flat_number
+        FROM restaurants_addresses
+                 JOIN addresses ON restaurants_addresses.address_id = addresses.id
+        WHERE restaurant_id = #{restaurantId}
+    </select>
+
+    <update id="update" parameterType="com.solvd.dp.domain.user.Address">
+        UPDATE addresses
+        SET street_name  = #{address.streetName},
+            house_number = #{address.houseNumber},
+            floor_number = #{address.floorNumber},
+            flat_number  = #{address.flatNumber}
+        WHERE id = #{id}
+    </update>
+
+    <insert id="create" keyProperty="address.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Address">
+        INSERT INTO addresses (street_name,
+                               house_number,
+                               floor_number,
+                               flat_number)
+        VALUES (#{address.streetName},
+                #{address.houseNumber},
+                #{address.floorNumber},
+                #{address.flatNumber})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM addresses
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

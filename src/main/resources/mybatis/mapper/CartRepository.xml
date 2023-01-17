@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.CartRepository">
+
+    <resultMap id="CartResultMap" type="com.solvd.dp.domain.user.Cart" autoMapping="false">
+        <id property="id" column="cart_id"/>
+        <collection property="cartItems" javaType="List" ofType="com.solvd.dp.domain.restaurant.CartItem" autoMapping="false">
+            <id property="id" column="item_id" jdbcType="BIGINT"/>
+            <result property="name" column="item_name" jdbcType="VARCHAR"/>
+            <result property="description" column="item_description" jdbcType="VARCHAR"/>
+            <result property="price" column="item_price" jdbcType="NUMERIC"/>
+            <result property="type" column="item_type" jdbcType="VARCHAR"/>
+            <result property="available" column="item_available" jdbcType="BOOLEAN"/>
+            <result property="quantity" column="item_quantity" jdbcType="BIGINT"/>
+        </collection>
+    </resultMap>
+
+    <select id="findById" resultMap="CartResultMap" parameterType="Long">
+        SELECT c.id          as cart_id,
+               i.id          as item_id,
+               i.name        as item_name,
+               i.description as item_description,
+               i.price       as item_price,
+               i.type        as item_type,
+               i.available   as item_available,
+               ci.quantity   as item_quantity
+        FROM carts c
+                 JOIN carts_items ci ON c.id = ci.cart_id
+                 LEFT JOIN items i on i.id = ci.item_id
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="findByUserId" resultMap="CartResultMap" parameterType="Long">
+        SELECT c.id          as cart_id,
+               i.id          as item_id,
+               i.name        as item_name,
+               i.description as item_description,
+               i.price       as item_price,
+               i.type        as item_type,
+               i.available   as item_available,
+               ci.quantity   as item_quantity
+        FROM users u
+                 JOIN carts c ON u.cart_id = c.id
+                 LEFT JOIN carts_items ci ON c.id = ci.cart_id
+                 LEFT JOIN items i on i.id = ci.item_id
+        WHERE u.id = #{userId}
+    </select>
+
+    <insert id="create" keyProperty="cart.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Cart">
+        INSERT INTO carts
+        VALUES (default)
+    </insert>
+
+    <delete id="clear" parameterType="Long">
+        DELETE
+        FROM carts_items
+        WHERE cart_id = #{id}
+    </delete>
+
+    <update id="setByUserId" parameterType="Long">
+        UPDATE users
+        SET cart_id = #{cartId}
+        WHERE id = #{userId}
+    </update>
+
+    <insert id="addItemById">
+        INSERT INTO carts_items AS ci (cart_id, item_id, quantity)
+        VALUES (#{cartId}, #{itemId}, #{quantity})
+        ON CONFLICT (cart_id, item_id) DO UPDATE SET quantity = ci.quantity + #{quantity}
+    </insert>
+
+    <update id="deleteItemById">
+        UPDATE carts_items
+        SET quantity = quantity - #{quantity}
+        WHERE cart_id = #{cartId}
+          AND item_id = #{itemId};
+        DELETE
+        FROM carts_items
+        WHERE cart_id = #{cartId}
+          AND item_id = #{itemId}
+          AND quantity &lt;= 0
+    </update>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM carts
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

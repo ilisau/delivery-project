@@ -6,12 +6,11 @@ import com.solvd.dp.repository.CartRepository;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.CartRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class CartRepositoryImpl implements CartRepository {
 

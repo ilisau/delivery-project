@@ -7,18 +7,16 @@ import com.solvd.dp.repository.CourierRepository;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.CourierRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class CourierRepositoryImpl implements CourierRepository {
 
@@ -145,9 +143,6 @@ public class CourierRepositoryImpl implements CourierRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
-            courier.setCreatedAt(LocalDateTime.now());
-            courier.setLastActiveAt(LocalDateTime.now());
-            courier.setStatus(CourierStatus.AVAILABLE);
 
             statement.setString(1, courier.getFirstName());
             statement.setString(2, courier.getLastName());

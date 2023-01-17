@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.CourierRepository">
+
+    <resultMap id="CourierResultMap" type="com.solvd.dp.domain.courier.Courier" autoMapping="false">
+        <id property="id" column="courier_id" jdbcType="BIGINT"/>
+        <result property="firstName" column="courier_first_name" jdbcType="VARCHAR"/>
+        <result property="lastName" column="courier_last_name" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="courier_created_at" jdbcType="TIMESTAMP"/>
+        <result property="lastActiveAt" column="courier_last_active_at" jdbcType="TIMESTAMP"/>
+        <result property="status" column="courier_status" jdbcType="VARCHAR"/>
+        <result property="phoneNumber" column="courier_phone_number" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findById" resultMap="CourierResultMap" parameterType="Long">
+        SELECT id             as courier_id,
+               first_name     as courier_first_name,
+               last_name      as courier_last_name,
+               created_at     as courier_created_at,
+               last_active_at as courier_last_active_at,
+               status         as courier_status,
+               phone_number   as courier_phone_number
+        FROM couriers
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByOrderId" resultMap="CourierResultMap" parameterType="Long">
+        SELECT c.id            as courier_id,
+               c.first_name     as courier_first_name,
+               c.last_name      as courier_last_name,
+               c.phone_number   as courier_phone_number,
+               c.created_at     as courier_created_at,
+               c.last_active_at as courier_last_active_at,
+               c.status         as courier_status
+        FROM couriers c
+                 LEFT JOIN orders o on c.id = o.courier_id
+        WHERE o.id = #{orderId}
+    </select>
+
+    <select id="getAll" resultMap="CourierResultMap">
+        SELECT id             as courier_id,
+               first_name     as courier_first_name,
+               last_name      as courier_last_name,
+               created_at     as courier_created_at,
+               last_active_at as courier_last_active_at,
+               status         as courier_status,
+               phone_number   as courier_phone_number
+        FROM couriers
+    </select>
+
+    <select id="getAllByStatus" resultMap="CourierResultMap" parameterType="com.solvd.dp.domain.courier.CourierStatus">
+        SELECT id             as courier_id,
+               first_name     as courier_first_name,
+               last_name      as courier_last_name,
+               created_at     as courier_created_at,
+               last_active_at as courier_last_active_at,
+               status         as courier_status,
+               phone_number   as courier_phone_number
+        FROM couriers
+        WHERE status = #{status}
+    </select>
+
+    <update id="update" parameterType="com.solvd.dp.domain.courier.Courier">
+        UPDATE couriers
+        SET first_name   = #{courier.firstName},
+            last_name    = #{courier.lastName},
+            phone_number = #{courier.phoneNumber},
+            status       = #{courier.status}
+        WHERE id = #{courier.id}
+    </update>
+
+    <insert id="create" keyProperty="courier.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.courier.Courier">
+        INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number)
+        VALUES (#{courier.firstName}, #{courier.lastName}, #{courier.createdAt}, #{courier.lastActiveAt},
+                #{courier.status}, #{courier.phoneNumber})
+    </insert>
+
+    <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.courier.Courier">
+        SELECT EXISTS(SELECT
+                      FROM couriers
+                      WHERE (first_name = #{courier.firstName} and last_name = #{courier.lastName})
+                         or phone_number = #{courier.phoneNumber})
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM couriers
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

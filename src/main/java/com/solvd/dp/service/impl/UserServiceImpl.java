@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -70,10 +70,10 @@ public class UserServiceImpl implements UserService {
             throw new ResourceAlreadyExistsException("User already exists :: " + user);
         }
         Cart cart = new Cart();
-        cart.setItems(new HashMap<>());
         cartService.create(cart);
-        userRepository.create(user, cart.getId());
+        user.setCreatedAt(LocalDateTime.now());
         user.setCart(cart);
+        userRepository.create(user, cart.getId());
         user.setOrders(new ArrayList<>());
         user.setAddresses(new ArrayList<>());
         return user;
@@ -83,13 +83,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void addAddress(Long userId, Address address) {
         addressService.create(address);
-        userRepository.addAddress(userId, address.getId());
+        userRepository.addAddressById(userId, address.getId());
     }
 
     @Override
     @Transactional
     public void deleteAddressById(Long userId, Long addressId) {
-        userRepository.deleteAddress(userId, addressId);
+        userRepository.deleteAddressById(userId, addressId);
     }
 
     @Override

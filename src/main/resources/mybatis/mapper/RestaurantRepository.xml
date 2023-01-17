@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.RestaurantRepository">
+
+    <resultMap id="RestaurantResultMap" type="com.solvd.dp.domain.restaurant.Restaurant" autoMapping="false">
+        <id property="id" column="restaurant_id" jdbcType="BIGINT"/>
+        <result property="name" column="restaurant_name" jdbcType="VARCHAR"/>
+        <result property="description" column="restaurant_description" jdbcType="VARCHAR"/>
+        <collection property="addresses" javaType="List" ofType="com.solvd.dp.domain.user.Address" autoMapping="false">
+            <id property="id" column="address_id" jdbcType="BIGINT"/>
+            <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
+            <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
+            <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
+            <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
+        </collection>
+        <collection property="items" column="restaurant_id" javaType="List" ofType="com.solvd.dp.domain.restaurant.Item" autoMapping="false">
+            <id property="id" column="item_id" jdbcType="BIGINT"/>
+            <result property="name" column="item_name" jdbcType="VARCHAR"/>
+            <result property="description" column="item_description" jdbcType="VARCHAR"/>
+            <result property="price" column="item_price" jdbcType="NUMERIC"/>
+            <result property="type" column="item_type" jdbcType="VARCHAR"/>
+            <result property="available" column="item_available" jdbcType="BOOLEAN"/>
+        </collection>
+        <collection property="employees" javaType="List" ofType="com.solvd.dp.domain.restaurant.Employee" autoMapping="false">
+            <id property="id" column="employee_id" jdbcType="BIGINT"/>
+            <result property="name" column="employee_name" jdbcType="VARCHAR"/>
+            <result property="position" column="employee_position" jdbcType="VARCHAR"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAll" resultMap="RestaurantResultMap">
+        SELECT r.id           as restaurant_id,
+               r.name         as restaurant_name,
+               r.description  as restaurant_description,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number,
+               e.id           as employee_id,
+               e.name         as employee_name,
+               e.position     as employee_position,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available
+        FROM restaurants r
+                 LEFT JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                 LEFT JOIN addresses a on ra.address_id = a.id
+                 LEFT JOIN restaurants_employees re on r.id = re.restaurant_id
+                 LEFT JOIN employees e on re.employee_id = e.id
+                 LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                 LEFT JOIN items i on restaurants_items.item_id = i.id
+    </select>
+
+    <select id="findById" resultMap="RestaurantResultMap" parameterType="Long">
+        SELECT r.id           as restaurant_id,
+               r.name         as restaurant_name,
+               r.description  as restaurant_description,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number,
+               e.id           as employee_id,
+               e.name         as employee_name,
+               e.position     as employee_position,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available
+        FROM restaurants r
+                 LEFT JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                 LEFT JOIN addresses a on ra.address_id = a.id
+                 LEFT JOIN restaurants_employees re on r.id = re.restaurant_id
+                 LEFT JOIN employees e on re.employee_id = e.id
+                 LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                 LEFT JOIN items i on restaurants_items.item_id = i.id
+        WHERE r.id = #{id}
+    </select>
+
+    <select id="findByName" resultMap="RestaurantResultMap" parameterType="String">
+        SELECT r.id           as restaurant_id,
+               r.name         as restaurant_name,
+               r.description  as restaurant_description,
+               a.id           as address_id,
+               a.street_name  as address_street_name,
+               a.house_number as address_house_number,
+               a.floor_number as address_floor_number,
+               a.flat_number  as address_flat_number,
+               e.id           as employee_id,
+               e.name         as employee_name,
+               e.position     as employee_position,
+               i.id           as item_id,
+               i.name         as item_name,
+               i.description  as item_description,
+               i.type         as item_type,
+               i.price        as item_price,
+               i.available    as item_available
+        FROM restaurants r
+                 LEFT JOIN restaurants_addresses ra on r.id = ra.restaurant_id
+                 LEFT JOIN addresses a on ra.address_id = a.id
+                 LEFT JOIN restaurants_employees re on r.id = re.restaurant_id
+                 LEFT JOIN employees e on re.employee_id = e.id
+                 LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
+                 LEFT JOIN items i on restaurants_items.item_id = i.id
+        WHERE r.name = #{name}
+    </select>
+
+    <update id="update" parameterType="com.solvd.dp.domain.restaurant.Restaurant">
+        UPDATE restaurants
+        SET name        = #{restaurant.name},
+            description = #{restaurant.description}
+        WHERE id = #{restaurant.id}
+    </update>
+
+    <insert id="create" keyProperty="restaurant.id" keyColumn="id" useGeneratedKeys="true"
+            parameterType="com.solvd.dp.domain.restaurant.Restaurant">
+        INSERT INTO restaurants (name, description)
+        VALUES (#{restaurant.name}, #{restaurant.description})
+    </insert>
+
+    <insert id="addEmployeeById">
+        INSERT INTO restaurants_employees (restaurant_id, employee_id)
+        VALUES (#{restaurantId}, #{employeeId})
+    </insert>
+
+    <delete id="deleteEmployeeById">
+        DELETE FROM restaurants_employees
+        WHERE restaurant_id = #{restaurantId} AND employee_id = #{employeeId}
+    </delete>
+
+    <insert id="addItemById">
+        INSERT INTO restaurants_items (restaurant_id, item_id)
+        VALUES (#{restaurantId}, #{itemId})
+    </insert>
+
+    <delete id="deleteItemById">
+        DELETE FROM restaurants_items
+        WHERE restaurant_id = #{restaurantId} AND item_id = #{itemId}
+    </delete>
+
+    <insert id="addAddressById">
+        INSERT INTO restaurants_addresses (restaurant_id, address_id)
+        VALUES (#{restaurantId}, #{addressId})
+    </insert>
+
+    <delete id="deleteAddressById">
+        DELETE FROM restaurants_addresses
+        WHERE restaurant_id = #{restaurantId} AND address_id = #{addressId}
+    </delete>
+
+    <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.restaurant.Restaurant">
+        SELECT EXISTS(SELECT 1 FROM restaurants WHERE name = #{restaurant.name})
+    </select>
+
+    <select id="employeeExists" resultType="boolean">
+        SELECT EXISTS(SELECT 1
+                      FROM restaurants_employees
+                      WHERE restaurant_id = #{restaurantId} AND employee_id = #{employeeId})
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM restaurants
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

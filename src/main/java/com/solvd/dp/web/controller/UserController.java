@@ -85,7 +85,7 @@ public class UserController {
 
     @GetMapping("/{id}/cart")
     public CartDto getCartById(@PathVariable Long id) {
-        Cart cart = cartService.getById(id);
+        Cart cart = cartService.getByUserId(id);
         return cartMapper.toDto(cart);
     }
 

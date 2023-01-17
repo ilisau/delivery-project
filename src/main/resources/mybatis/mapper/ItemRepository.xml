@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.solvd.dp.repository.ItemRepository">
+
+    <resultMap id="ItemResultMap" type="com.solvd.dp.domain.restaurant.Item" autoMapping="false">
+        <id property="id" column="item_id" jdbcType="BIGINT"/>
+        <result property="name" column="item_name" jdbcType="VARCHAR"/>
+        <result property="description" column="item_description" jdbcType="VARCHAR"/>
+        <result property="price" column="item_price" jdbcType="NUMERIC"/>
+        <result property="type" column="item_type" jdbcType="VARCHAR"/>
+        <result property="available" column="item_available" jdbcType="BOOLEAN"/>
+    </resultMap>
+
+    <select id="findById" resultMap="ItemResultMap" parameterType="Long">
+        SELECT id          AS item_id,
+               name        AS item_name,
+               description AS item_description,
+               price       AS item_price,
+               type        AS item_type,
+               available   AS item_available
+        FROM items
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllByType" resultMap="ItemResultMap" parameterType="com.solvd.dp.domain.restaurant.ItemType">
+        SELECT id          AS item_id,
+               name        AS item_name,
+               description AS item_description,
+               price       AS item_price,
+               type        AS item_type,
+               available   AS item_available
+        FROM items
+        WHERE type = #{type}
+    </select>
+
+    <select id="getAllByRestaurantId" resultMap="ItemResultMap" parameterType="Long">
+        SELECT i.id          as item_id,
+               i.name        as item_name,
+               i.description as item_description,
+               i.price       as item_price,
+               i.type        as item_type,
+               i.available   as item_available
+        FROM restaurants_items
+                 LEFT JOIN items i ON restaurants_items.item_id = i.id
+        WHERE restaurants_items.restaurant_id = #{restaurantId}
+    </select>
+
+    <select id="getAllByRestaurantIdAndType" resultMap="ItemResultMap">
+        SELECT i.id          as item_id,
+               i.name        as item_name,
+               i.description as item_description,
+               i.price       as item_price,
+               i.type        as item_type,
+               i.available   as item_available
+        FROM restaurants_items
+                 LEFT JOIN items i ON restaurants_items.item_id = i.id
+        WHERE restaurants_items.restaurant_id = #{restaurantId}
+          AND type = #{type}
+    </select>
+
+    <update id="update" parameterType="com.solvd.dp.domain.restaurant.Item">
+        UPDATE items
+        SET name        = #{item.name},
+            description = #{item.description},
+            price       = #{item.price},
+            type        = #{item.type},
+            available   = #{item.available}
+        WHERE id = #{item.id}
+    </update>
+
+    <insert id="create" keyProperty="item.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Item">
+        INSERT INTO items (name, description, price, type, available)
+        VALUES (#{item.name}, #{item.description}, #{item.price}, #{item.type}, #{item.available})
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        DELETE
+        FROM items
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

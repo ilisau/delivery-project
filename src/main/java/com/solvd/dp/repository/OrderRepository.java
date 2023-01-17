@@ -2,38 +2,41 @@ package com.solvd.dp.repository;
 
 import com.solvd.dp.domain.user.Order;
 import com.solvd.dp.domain.user.OrderStatus;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
 
+@Mapper
 public interface OrderRepository {
 
-    Optional<Order> findById(Long id);
+    Optional<Order> findById(@Param("id") Long id);
 
-    List<Order> getAllByUserId(Long userId);
+    List<Order> getAllByUserId(@Param("userId") Long userId);
 
-    List<Order> getAllByAddressId(Long addressId);
+    List<Order> getAllByAddressId(@Param("addressId") Long addressId);
 
-    List<Order> getAllByCourierId(Long courierId);
+    List<Order> getAllByCourierId(@Param("courierId") Long courierId);
 
-    List<Order> getAllByRestaurantId(Long restaurantId);
+    List<Order> getAllByRestaurantId(@Param("restaurantId") Long restaurantId);
 
-    List<Order> getAllByRestaurantIdAndStatus(Long restaurantId, OrderStatus status);
+    List<Order> getAllByRestaurantIdAndStatus(@Param("restaurantId") Long restaurantId, @Param("status") OrderStatus status);
 
-    void update(Order order);
+    void update(@Param("order") Order order);
 
-    void create(Order order);
+    void create(@Param("order") Order order);
 
-    boolean isOrderAssigned(Long id);
+    boolean isOrderAssigned(@Param("id") Long id);
 
-    void assignOrder(Long orderId, Long courierId);
+    void assignOrder(@Param("orderId") Long orderId, @Param("courierId") Long courierId);
 
-    void updateStatus(Long id, OrderStatus status);
+    void updateStatus(@Param("id") Long id, @Param("status") OrderStatus status);
 
-    void setDelivered(Long id);
+    void setDelivered(@Param("id") Long id);
 
-    void addOrderById(Long orderId, Long userId);
+    void addOrderById(@Param("orderId") Long orderId, @Param("userId") Long userId);
 
-    void delete(Long id);
+    void delete(@Param("id") Long id);
 
 }

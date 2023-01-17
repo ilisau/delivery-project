@@ -6,14 +6,12 @@ import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.UserRepository;
 import com.solvd.dp.repository.mappers.UserRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
 
@@ -138,7 +136,6 @@ public class UserRepositoryImpl implements UserRepository {
             if (!user.getPassword().equals(user.getPasswordConfirmation())) {
                 throw new IllegalStateException("Password and password confirmation are not equal");
             }
-            user.setCreatedAt(LocalDateTime.now());
             //TODO set hashed password
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
@@ -157,7 +154,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void addAddress(Long userId, Long addressId) {
+    public void addAddressById(Long userId, Long addressId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(ADD_ADDRESS);
@@ -170,7 +167,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteAddress(Long userId, Long addressId) {
+    public void deleteAddressById(Long userId, Long addressId) {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_ADDRESS);
