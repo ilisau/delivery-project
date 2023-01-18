@@ -48,7 +48,7 @@
         WHERE u.id = #{userId}
     </select>
 
-    <insert id="create" keyProperty="cart.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Cart">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Cart">
         INSERT INTO carts
         VALUES (default)
     </insert>

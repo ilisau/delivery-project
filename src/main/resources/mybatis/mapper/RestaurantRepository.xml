@@ -8,26 +8,21 @@
         <id property="id" column="restaurant_id" jdbcType="BIGINT"/>
         <result property="name" column="restaurant_name" jdbcType="VARCHAR"/>
         <result property="description" column="restaurant_description" jdbcType="VARCHAR"/>
-        <collection property="addresses" javaType="List" ofType="com.solvd.dp.domain.user.Address" autoMapping="false">
-            <id property="id" column="address_id" jdbcType="BIGINT"/>
-            <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
-            <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
-            <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
-            <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
-        </collection>
-        <collection property="items" column="restaurant_id" javaType="List" ofType="com.solvd.dp.domain.restaurant.Item" autoMapping="false">
-            <id property="id" column="item_id" jdbcType="BIGINT"/>
-            <result property="name" column="item_name" jdbcType="VARCHAR"/>
-            <result property="description" column="item_description" jdbcType="VARCHAR"/>
-            <result property="price" column="item_price" jdbcType="NUMERIC"/>
-            <result property="type" column="item_type" jdbcType="VARCHAR"/>
-            <result property="available" column="item_available" jdbcType="BOOLEAN"/>
-        </collection>
-        <collection property="employees" javaType="List" ofType="com.solvd.dp.domain.restaurant.Employee" autoMapping="false">
-            <id property="id" column="employee_id" jdbcType="BIGINT"/>
-            <result property="name" column="employee_name" jdbcType="VARCHAR"/>
-            <result property="position" column="employee_position" jdbcType="VARCHAR"/>
-        </collection>
+        <collection property="addresses"
+                    javaType="List"
+                    ofType="com.solvd.dp.domain.user.Address"
+                    resultMap="com.solvd.dp.repository.AddressRepository.AddressResultMap"
+                    autoMapping="false"/>
+        <collection property="items"
+                    javaType="List"
+                    ofType="com.solvd.dp.domain.restaurant.Item"
+                    resultMap="com.solvd.dp.repository.ItemRepository.ItemResultMap"
+                    autoMapping="false"/>
+        <collection property="employees"
+                    javaType="List"
+                    ofType="com.solvd.dp.domain.restaurant.Employee"
+                    resultMap="com.solvd.dp.repository.EmployeeRepository.EmployeeResultMap"
+                    autoMapping="false"/>
     </resultMap>
 
     <select id="getAll" resultMap="RestaurantResultMap">
@@ -115,15 +110,15 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.restaurant.Restaurant">
         UPDATE restaurants
-        SET name        = #{restaurant.name},
-            description = #{restaurant.description}
-        WHERE id = #{restaurant.id}
+        SET name        = #{name},
+            description = #{description}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="restaurant.id" keyColumn="id" useGeneratedKeys="true"
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true"
             parameterType="com.solvd.dp.domain.restaurant.Restaurant">
         INSERT INTO restaurants (name, description)
-        VALUES (#{restaurant.name}, #{restaurant.description})
+        VALUES (#{name}, #{description})
     </insert>
 
     <insert id="addEmployeeById">
@@ -157,7 +152,7 @@
     </delete>
 
     <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.restaurant.Restaurant">
-        SELECT EXISTS(SELECT 1 FROM restaurants WHERE name = #{restaurant.name})
+        SELECT EXISTS(SELECT 1 FROM restaurants WHERE name = #{name})
     </select>
 
     <select id="employeeExists" resultType="boolean">

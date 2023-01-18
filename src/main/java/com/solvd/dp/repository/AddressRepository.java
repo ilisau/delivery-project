@@ -2,7 +2,6 @@ package com.solvd.dp.repository;
 
 import com.solvd.dp.domain.user.Address;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,16 +9,16 @@ import java.util.Optional;
 @Mapper
 public interface AddressRepository {
 
-    Optional<Address> findById(@Param("id") Long id);
+    Optional<Address> findById(Long id);
 
-    List<Address> getAllByUserId(@Param("userId") Long userId);
+    List<Address> getAllByUserId(Long userId);
 
-    List<Address> getAllByRestaurantId(@Param("restaurantId") Long restaurantId);
+    List<Address> getAllByRestaurantId(Long restaurantId);
 
-    void update(@Param("address") Address address);
+    void update(Address address);
 
-    void create(@Param("address") Address address);
+    void create(Address address);
 
-    void delete(@Param("id") Long id);
+    void delete(Long id);
 
 }

@@ -39,14 +39,14 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.restaurant.Employee">
         UPDATE employees
-        SET name     = #{employee.name},
-            position = #{employee.position}
-        WHERE id = #{employee.id}
+        SET name     = #{name},
+            position = #{position}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="employee.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Employee">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Employee">
         INSERT INTO employees (name, position)
-        VALUES (#{employee.name}, #{employee.position})
+        VALUES (#{name}, #{position})
     </insert>
 
     <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.restaurant.Employee">
@@ -54,7 +54,7 @@
                        SELECT 1
                        FROM restaurants_employees re
                                 JOIN employees e on re.employee_id = e.id
-                       WHERE e.name = #{employee.name}
+                       WHERE e.name = #{name}
                          AND re.restaurant_id = #{restaurantId}
                    )
     </select>

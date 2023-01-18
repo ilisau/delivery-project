@@ -62,17 +62,17 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.restaurant.Item">
         UPDATE items
-        SET name        = #{item.name},
-            description = #{item.description},
-            price       = #{item.price},
-            type        = #{item.type},
-            available   = #{item.available}
-        WHERE id = #{item.id}
+        SET name        = #{name},
+            description = #{description},
+            price       = #{price},
+            type        = #{type},
+            available   = #{available}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="item.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Item">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Item">
         INSERT INTO items (name, description, price, type, available)
-        VALUES (#{item.name}, #{item.description}, #{item.price}, #{item.type}, #{item.available})
+        VALUES (#{name}, #{description}, #{price}, #{type}, #{available})
     </insert>
 
     <delete id="delete" parameterType="Long">

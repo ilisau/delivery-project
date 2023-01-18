@@ -64,24 +64,24 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.courier.Courier">
         UPDATE couriers
-        SET first_name   = #{courier.firstName},
-            last_name    = #{courier.lastName},
-            phone_number = #{courier.phoneNumber},
-            status       = #{courier.status}
-        WHERE id = #{courier.id}
+        SET first_name   = #{firstName},
+            last_name    = #{lastName},
+            phone_number = #{phoneNumber},
+            status       = #{status}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="courier.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.courier.Courier">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.courier.Courier">
         INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number)
-        VALUES (#{courier.firstName}, #{courier.lastName}, #{courier.createdAt}, #{courier.lastActiveAt},
-                #{courier.status}, #{courier.phoneNumber})
+        VALUES (#{firstName}, #{lastName}, #{createdAt}, #{lastActiveAt},
+                #{status}, #{phoneNumber})
     </insert>
 
     <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.courier.Courier">
         SELECT EXISTS(SELECT
                       FROM couriers
-                      WHERE (first_name = #{courier.firstName} and last_name = #{courier.lastName})
-                         or phone_number = #{courier.phoneNumber})
+                      WHERE (first_name = #{firstName} and last_name = #{lastName})
+                         or phone_number = #{phoneNumber})
     </select>
 
     <delete id="delete" parameterType="Long">

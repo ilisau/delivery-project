@@ -11,25 +11,15 @@
         <result property="phoneNumber" column="user_phone_number" jdbcType="VARCHAR"/>
         <result property="password" column="user_password" jdbcType="VARCHAR"/>
         <result property="createdAt" column="user_created_at" jdbcType="TIMESTAMP"/>
-        <association property="cart" javaType="com.solvd.dp.domain.user.Cart" autoMapping="false">
-            <id property="id" column="cart_id"/>
-            <collection property="cartItems" javaType="List" ofType="com.solvd.dp.domain.restaurant.CartItem" autoMapping="false">
-                <id property="id" column="item_id" jdbcType="BIGINT"/>
-                <result property="name" column="item_name" jdbcType="VARCHAR"/>
-                <result property="description" column="item_description" jdbcType="VARCHAR"/>
-                <result property="price" column="item_price" jdbcType="NUMERIC"/>
-                <result property="type" column="item_type" jdbcType="VARCHAR"/>
-                <result property="available" column="item_available" jdbcType="BOOLEAN"/>
-                <result property="quantity" column="item_quantity" jdbcType="BIGINT"/>
-            </collection>
-        </association>
-        <collection property="addresses" javaType="List" ofType="com.solvd.dp.domain.user.Address" autoMapping="false">
-            <id property="id" column="address_id" jdbcType="BIGINT"/>
-            <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
-            <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
-            <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
-            <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
-        </collection>
+        <association property="cart"
+                     javaType="com.solvd.dp.domain.user.Cart"
+                     resultMap="com.solvd.dp.repository.CartRepository.CartResultMap"
+                     autoMapping="false"/>
+        <collection property="addresses"
+                    javaType="List"
+                    ofType="com.solvd.dp.domain.user.Address"
+                    resultMap="com.solvd.dp.repository.AddressRepository.AddressResultMap"
+                    autoMapping="false"/>
         <collection property="roles" ofType="com.solvd.dp.domain.user.Role" autoMapping="false">
             <result property="name" column="role_name" jdbcType="VARCHAR"/>
         </collection>
@@ -130,16 +120,16 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.user.User">
         UPDATE users
-        SET name         = #{user.name},
-            email        = #{user.email},
-            phone_number = #{user.phoneNumber},
-            password     = #{user.password}
-        WHERE id = #{user.id};
+        SET name         = #{name},
+            email        = #{email},
+            phone_number = #{phoneNumber},
+            password     = #{password}
+        WHERE id = #{id};
     </update>
 
-    <insert id="create" keyProperty="user.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.User">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
         INSERT INTO users (name, email, phone_number, password, created_at, cart_id)
-        VALUES (#{user.name}, #{user.email}, #{user.phoneNumber}, #{user.password}, #{user.createdAt}, #{cartId});
+        VALUES (#{name}, #{email}, #{phoneNumber}, #{password}, #{createdAt}, #{cartId});
     </insert>
 
     <insert id="saveRoles">
@@ -164,7 +154,9 @@
     <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.user.User">
         SELECT EXISTS(SELECT 1
                       FROM users
-                      WHERE name = #{user.name} OR email = #{user.email} OR phone_number = #{user.phoneNumber});
+                      WHERE name = #{name}
+                         OR email = #{email}
+                         OR phone_number = #{phoneNumber});
     </select>
 
     <delete id="delete" parameterType="Long">

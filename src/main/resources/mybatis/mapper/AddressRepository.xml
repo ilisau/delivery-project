@@ -46,22 +46,22 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.user.Address">
         UPDATE addresses
-        SET street_name  = #{address.streetName},
-            house_number = #{address.houseNumber},
-            floor_number = #{address.floorNumber},
-            flat_number  = #{address.flatNumber}
+        SET street_name  = #{streetName},
+            house_number = #{houseNumber},
+            floor_number = #{floorNumber},
+            flat_number  = #{flatNumber}
         WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="address.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Address">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Address">
         INSERT INTO addresses (street_name,
                                house_number,
                                floor_number,
                                flat_number)
-        VALUES (#{address.streetName},
-                #{address.houseNumber},
-                #{address.floorNumber},
-                #{address.flatNumber})
+        VALUES (#{streetName},
+                #{houseNumber},
+                #{floorNumber},
+                #{flatNumber})
     </insert>
 
     <delete id="delete" parameterType="Long">

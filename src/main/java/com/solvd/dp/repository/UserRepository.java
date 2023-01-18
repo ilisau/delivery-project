@@ -11,13 +11,13 @@ import java.util.Set;
 @Mapper
 public interface UserRepository {
 
-    Optional<User> findById(@Param("id") Long id);
+    Optional<User> findById(Long id);
 
-    Optional<User> findByEmail(@Param("email") String email);
+    Optional<User> findByEmail(String email);
 
-    Optional<User> findByPhoneNumber(@Param("phoneNumber") String phoneNumber);
+    Optional<User> findByPhoneNumber(String phoneNumber);
 
-    void update(@Param("user") User user);
+    void update(User user);
 
     void create(@Param("user") User user, @Param("cartId") Long cartId);
 
@@ -27,8 +27,8 @@ public interface UserRepository {
 
     void deleteAddressById(@Param("userId") Long userId, @Param("addressId") Long addressId);
 
-    boolean exists(@Param("user") User user);
+    boolean exists(User user);
 
-    void delete(@Param("id") Long id);
+    void delete(Long id);
 
 }

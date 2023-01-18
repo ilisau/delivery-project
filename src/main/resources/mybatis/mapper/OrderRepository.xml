@@ -9,34 +9,18 @@
         <id property="status" column="order_status" jdbcType="VARCHAR"/>
         <id property="createdAt" column="order_created_at" jdbcType="TIMESTAMP"/>
         <id property="deliveredAt" column="order_delivered_at" jdbcType="TIMESTAMP"/>
-        <association property="courier" javaType="com.solvd.dp.domain.courier.Courier" autoMapping="false">
-            <id property="id" column="courier_id" jdbcType="BIGINT"/>
-            <result property="firstName" column="courier_first_name" jdbcType="VARCHAR"/>
-            <result property="lastName" column="courier_last_name" jdbcType="VARCHAR"/>
-            <result property="createdAt" column="courier_created_at" jdbcType="TIMESTAMP"/>
-            <result property="lastActiveAt" column="courier_last_active_at" jdbcType="TIMESTAMP"/>
-            <result property="status" column="courier_status" jdbcType="VARCHAR"/>
-            <result property="phoneNumber" column="courier_phone_number" jdbcType="VARCHAR"/>
-        </association>
-        <association property="address" javaType="com.solvd.dp.domain.user.Address" autoMapping="false">
-            <id property="id" column="address_id" jdbcType="BIGINT"/>
-            <result property="streetName" column="address_street_name" jdbcType="VARCHAR"/>
-            <result property="houseNumber" column="address_house_number" jdbcType="VARCHAR"/>
-            <result property="floorNumber" column="address_floor_number" jdbcType="VARCHAR"/>
-            <result property="flatNumber" column="address_flat_number" jdbcType="VARCHAR"/>
-        </association>
-        <association property="cart" javaType="com.solvd.dp.domain.user.Cart" autoMapping="false">
-            <id property="id" column="cart_id" jdbcType="BIGINT"/>
-            <collection property="cartItems" javaType="List" ofType="com.solvd.dp.domain.restaurant.CartItem" autoMapping="false">
-                <id property="id" column="item_id" jdbcType="BIGINT"/>
-                <result property="name" column="item_name" jdbcType="VARCHAR"/>
-                <result property="description" column="item_description" jdbcType="VARCHAR"/>
-                <result property="price" column="item_price" jdbcType="NUMERIC"/>
-                <result property="type" column="item_type" jdbcType="VARCHAR"/>
-                <result property="available" column="item_available" jdbcType="BOOLEAN"/>
-                <result property="quantity" column="item_quantity" jdbcType="BIGINT"/>
-            </collection>
-        </association>
+        <association property="courier"
+                     javaType="com.solvd.dp.domain.courier.Courier"
+                     resultMap="com.solvd.dp.repository.CourierRepository.CourierResultMap"
+                     autoMapping="false"/>
+        <association property="address"
+                     javaType="com.solvd.dp.domain.user.Address"
+                     resultMap="com.solvd.dp.repository.AddressRepository.AddressResultMap"
+                     autoMapping="false"/>
+        <association property="cart"
+                     javaType="com.solvd.dp.domain.user.Cart"
+                     resultMap="com.solvd.dp.repository.CartRepository.CartResultMap"
+                     autoMapping="false"/>
     </resultMap>
 
     <select id="findById" resultMap="OrderResultMap" parameterType="Long">
@@ -252,14 +236,14 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.user.Order">
         UPDATE orders
-        SET address_id = #{order.address.id}
-        WHERE id = #{order.id}
+        SET address_id = #{address.id}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="order.id" keyColumn="id" useGeneratedKeys="true"
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true"
             parameterType="com.solvd.dp.domain.user.Order">
         INSERT INTO orders (address_id, cart_id, status, created_at)
-        VALUES (#{order.address.id}, #{order.cart.id}, #{order.status}, #{order.createdAt})
+        VALUES (#{address.id}, #{cart.id}, #{status}, #{createdAt})
     </insert>
 
     <select id="isOrderAssigned" resultType="boolean" parameterType="Long">
