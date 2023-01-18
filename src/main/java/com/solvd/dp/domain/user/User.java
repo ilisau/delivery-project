@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class User {
@@ -18,5 +19,6 @@ public class User {
     private List<Order> orders;
     private Cart cart;
     private LocalDateTime createdAt;
+    private Set<Role> roles;
 
 }

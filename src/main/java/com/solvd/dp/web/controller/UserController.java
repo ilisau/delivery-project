@@ -46,13 +46,6 @@ public class UserController {
         userService.update(user);
     }
 
-    @PostMapping
-    public UserDto create(@Validated(OnCreate.class) @RequestBody UserDto userDto) {
-        User userToBeCreated = userMapper.toEntity(userDto);
-        User user = userService.create(userToBeCreated);
-        return userMapper.toDto(user);
-    }
-
     @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id) {
         User user = userService.getById(id);

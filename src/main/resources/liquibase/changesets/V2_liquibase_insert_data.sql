@@ -52,3 +52,9 @@ INSERT INTO "restaurants_items" ("restaurant_id", "item_id") VALUES (1, 3);
 
 -- changeset solvd:1674032636372-13
 INSERT INTO "users_addresses" ("user_id", "address_id") VALUES (1, 2);
+
+-- changeset solvd:1674032636372-14
+INSERT INTO "users_orders" ("user_id", "order_id") VALUES (1, 1);
+
+-- changeset solvd:1674032636372-15
+INSERT INTO "users_roles" ("user_id", "role") VALUES (1, 'ROLE_USER');

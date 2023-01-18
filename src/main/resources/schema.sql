@@ -102,6 +102,13 @@ create table if not exists users
     constraint fk_users_carts foreign key (cart_id) references carts (id)
 );
 
+create table if not exists users_roles
+(
+    user_id bigint not null,
+    role    varchar(45) not null,
+    constraint fk_users_roles_users foreign key (user_id) references users (id) on delete cascade on update no action
+);
+
 create table if not exists users_addresses
 (
     user_id    bigint not null,

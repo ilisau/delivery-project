@@ -52,3 +52,6 @@ values (2, 1, 'DELIVERED', 1, '2022-12-01 00:00:00', '2022-12-01 00:00:00');
 
 insert into users_orders (user_id, order_id)
 values (1, 1);
+
+insert into users_roles (user_id, role)
+values (1, 'ROLE_USER');
