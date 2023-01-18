@@ -9,5 +9,9 @@ spring:
       mode: always
 #      data-locations: classpath:demo_data.sql
       continue-on-error: false
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yaml
+    enabled: true
+    default-schema: delivery_project
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
