@@ -7,7 +7,6 @@ import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.EmployeeRepository;
 import com.solvd.dp.repository.mappers.EmployeeRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepository {
 

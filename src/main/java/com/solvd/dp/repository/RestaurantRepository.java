@@ -1,38 +1,41 @@
 package com.solvd.dp.repository;
 
 import com.solvd.dp.domain.restaurant.Restaurant;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
 
+@Mapper
 public interface RestaurantRepository {
 
     List<Restaurant> getAll();
 
-    Optional<Restaurant> findById(Long id);
+    Optional<Restaurant> findById(@Param("id") Long id);
 
-    Optional<Restaurant> findByName(String name);
+    Optional<Restaurant> findByName(@Param("name") String name);
 
-    void update(Restaurant restaurant);
+    void update(@Param("restaurant") Restaurant restaurant);
 
-    void create(Restaurant restaurant);
+    void create(@Param("restaurant") Restaurant restaurant);
 
-    void addEmployeeById(Long restaurantId, Long employeeId);
+    void addEmployeeById(@Param("restaurantId") Long restaurantId, @Param("employeeId") Long employeeId);
 
-    void deleteEmployeeById(Long restaurantId, Long employeeId);
+    void deleteEmployeeById(@Param("restaurantId") Long restaurantId, @Param("employeeId") Long employeeId);
 
-    void addItemById(Long restaurantId, Long itemId);
+    void addItemById(@Param("restaurantId") Long restaurantId, @Param("itemId") Long itemId);
 
-    void deleteItemById(Long restaurantId, Long itemId);
+    void deleteItemById(@Param("restaurantId") Long restaurantId, @Param("itemId") Long itemId);
 
-    void addAddressById(Long restaurantId, Long addressId);
+    void addAddressById(@Param("restaurantId") Long restaurantId, @Param("addressId") Long addressId);
 
-    void deleteAddressById(Long restaurantId, Long addressId);
+    void deleteAddressById(@Param("restaurantId") Long restaurantId, @Param("addressId") Long addressId);
 
-    boolean exists(Restaurant restaurant);
+    boolean exists(@Param("restaurant") Restaurant restaurant);
 
-    boolean employeeExists(Long restaurantId, Long employeeId);
+    boolean employeeExists(@Param("restaurantId") Long restaurantId, @Param("employeeId") Long employeeId);
 
-    void delete(Long id);
+    void delete(@Param("id") Long id);
 
 }

@@ -6,13 +6,12 @@ import com.solvd.dp.repository.AddressRepository;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.AddressRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class AddressRepositoryImpl implements AddressRepository {
 

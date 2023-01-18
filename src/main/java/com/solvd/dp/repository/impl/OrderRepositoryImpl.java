@@ -7,7 +7,6 @@ import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.OrderRepository;
 import com.solvd.dp.repository.mappers.OrderRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepository {
 
@@ -74,30 +73,7 @@ public class OrderRepositoryImpl implements OrderRepository {
                 JOIN restaurants_items ri on ci.item_id = ri.item_id
             WHERE ri.restaurant_id = ?""";
     private static final String GET_ALL_BY_RESTAURANT_ID_AND_STATUS = """
-            SELECT o.id             as order_id,
-                   o.status         as order_status,
-                   o.created_at     as order_created_at,
-                   o.delivered_at   as order_delivered_at,
-                   a.id             as address_id,
-                   a.street_name    as address_street_name,
-                   a.house_number   as address_house_number,
-                   a.floor_number   as address_floor_number,
-                   a.flat_number    as address_flat_number,
-                   c.id             as courier_id,
-                   c.first_name     as courier_first_name,
-                   c.last_name      as courier_last_name,
-                   c.last_active_at as courier_last_active_at,
-                   c.phone_number   as courier_phone_number,
-                   c.status         as courier_status,
-                   c.created_at     as courier_created_at,
-                   c2.id            as cart_id,
-                   i.id             as item_id,
-                   i.name           as item_name,
-                   i.description    as item_description,
-                   i.price          as item_price,
-                   i.type           as item_type,
-                   i.available      as item_available,
-                   ci.quantity      as item_quantity
+            SELECT o.id             as order_id
             FROM orders o
                      LEFT JOIN addresses a on o.address_id = a.id
                      LEFT JOIN couriers c on o.courier_id = c.id
@@ -240,8 +216,6 @@ public class OrderRepositoryImpl implements OrderRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
-            order.setStatus(OrderStatus.ORDERED);
-            order.setCreatedAt(LocalDateTime.now());
             statement.setLong(1, order.getAddress().getId());
             statement.setLong(2, order.getCart().getId());
             statement.setString(3, order.getStatus().name());

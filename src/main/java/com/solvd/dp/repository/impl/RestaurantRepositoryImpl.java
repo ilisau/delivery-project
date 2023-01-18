@@ -6,7 +6,6 @@ import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.RestaurantRepository;
 import com.solvd.dp.repository.mappers.RestaurantRowMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Repository
+//@Repository
 @RequiredArgsConstructor
 public class RestaurantRepositoryImpl implements RestaurantRepository {
 

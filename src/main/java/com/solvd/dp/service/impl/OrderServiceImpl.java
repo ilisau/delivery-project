@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -81,6 +82,8 @@ public class OrderServiceImpl implements OrderService {
             addressService.create(order.getAddress());
             userService.addAddress(userId, order.getAddress());
         }
+        order.setStatus(OrderStatus.ORDERED);
+        order.setCreatedAt(LocalDateTime.now());
         orderRepository.create(order);
         orderRepository.addOrderById(order.getId(), userId);
         cartService.setEmptyByUserId(userId);
