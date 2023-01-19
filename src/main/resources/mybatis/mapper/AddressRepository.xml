@@ -64,6 +64,10 @@
                 #{flatNumber})
     </insert>
 
+    <select id="isUserOwner" resultType="boolean">
+        SELECT EXISTS (SELECT * FROM users_addresses WHERE user_id = #{userId} AND address_id = #{addressId})
+    </select>
+
     <delete id="delete" parameterType="Long">
         DELETE
         FROM addresses

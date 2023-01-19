@@ -8,13 +8,13 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,11 +72,11 @@ public class ControllerAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ExceptionBody handleAuthenticationException(AuthenticationException e) {
-        return new ExceptionBody(e.getMessage());
+    public ExceptionBody handleAuthenticationException() {
+        return new ExceptionBody("Incorrect credentials");
     }
 
-    @ExceptionHandler({AccessDeniedException.class, org.springframework.security.core.AuthenticationException.class, com.solvd.dp.domain.exception.AccessDeniedException.class})
+    @ExceptionHandler({AccessDeniedException.class, com.solvd.dp.domain.exception.AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionBody handleAccessDeniedException() {
         return new ExceptionBody("Access denied");

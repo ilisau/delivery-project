@@ -45,6 +45,7 @@ public class AddressRepositoryImpl implements AddressRepository {
             WHERE restaurant_id = ?""";
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
+    private static final String IS_USER_OWNER = "SELECT EXISTS (SELECT * FROM users_addresses WHERE user_id = ? AND address_id = ?)";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
 
     @Override
@@ -137,6 +138,21 @@ public class AddressRepositoryImpl implements AddressRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating address :: " + address);
+        }
+    }
+
+    @Override
+    public boolean isUserOwner(Long addressId, Long userId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_USER_OWNER);
+            statement.setLong(1, userId);
+            statement.setLong(2, addressId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if user is owner of address :: " + addressId);
         }
     }
 

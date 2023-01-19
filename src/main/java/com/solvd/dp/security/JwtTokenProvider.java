@@ -5,9 +5,11 @@ import com.solvd.dp.domain.user.Role;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.service.UserService;
 import com.solvd.dp.web.dto.auth.JwtResponse;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,8 +28,6 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private final UserService userService;
-
     @Value("${jwt.token.accessToken}")
     private long accessTokenValidityInMilliseconds;
 
@@ -35,18 +35,14 @@ public class JwtTokenProvider {
     private long refreshTokenValidityInMilliseconds;
 
     private final UserDetailsService userDetailsService;
-
-    private Key key;
+    private final UserService userService;
+    private final Key key;
 
     @Autowired
-    public JwtTokenProvider(UserDetailsService userDetailsService, UserService userService) {
+    public JwtTokenProvider(UserDetailsService userDetailsService, UserService userService, @Value("${jwt.token.secret}") String secret) {
         this.userDetailsService = userDetailsService;
         this.userService = userService;
-    }
-
-    @PostConstruct
-    protected void init() {
-        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String createToken(Long userId, String username, List<String> roles) {

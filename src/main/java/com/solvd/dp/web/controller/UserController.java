@@ -42,26 +42,27 @@ public class UserController {
     private final OrderMapper orderMapper;
 
     @PutMapping
+    @PreAuthorize("canAccessUser(#userDto.id)")
     public void update(@Validated(OnUpdate.class) @RequestBody UserDto userDto) {
         User user = userMapper.toEntity(userDto);
         userService.update(user);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasPermission(#id, 'Get')")
+    @PreAuthorize("canAccessUser(#id)")
     public UserDto getById(@PathVariable Long id) {
         User user = userService.getById(id);
         return userMapper.toDto(user);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasPermission(#id, 'Delete')")
+    @PreAuthorize("canAccessUser(#id)")
     public void deleteById(@PathVariable Long id) {
         userService.delete(id);
     }
 
     @PutMapping("/{id}/items/{itemId}")
-    @PreAuthorize("hasPermission(#id, 'Put')")
+    @PreAuthorize("canAccessUser(#id)")
     public void addItemById(@PathVariable Long id,
                             @PathVariable Long itemId,
                             @RequestParam(required = false) Long quantity) {
@@ -69,7 +70,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/items/{itemId}")
-    @PreAuthorize("hasPermission(#id, 'Delete')")
+    @PreAuthorize("canAccessUser(#id)")
     public void deleteItemById(@PathVariable Long id,
                                @PathVariable Long itemId,
                                @RequestParam(required = false) Long quantity) {
@@ -77,27 +78,27 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/items")
-    @PreAuthorize("hasPermission(#id, 'Delete')")
+    @PreAuthorize("canAccessUser(#id)")
     public void clearCartById(@PathVariable Long id) {
         cartService.clearById(id);
     }
 
     @GetMapping("/{id}/cart")
-    @PreAuthorize("hasPermission(#id, 'Get')")
+    @PreAuthorize("canAccessUser(#id)")
     public CartDto getCartById(@PathVariable Long id) {
         Cart cart = cartService.getByUserId(id);
         return cartMapper.toDto(cart);
     }
 
     @GetMapping("/{id}/addresses")
-    @PreAuthorize("hasPermission(#id, 'Get')")
+    @PreAuthorize("canAccessUser(#id)")
     public List<AddressDto> getAllAddresses(@PathVariable Long id) {
         List<Address> addresses = addressService.getAllByUserId(id);
         return addressMapper.toDto(addresses);
     }
 
     @PostMapping("/{id}/addresses")
-    @PreAuthorize("hasPermission(#id, 'Post')")
+    @PreAuthorize("canAccessUser(#id)")
     public void addAddress(@PathVariable Long id,
                            @Validated(OnCreate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
@@ -105,21 +106,21 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/addresses/{addressId}")
-    @PreAuthorize("hasPermission(#id, 'Delete')")
+    @PreAuthorize("canAccessUser(#id)")
     public void deleteAddress(@PathVariable Long id,
                               @PathVariable Long addressId) {
         userService.deleteAddressById(id, addressId);
     }
 
     @GetMapping("/{id}/orders")
-    @PreAuthorize("hasPermission(#id, 'Get')")
+    @PreAuthorize("canAccessUser(#id)")
     public List<OrderDto> getAllOrders(@PathVariable Long id) {
         List<Order> orders = orderService.getAllByUserId(id);
         return orderMapper.toDto(orders);
     }
 
     @PostMapping("/{id}/orders")
-    @PreAuthorize("hasPermission(#id, 'Post')")
+    @PreAuthorize("canAccessUser(#id)")
     public OrderDto create(@PathVariable Long id,
                            @Validated(OnCreate.class) @RequestBody OrderDto dto) {
         Order orderToBeCreated = orderMapper.toEntity(dto);

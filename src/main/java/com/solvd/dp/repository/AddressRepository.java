@@ -2,6 +2,7 @@ package com.solvd.dp.repository;
 
 import com.solvd.dp.domain.user.Address;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,8 @@ public interface AddressRepository {
     void update(Address address);
 
     void create(Address address);
+
+    boolean isUserOwner(@Param("addressId") Long addressId, @Param("userId") Long userId);
 
     void delete(Long id);
 

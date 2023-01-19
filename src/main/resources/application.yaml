@@ -17,5 +17,6 @@ mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
 jwt:
   token:
-    accessToken: 600000
+    secret: c2VjcmV0aWdpdWhvaWhvdWpvaWpiZ2p5dnViamg=
+    accessToken: 3600000
     refreshToken: 2592000000

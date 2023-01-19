@@ -50,6 +50,12 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public boolean isUserOwner(Long addressId, Long userId) {
+        return addressRepository.isUserOwner(addressId, userId);
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         addressRepository.delete(id);

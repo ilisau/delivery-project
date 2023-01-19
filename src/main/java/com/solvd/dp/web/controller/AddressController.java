@@ -6,6 +6,7 @@ import com.solvd.dp.web.dto.user.AddressDto;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.AddressMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,18 +21,21 @@ public class AddressController {
     private final AddressMapper addressMapper;
 
     @PutMapping
+    @PreAuthorize("canAccessAddress(#addressDto.id)")
     public void update(@Validated(OnUpdate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
         addressService.update(address);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("canAccessAddress(#id)")
     public AddressDto getById(@PathVariable Long id) {
         Address address = addressService.getById(id);
         return addressMapper.toDto(address);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("canAccessAddress(#id)")
     public void deleteById(@PathVariable Long id) {
         addressService.delete(id);
     }
