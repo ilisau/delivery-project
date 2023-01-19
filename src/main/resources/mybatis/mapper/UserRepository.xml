@@ -52,7 +52,7 @@
                  LEFT JOIN items i on ci.item_id = i.id
                  LEFT JOIN users_addresses ua on u.id = ua.user_id
                  LEFT JOIN addresses a on ua.address_id = a.id
-                 LEFT JOIN users_roles ur on u.id = ur.user_id
+                 JOIN users_roles ur on u.id = ur.user_id
         WHERE u.id = #{id};
     </select>
 
@@ -83,7 +83,7 @@
                  LEFT JOIN items i on ci.item_id = i.id
                  LEFT JOIN users_addresses ua on u.id = ua.user_id
                  LEFT JOIN addresses a on ua.address_id = a.id
-                 LEFT JOIN users_roles ur on u.id = ur.user_id
+                 JOIN users_roles ur on u.id = ur.user_id
         WHERE u.email = #{email};
     </select>
 
@@ -114,7 +114,7 @@
                  LEFT JOIN items i on ci.item_id = i.id
                  LEFT JOIN users_addresses ua on u.id = ua.user_id
                  LEFT JOIN addresses a on ua.address_id = a.id
-                 LEFT JOIN users_roles ur on u.id = ur.user_id
+                 JOIN users_roles ur on u.id = ur.user_id
         WHERE u.phone_number = #{phoneNumber};
     </select>
 

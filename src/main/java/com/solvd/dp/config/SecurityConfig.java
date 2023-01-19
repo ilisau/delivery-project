@@ -59,6 +59,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/users/**").authenticated()
+                .requestMatchers("/api/v1/couriers/**").authenticated()
+                .requestMatchers("/api/v1/orders/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

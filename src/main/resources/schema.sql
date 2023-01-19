@@ -9,6 +9,8 @@ create table if not exists couriers
     created_at     timestamp   not null,
     last_active_at timestamp   not null,
     status         varchar(45) not null,
+    email          varchar(45) not null unique,
+    password       varchar(65) not null,
     primary key (id)
 );
 
@@ -104,9 +106,16 @@ create table if not exists users
 
 create table if not exists users_roles
 (
-    user_id bigint not null,
+    user_id bigint      not null,
     role    varchar(45) not null,
     constraint fk_users_roles_users foreign key (user_id) references users (id) on delete cascade on update no action
+);
+
+create table if not exists couriers_roles
+(
+    courier_id bigint      not null,
+    role       varchar(45) not null,
+    constraint fk_couriers_roles_couriers foreign key (courier_id) references couriers (id) on delete cascade on update no action
 );
 
 create table if not exists users_addresses

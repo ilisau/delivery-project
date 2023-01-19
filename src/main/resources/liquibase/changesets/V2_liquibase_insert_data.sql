@@ -6,9 +6,9 @@ INSERT INTO "items" ("id", "name", "description", "price", "type", "available") 
 INSERT INTO "items" ("id", "name", "description", "price", "type", "available") VALUES (3, 'Coca-Cola', 'Coca-Cola', 50.00, 'DRINK', TRUE);
 
 -- changeset solvd:1674032636372-2
-INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status") VALUES (1, 'John', 'Doe', '1234567890', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'AVAILABLE');
-INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status") VALUES (2, 'Michael', 'Depp', '12345', '2022-12-01 00:00:00', '2022-12-05 00:00:00', 'UNAVAILABLE');
-INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status") VALUES (3, 'Bob', 'Jonson', '123456', '2022-11-05 00:00:00', '2022-12-03 00:00:00', 'UNAVAILABLE');
+INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status", "email", "password") VALUES (1, 'John', 'Doe', '1234567890', '2023-01-01 00:00:00', '2023-01-01 00:00:00', 'AVAILABLE', 'johndoe@gmail.com', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4oH3pK8hhOOfPwMzbA2');
+INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status", "email", "password") VALUES (2, 'Michael', 'Depp', '12345', '2022-12-01 00:00:00', '2022-12-05 00:00:00', 'UNAVAILABLE', 'Michael@mail.ru', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4oH3pK8hhOOfPwMzbA2');
+INSERT INTO "couriers" ("id", "first_name", "last_name", "phone_number", "created_at", "last_active_at", "status", "email", "password") VALUES (3, 'Bob', 'Jonson', '123456', '2022-11-05 00:00:00', '2022-12-03 00:00:00', 'UNAVAILABLE', 'bob@yahoo.com', '$2a$12$Iq9jB0.zAt/VA.XSeWrHb.jpeWUAP6AXqP4oH3pK8hhOOfPwMzbA2');
 
 -- changeset solvd:1674032636372-3
 INSERT INTO "restaurants" ("id", "name", "description") VALUES (1, 'McDonalds', 'Вкусно и точка');
@@ -58,3 +58,8 @@ INSERT INTO "users_orders" ("user_id", "order_id") VALUES (1, 1);
 
 -- changeset solvd:1674032636372-15
 INSERT INTO "users_roles" ("user_id", "role") VALUES (1, 'ROLE_USER');
+
+-- changeset solvd:1674032636372-16
+INSERT INTO "couriers_roles" ("courier_id", "role") VALUES (1, 'ROLE_COURIER');
+INSERT INTO "couriers_roles" ("courier_id", "role") VALUES (2, 'ROLE_COURIER');
+INSERT INTO "couriers_roles" ("courier_id", "role") VALUES (3, 'ROLE_COURIER');

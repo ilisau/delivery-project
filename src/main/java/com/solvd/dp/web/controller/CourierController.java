@@ -7,11 +7,11 @@ import com.solvd.dp.service.CourierService;
 import com.solvd.dp.service.OrderService;
 import com.solvd.dp.web.dto.courier.CourierDto;
 import com.solvd.dp.web.dto.user.OrderDto;
-import com.solvd.dp.web.dto.validation.OnCreate;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.CourierMapper;
 import com.solvd.dp.web.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +30,7 @@ public class CourierController {
     private final OrderMapper orderMapper;
 
     @GetMapping
+    @PreAuthorize("canAccessCouriers()")
     public List<CourierDto> getAll(@RequestParam(required = false) CourierStatus status) {
         List<Courier> couriers;
         if (status == null) {
@@ -41,30 +42,27 @@ public class CourierController {
     }
 
     @PutMapping
+    @PreAuthorize("canAccessCourier(#courierDto.id)")
     public void update(@Validated(OnUpdate.class) @RequestBody CourierDto courierDto) {
         Courier courier = courierMapper.toEntity(courierDto);
         courierService.update(courier);
     }
 
-    @PostMapping
-    public CourierDto create(@Validated(OnCreate.class) @RequestBody CourierDto courierDto) {
-        Courier courierToBeCreated = courierMapper.toEntity(courierDto);
-        Courier courier = courierService.create(courierToBeCreated);
-        return courierMapper.toDto(courier);
-    }
-
     @GetMapping("/{id}")
+    @PreAuthorize("canAccessCourier(#id)")
     public CourierDto getById(@PathVariable Long id) {
         Courier courier = courierService.getById(id);
         return courierMapper.toDto(courier);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("canAccessCourier(#id)")
     public void deleteById(@PathVariable Long id) {
         courierService.delete(id);
     }
 
     @GetMapping("/{id}/orders")
+    @PreAuthorize("canAccessCourier(#id)")
     public List<OrderDto> getAllOrdersByCourierId(@PathVariable Long id) {
         List<Order> orders = orderService.getAllByCourierId(id);
         return orderMapper.toDto(orders);

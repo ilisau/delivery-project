@@ -40,6 +40,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -54,6 +55,7 @@
                  LEFT JOIN carts c2 on o.cart_id = c2.id
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE o.id = #{id}
     </select>
 
@@ -74,6 +76,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -88,6 +91,7 @@
                  LEFT JOIN carts c2 on o.cart_id = c2.id
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE o.id IN (SELECT order_id FROM users_orders WHERE user_id = #{userId})
     </select>
 
@@ -108,6 +112,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -122,6 +127,7 @@
                  LEFT JOIN carts c2 on o.cart_id = c2.id
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE o.address_id = #{addressId}
     </select>
 
@@ -142,6 +148,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -156,6 +163,7 @@
                  LEFT JOIN carts c2 on o.cart_id = c2.id
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE o.courier_id = #{courierId}
     </select>
 
@@ -178,6 +186,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -193,6 +202,7 @@
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
                  JOIN restaurants_items ri on ci.item_id = ri.item_id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE ri.restaurant_id = #{restaurantId}
     </select>
 
@@ -215,6 +225,7 @@
                c.phone_number   as courier_phone_number,
                c.status         as courier_status,
                c.created_at     as courier_created_at,
+               cr.role          as role_name,
                c2.id            as cart_id,
                i.id             as item_id,
                i.name           as item_name,
@@ -230,6 +241,7 @@
                  LEFT JOIN carts_items ci on c2.id = ci.cart_id
                  LEFT JOIN items i on ci.item_id = i.id
                  JOIN restaurants_items ri on ci.item_id = ri.item_id
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE ri.restaurant_id = #{restaurantId}
           AND o.status = #{status}
     </select>

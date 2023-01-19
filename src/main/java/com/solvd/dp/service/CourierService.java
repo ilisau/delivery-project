@@ -9,6 +9,8 @@ public interface CourierService {
 
     Courier getById(Long id);
 
+    Courier getByEmail(String email);
+
     Courier getByOrderId(Long orderId);
 
     List<Courier> getAll();

@@ -1,8 +1,10 @@
 package com.solvd.dp.security;
 
+import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.exception.AccessDeniedException;
 import com.solvd.dp.domain.user.Role;
 import com.solvd.dp.domain.user.User;
+import com.solvd.dp.service.CourierService;
 import com.solvd.dp.service.UserService;
 import com.solvd.dp.web.dto.auth.JwtResponse;
 import io.jsonwebtoken.Claims;
@@ -36,19 +38,25 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
     private final UserService userService;
+    private final CourierService courierService;
     private final Key key;
 
     @Autowired
-    public JwtTokenProvider(UserDetailsService userDetailsService, UserService userService, @Value("${jwt.token.secret}") String secret) {
+    public JwtTokenProvider(UserDetailsService userDetailsService,
+                            UserService userService,
+                            CourierService courierService,
+                            @Value("${jwt.token.secret}") String secret) {
         this.userDetailsService = userDetailsService;
         this.userService = userService;
+        this.courierService = courierService;
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String createToken(Long userId, String username, List<String> roles) {
+    public String createUserToken(Long userId, String username, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userId", userId);
-        claims.put("userRoles", roles);
+        claims.put("type", "U");
+        claims.put("id", userId);
+        claims.put("roles", roles);
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessTokenValidityInMilliseconds);
         return Jwts.builder()
@@ -59,9 +67,9 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String createRefreshToken(Long userId, String username) {
+    public String createUserRefreshToken(Long userId, String username) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("userId", userId);
+        claims.put("id", userId);
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshTokenValidityInMilliseconds);
         return Jwts.builder()
@@ -72,15 +80,58 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public JwtResponse refreshTokens(String refreshToken) {
+    public JwtResponse refreshUserTokens(String refreshToken) {
         JwtResponse jwtResponse = new JwtResponse();
         if (validateToken(refreshToken)) {
-            Long userId = Long.valueOf(getUserId(refreshToken));
+            Long userId = Long.valueOf(getId(refreshToken));
             User user = userService.getById(userId);
-            jwtResponse.setUserId(user.getId());
+            jwtResponse.setEntityId(user.getId());
             jwtResponse.setUsername(user.getEmail());
-            jwtResponse.setToken(createToken(user.getId(), user.getEmail(), resolveRoles(new ArrayList<>(user.getRoles()))));
-            jwtResponse.setRefreshToken(createRefreshToken(userId, user.getEmail()));
+            jwtResponse.setToken(createUserToken(user.getId(), user.getEmail(), resolveRoles(new ArrayList<>(user.getRoles()))));
+            jwtResponse.setRefreshToken(createUserRefreshToken(userId, user.getEmail()));
+            return jwtResponse;
+        } else {
+            throw new AccessDeniedException("Invalid refresh token");
+        }
+    }
+
+    public String createCourierToken(Long courierId, String username, List<String> roles) {
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("type", "C");
+        claims.put("id", courierId);
+        claims.put("roles", roles);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + accessTokenValidityInMilliseconds);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key)
+                .compact();
+    }
+
+    public String createCourierRefreshToken(Long courierId, String username) {
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("id", courierId);
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenValidityInMilliseconds);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(key)
+                .compact();
+    }
+
+    public JwtResponse refreshCourierTokens(String refreshToken) {
+        JwtResponse jwtResponse = new JwtResponse();
+        if (validateToken(refreshToken)) {
+            Long courierId = Long.valueOf(getId(refreshToken));
+            Courier courier = courierService.getById(courierId);
+            jwtResponse.setEntityId(courier.getId());
+            jwtResponse.setUsername(courier.getEmail());
+            jwtResponse.setToken(createCourierToken(courier.getId(), courier.getEmail(), resolveRoles(new ArrayList<>(courier.getRoles()))));
+            jwtResponse.setRefreshToken(createCourierRefreshToken(courierId, courier.getEmail()));
             return jwtResponse;
         } else {
             throw new AccessDeniedException("Invalid refresh token");
@@ -94,8 +145,18 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        String type = getType(token);
+        switch (type) {
+            case "U" -> {
+                UserDetails userDetails = userDetailsService.loadUserByUsername("U:" + getUsername(token));
+                return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+            }
+            case "C" -> {
+                UserDetails courierDetails = userDetailsService.loadUserByUsername("C:" + getUsername(token));
+                return new UsernamePasswordAuthenticationToken(courierDetails, "", courierDetails.getAuthorities());
+            }
+            default -> throw new AccessDeniedException("Invalid token");
+        }
     }
 
     public String getUsername(String token) {
@@ -108,14 +169,25 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    public String getUserId(String token) {
+    public String getType(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("userId")
+                .get("type")
+                .toString();
+    }
+
+    public String getId(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id")
                 .toString();
     }
 
@@ -126,7 +198,7 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("userRoles")
+                .get("roles")
                 .toString();
     }
 

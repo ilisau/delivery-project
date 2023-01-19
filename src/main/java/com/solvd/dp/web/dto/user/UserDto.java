@@ -26,6 +26,7 @@ public class UserDto {
     @NotNull(message = "Email is required", groups = {OnCreate.class, OnUpdate.class})
     @Length(min = 3, max = 45, message = "Email must be between {min} and {max} characters", groups = {OnCreate.class, OnUpdate.class})
     @Email(message = "Email must be valid")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String email;
 
     @NotNull(message = "Phone number is required", groups = {OnCreate.class, OnUpdate.class})

@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Data
-public class JwtUser implements UserDetails {
+public class JwtEntity implements UserDetails {
 
     private final Long id;
     private final String username;
@@ -15,8 +15,8 @@ public class JwtUser implements UserDetails {
     private final String password;
     private final Collection<? extends GrantedAuthority> authorities;
 
-    public JwtUser(Long id, String username, String name, String password,
-                   Collection<? extends GrantedAuthority> authorities) {
+    public JwtEntity(Long id, String username, String name, String password,
+                     Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.name = name;

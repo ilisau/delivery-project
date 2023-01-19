@@ -2,12 +2,14 @@ package com.solvd.dp.repository.mappers;
 
 import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.courier.CourierStatus;
+import com.solvd.dp.domain.user.Role;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class CourierRowMapper implements RowMapper<Courier> {
 
@@ -23,6 +25,7 @@ public abstract class CourierRowMapper implements RowMapper<Courier> {
                 courier.setStatus(CourierStatus.valueOf(resultSet.getString("courier_status")));
                 courier.setCreatedAt(resultSet.getTimestamp("courier_created_at").toLocalDateTime());
                 courier.setLastActiveAt(resultSet.getTimestamp("courier_last_active_at").toLocalDateTime());
+                courier.setRoles(Set.of(Role.valueOf(resultSet.getString("courier_role"))));
                 return courier;
             }
         }

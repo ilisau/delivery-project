@@ -4,8 +4,12 @@ import com.solvd.dp.web.dto.auth.JwtResponse;
 
 public interface AuthenticationService {
 
-    JwtResponse login(String username, String password);
+    JwtResponse loginUser(String username, String password);
 
-    JwtResponse refresh(String refreshToken);
+    JwtResponse refreshUserTokens(String refreshToken);
+
+    JwtResponse loginCourier(String username, String password);
+
+    JwtResponse refreshCourierTokens(String refreshToken);
 
 }
