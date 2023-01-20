@@ -24,9 +24,11 @@ create table if not exists restaurants
 
 create table if not exists employees
 (
-    id            bigserial,
-    name          varchar(45) not null,
-    position      varchar(45) not null,
+    id       bigserial,
+    name     varchar(45) not null,
+    position varchar(45) not null,
+    email    varchar(45) not null unique,
+    password varchar(65) not null,
     primary key (id)
 );
 
@@ -116,6 +118,13 @@ create table if not exists couriers_roles
     courier_id bigint      not null,
     role       varchar(45) not null,
     constraint fk_couriers_roles_couriers foreign key (courier_id) references couriers (id) on delete cascade on update no action
+);
+
+create table if not exists employees_roles
+(
+    employee_id bigint      not null,
+    role        varchar(45) not null,
+    constraint fk_employees_roles_employees foreign key (employee_id) references employees (id) on delete cascade on update no action
 );
 
 create table if not exists users_addresses

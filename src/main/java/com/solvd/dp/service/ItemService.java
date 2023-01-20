@@ -22,6 +22,8 @@ public interface ItemService {
 
     Item create(Item item, Long restaurantId);
 
+    Long getRestaurantIdByItemId(Long itemId);
+
     void delete(Long id);
 
 }

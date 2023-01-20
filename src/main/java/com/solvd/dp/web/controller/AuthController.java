@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/user/login")
     public JwtResponse loginUser(@Validated @RequestBody JwtRequest jwtRequest) {
-        return authenticationService.loginUser(jwtRequest.getUsername(), jwtRequest.getPassword());
+        return authenticationService.loginUser(jwtRequest);
     }
 
     @PostMapping("/user/register")
@@ -51,7 +51,7 @@ public class AuthController {
 
     @PostMapping("/courier/login")
     public JwtResponse loginCourier(@Validated @RequestBody JwtRequest jwtRequest) {
-        return authenticationService.loginCourier(jwtRequest.getUsername(), jwtRequest.getPassword());
+        return authenticationService.loginCourier(jwtRequest);
     }
 
     @PostMapping("/courier/register")
@@ -64,6 +64,16 @@ public class AuthController {
     @PostMapping("/courier/refresh")
     public JwtResponse refreshCourier(@RequestBody String refreshToken) {
         return authenticationService.refreshCourierTokens(refreshToken);
+    }
+
+    @PostMapping("/employee/login")
+    public JwtResponse loginEmployee(@Validated @RequestBody JwtRequest jwtRequest) {
+        return authenticationService.loginEmployee(jwtRequest);
+    }
+
+    @PostMapping("/employee/refresh")
+    public JwtResponse refreshEmployee(@RequestBody String refreshToken) {
+        return authenticationService.refreshEmployeeTokens(refreshToken);
     }
 
 }

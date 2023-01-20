@@ -70,10 +70,17 @@
         WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Item">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true"
+            parameterType="com.solvd.dp.domain.restaurant.Item">
         INSERT INTO items (name, description, price, type, available)
         VALUES (#{name}, #{description}, #{price}, #{type}, #{available})
     </insert>
+
+    <select id="getRestaurantIdByItemId" parameterType="Long" resultType="Long">
+        SELECT restaurant_id
+        FROM restaurants_items
+        WHERE item_id = #{itemId}
+    </select>
 
     <delete id="delete" parameterType="Long">
         DELETE

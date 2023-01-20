@@ -1,7 +1,6 @@
-package com.solvd.dp.security.evaluators;
+package com.solvd.dp.security.expressions;
 
-import com.solvd.dp.service.AddressService;
-import com.solvd.dp.service.UserService;
+import com.solvd.dp.service.*;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -24,6 +23,9 @@ public class CustomSecurityExpressionHandler extends DefaultMethodSecurityExpres
         root.setRoleHierarchy(getRoleHierarchy());
         root.setUserService(this.applicationContext.getBean(UserService.class));
         root.setAddressService(this.applicationContext.getBean(AddressService.class));
+        root.setEmployeeService(this.applicationContext.getBean(EmployeeService.class));
+        root.setItemService(this.applicationContext.getBean(ItemService.class));
+        root.setOrderService(this.applicationContext.getBean(OrderService.class));
         return root;
     }
 

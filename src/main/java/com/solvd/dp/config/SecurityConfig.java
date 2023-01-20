@@ -2,7 +2,7 @@ package com.solvd.dp.config;
 
 import com.solvd.dp.security.JwtConfigurer;
 import com.solvd.dp.security.JwtTokenProvider;
-import com.solvd.dp.security.evaluators.CustomSecurityExpressionHandler;
+import com.solvd.dp.security.expressions.CustomSecurityExpressionHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -61,8 +61,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/users/**").authenticated()
                 .requestMatchers("/api/v1/couriers/**").authenticated()
                 .requestMatchers("/api/v1/orders/**").authenticated()
+                .requestMatchers("/api/v1/restaurants/*/employees/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
+                .anonymous()
+                .disable()
                 .apply(new JwtConfigurer(jwtTokenProvider));
         return http.build();
     }

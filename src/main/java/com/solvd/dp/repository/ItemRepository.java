@@ -26,6 +26,8 @@ public interface ItemRepository {
 
     void create(Item item);
 
+    Long getRestaurantIdByItemId(Long itemId);
+
     void delete(Long id);
 
 }

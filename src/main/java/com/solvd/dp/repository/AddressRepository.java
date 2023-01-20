@@ -22,6 +22,8 @@ public interface AddressRepository {
 
     boolean isUserOwner(@Param("addressId") Long addressId, @Param("userId") Long userId);
 
+    boolean isEmployeeOwner(@Param("addressId") Long addressId, @Param("employeeId") Long employeeId);
+
     void delete(Long id);
 
 }

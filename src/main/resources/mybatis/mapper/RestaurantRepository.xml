@@ -37,6 +37,9 @@
                e.id           as employee_id,
                e.name         as employee_name,
                e.position     as employee_position,
+               e.email        as employee_email,
+               e.password     as employee_password,
+               er.role        as employee_role,
                i.id           as item_id,
                i.name         as item_name,
                i.description  as item_description,
@@ -50,6 +53,7 @@
                  LEFT JOIN employees e on re.employee_id = e.id
                  LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                  LEFT JOIN items i on restaurants_items.item_id = i.id
+                 JOIN employees_roles er on e.id = er.employee_id
     </select>
 
     <select id="findById" resultMap="RestaurantResultMap" parameterType="Long">
@@ -64,6 +68,9 @@
                e.id           as employee_id,
                e.name         as employee_name,
                e.position     as employee_position,
+               e.email        as employee_email,
+               e.password     as employee_password,
+               er.role        as employee_role,
                i.id           as item_id,
                i.name         as item_name,
                i.description  as item_description,
@@ -77,6 +84,7 @@
                  LEFT JOIN employees e on re.employee_id = e.id
                  LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                  LEFT JOIN items i on restaurants_items.item_id = i.id
+                 JOIN employees_roles er on e.id = er.employee_id
         WHERE r.id = #{id}
     </select>
 
@@ -92,6 +100,9 @@
                e.id           as employee_id,
                e.name         as employee_name,
                e.position     as employee_position,
+               e.email        as employee_email,
+               e.password     as employee_password,
+               er.role        as employee_role,
                i.id           as item_id,
                i.name         as item_name,
                i.description  as item_description,
@@ -105,6 +116,7 @@
                  LEFT JOIN employees e on re.employee_id = e.id
                  LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                  LEFT JOIN items i on restaurants_items.item_id = i.id
+                 JOIN employees_roles er on e.id = er.employee_id
         WHERE r.name = #{name}
     </select>
 

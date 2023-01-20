@@ -34,6 +34,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                                   e.id           as employee_id,
                                   e.name         as employee_name,
                                   e.position     as employee_position,
+                                  er.role        as employee_role,
                                   i.id as item_id,
                                   i.name as item_name,
                                   i.description as item_description,
@@ -47,6 +48,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                                     LEFT JOIN employees e on re.employee_id = e.id
                                     LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                                     LEFT JOIN items i on restaurants_items.item_id = i.id
+                                    JOIN employees_roles er on e.id = er.employee_id
                            WHERE r.id = ?""";
     private static final String FIND_BY_NAME = """
             SELECT r.id           as restaurant_id,
@@ -60,6 +62,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                    e.id           as employee_id,
                    e.name         as employee_name,
                    e.position     as employee_position,
+                   er.role        as employee_role,
                    i.id as item_id,
                    i.name as item_name,
                    i.description as item_description,
@@ -73,6 +76,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                      LEFT JOIN employees e on re.employee_id = e.id
                      LEFT JOIN restaurants_items on r.id = restaurants_items.restaurant_id
                      LEFT JOIN items i on restaurants_items.item_id = i.id
+                     JOIN employees_roles er on e.id = er.employee_id
             WHERE r.name = ?""";
     private static final String IS_EXISTS = "SELECT id FROM restaurants WHERE name = ?";
     private static final String IS_EMPLOYEE_EXISTS = "SELECT EXISTS(SELECT 1 FROM restaurants_employees WHERE restaurant_id = ? AND employee_id = ?)";

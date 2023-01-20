@@ -65,7 +65,21 @@
     </insert>
 
     <select id="isUserOwner" resultType="boolean">
-        SELECT EXISTS (SELECT * FROM users_addresses WHERE user_id = #{userId} AND address_id = #{addressId})
+        SELECT EXISTS(SELECT * FROM users_addresses WHERE user_id = #{userId} AND address_id = #{addressId})
+    </select>
+
+    <select id="isEmployeeOwner" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM employees_roles
+                                JOIN employees e on e.id = employees_roles.employee_id
+                                JOIN restaurants_employees re on e.id = re.employee_id
+                                JOIN restaurants_addresses ra on re.restaurant_id = ra.restaurant_id
+                                JOIN addresses a on a.id = ra.address_id
+                       WHERE role = 'ROLE_MANAGER'
+                         AND e.id = #{employeeId}
+                         AND a.id = #{addressId}
+                   )
     </select>
 
     <delete id="delete" parameterType="Long">

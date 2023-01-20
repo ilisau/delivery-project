@@ -1,8 +1,10 @@
 package com.solvd.dp.security;
 
 import com.solvd.dp.domain.courier.Courier;
+import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.service.CourierService;
+import com.solvd.dp.service.EmployeeService;
 import com.solvd.dp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +17,7 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
     private final CourierService courierService;
+    private final EmployeeService employeeService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -28,6 +31,10 @@ public class JwtUserDetailsService implements UserDetailsService {
             case "C:" -> {
                 Courier courier = courierService.getByEmail(username);
                 return JwtEntityFactory.create(courier);
+            }
+            case "E:" -> {
+                Employee employee = employeeService.getByEmail(username);
+                return JwtEntityFactory.create(employee);
             }
             default -> throw new IllegalArgumentException("User with email " + username + " not found");
         }

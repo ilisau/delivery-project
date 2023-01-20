@@ -29,6 +29,12 @@ public interface OrderService {
 
     void updateStatus(Long id, OrderStatus status);
 
+    boolean isUserOwner(Long orderId, Long userId);
+
+    boolean isCourierOwner(Long orderId, Long courierId);
+
+    boolean isEmployeeOwner(Long orderId, Long employeeId);
+
     void delete(Long id);
 
 }

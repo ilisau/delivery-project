@@ -287,6 +287,44 @@
         VALUES (#{userId}, #{orderId})
     </insert>
 
+    <select id="isUserOwner" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM orders o
+                                JOIN users_orders uo on o.id = uo.order_id
+                                JOIN users u on uo.user_id = u.id
+                       WHERE u.id = #{userId}
+                         AND o.id = #{orderId}
+                   )
+    </select>
+
+    <select id="isCourierOwner" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM orders o
+                                JOIN couriers c on o.courier_id = c.id
+                       WHERE c.id = #{courierId}
+                         AND o.id = #{orderId}
+                   )
+    </select>
+
+    <select id="isEmployeeOwner" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM orders o
+                                JOIN carts c on o.cart_id = c.id
+                                JOIN carts_items ci on c.id = ci.cart_id
+                                JOIN items i on ci.item_id = i.id
+                                JOIN restaurants_items ri on i.id = ri.item_id
+                                JOIN restaurants_employees re on ri.restaurant_id = re.restaurant_id
+                                JOIN employees e on re.employee_id = e.id
+                                JOIN employees_roles er on e.id = er.employee_id
+                       WHERE er.role = ?
+                         AND o.id = ?
+                         AND e.id = ?
+                   )
+    </select>
+
     <delete id="delete" parameterType="Long">
         DELETE
         FROM orders

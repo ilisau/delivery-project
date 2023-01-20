@@ -37,6 +37,12 @@ public interface OrderRepository {
 
     void addOrderById(@Param("orderId") Long orderId, @Param("userId") Long userId);
 
+    boolean isUserOwner(@Param("orderId") Long orderId, @Param("userId") Long userId);
+
+    boolean isCourierOwner(@Param("orderId") Long orderId, @Param("courierId") Long courierId);
+
+    boolean isEmployeeOwner(@Param("orderId") Long orderId, @Param("employeeId") Long employeeId);
+
     void delete(Long id);
 
 }

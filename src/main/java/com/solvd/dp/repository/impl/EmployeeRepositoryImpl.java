@@ -3,6 +3,7 @@ package com.solvd.dp.repository.impl;
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.restaurant.EmployeePosition;
+import com.solvd.dp.domain.user.Role;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.EmployeeRepository;
 import com.solvd.dp.repository.mappers.EmployeeRowMapper;
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 //@Repository
 @RequiredArgsConstructor
@@ -24,24 +26,40 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
     private static final String FIND_ALL_BY_RESTAURANT_ID = """
             SELECT employees.id       as employee_id,
                    employees.name     as employee_name,
-                   employees.position as employee_position
+                   employees.position as employee_position,
+                   er.role            as employee_role
             FROM restaurants_employees
-                     LEFT JOIN employees ON employee_id = employees.id
+                   LEFT JOIN employees ON employee_id = employees.id
+                   JOIN employees_roles er on employees.id = er.employee_id
             WHERE restaurants_employees.restaurant_id = ?""";
     private static final String FIND_BY_ID = """
-            SELECT id       as employee_id,
-                   name     as employee_name,
-                   position as employee_position
-            FROM employees
-            WHERE id = ?""";
+            SELECT employees.id       as employee_id,
+                               employees.name     as employee_name,
+                               employees.position as employee_position,
+                               er.role            as employee_role
+                        FROM restaurants_employees
+                                 LEFT JOIN employees ON employee_id = employees.id
+                                 JOIN employees_roles er on employees.id = er.employee_id
+                        WHERE employees.id = ?""";
+    private static final String FIND_BY_EMAIL = """
+            SELECT employees.id       as employee_id,
+                               employees.name     as employee_name,
+                               employees.position as employee_position,
+                               er.role            as employee_role
+                        FROM restaurants_employees
+                                 LEFT JOIN employees ON employee_id = employees.id
+                                 JOIN employees_roles er on employees.id = er.employee_id
+                        WHERE employees.email = ?""";
     private static final String FIND_ALL_BY_RESTAURANT_ID_AND_POSITION = """
-            SELECT e.id       as employee_id,
-                   e.name     as employee_name,
-                   e.position as employee_position
+            SELECT employees.id       as employee_id,
+                   employees.name     as employee_name,
+                   employees.position as employee_position,
+                   er.role            as employee_role
             FROM restaurants_employees
-                     LEFT JOIN employees e ON employee_id = e.id
+                   LEFT JOIN employees ON employee_id = employees.id
+                   JOIN employees_roles er on employees.id = er.employee_id
             WHERE restaurants_employees.restaurant_id = ?
-            AND e.position = ?""";
+            AND employees.position = ?""";
     private static final String IS_EXISTS = """
             SELECT EXISTS(
                 SELECT 1
@@ -50,8 +68,19 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 WHERE e.name = ?
                   AND re.restaurant_id = ?
                 )""";
-    private static final String SAVE_BY_ID = "UPDATE employees SET name = ?, position = ? WHERE id = ?";
-    private static final String CREATE = "INSERT INTO employees (name, position) VALUES (?, ?)";
+    private static final String SAVE_ROLES = "INSERT INTO employees_roles (employee_id, role) VALUES (?, ?)";
+    private static final String SAVE_BY_ID = "UPDATE employees SET name = ?, position = ?, email = ?, password = ? WHERE id = ?";
+    private static final String IS_MANAGER = """
+            SELECT EXISTS(
+                SELECT 1
+                FROM employees_roles
+                         JOIN employees e on e.id = employees_roles.employee_id
+                         JOIN restaurants_employees re on e.id = re.employee_id
+                WHERE role = ?
+                  AND restaurant_id = ?
+                  AND e.id = ?
+            )""";
+    private static final String CREATE = "INSERT INTO employees (name, position, email, password) VALUES (?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM employees WHERE id = ?";
 
     @Override
@@ -65,6 +94,20 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while getting employee by id :: " + id);
+        }
+    }
+
+    @Override
+    public Optional<Employee> findByEmail(String email) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_BY_EMAIL);
+            statement.setString(1, email);
+            try (ResultSet rs = statement.executeQuery()) {
+                return Optional.ofNullable(EmployeeRowMapper.mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting employee by username :: " + email);
         }
     }
 
@@ -104,7 +147,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
             statement.setString(1, employee.getName());
             statement.setString(2, employee.getPosition().name());
-            statement.setLong(3, employee.getId());
+            statement.setString(3, employee.getEmail());
+            statement.setString(4, employee.getPassword());
+            statement.setLong(5, employee.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while saving employee :: " + employee);
@@ -118,6 +163,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             PreparedStatement statement = connection.prepareStatement(CREATE, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, employee.getName());
             statement.setString(2, employee.getPosition().name());
+            statement.setString(3, employee.getEmail());
+            statement.setString(4, employee.getPassword());
             statement.executeUpdate();
             try (ResultSet key = statement.getGeneratedKeys()) {
                 key.next();
@@ -125,6 +172,22 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating employee :: " + employee);
+        }
+    }
+
+    @Override
+    public void saveRoles(Long id, Set<Role> roles) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SAVE_ROLES);
+            for (Role role : roles) {
+                statement.setLong(1, id);
+                statement.setString(2, role.name());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while saving roles for employee :: " + id);
         }
     }
 
@@ -141,6 +204,23 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while checking if employee exists :: " + employee);
+        }
+    }
+
+    @Override
+    public boolean isManager(Long employeeId, Long restaurantId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_MANAGER);
+            statement.setString(1, Role.ROLE_MANAGER.name());
+            statement.setLong(2, restaurantId);
+            statement.setLong(3, employeeId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if employee is manager :: " + employeeId);
         }
     }
 
