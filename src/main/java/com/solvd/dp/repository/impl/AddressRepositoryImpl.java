@@ -2,6 +2,7 @@ package com.solvd.dp.repository.impl;
 
 import com.solvd.dp.domain.exception.ResourceMappingException;
 import com.solvd.dp.domain.user.Address;
+import com.solvd.dp.domain.user.Role;
 import com.solvd.dp.repository.AddressRepository;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.mappers.AddressRowMapper;
@@ -45,6 +46,19 @@ public class AddressRepositoryImpl implements AddressRepository {
             WHERE restaurant_id = ?""";
     private static final String SAVE_BY_ID = "UPDATE addresses SET street_name = ?, house_number = ?, floor_number = ?, flat_number = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO addresses (street_name, house_number, floor_number, flat_number) VALUES (?, ?, ?, ?)";
+    private static final String IS_USER_OWNER = "SELECT EXISTS (SELECT * FROM users_addresses WHERE user_id = ? AND address_id = ?)";
+    private static final String IS_EMPLOYEE_OWNER = """
+            SELECT EXISTS(
+                           SELECT 1
+                           FROM employees_roles
+                                    JOIN employees e on e.id = employees_roles.employee_id
+                                    JOIN restaurants_employees re on e.id = re.employee_id
+                                    JOIN restaurants_addresses ra on re.restaurant_id = ra.restaurant_id
+                                    JOIN addresses a on a.id = ra.address_id
+                           WHERE role = ?
+                             AND e.id = ?
+                             AND a.id = ?
+                       )""";
     private static final String DELETE_BY_ID = "DELETE FROM addresses WHERE id = ?";
 
     @Override
@@ -137,6 +151,39 @@ public class AddressRepositoryImpl implements AddressRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating address :: " + address);
+        }
+    }
+
+    @Override
+    public boolean isUserOwner(Long addressId, Long userId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_USER_OWNER);
+            statement.setLong(1, userId);
+            statement.setLong(2, addressId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if user is owner of address :: " + addressId);
+        }
+    }
+
+    @Override
+    public boolean isEmployeeOwner(Long addressId, Long employeeId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_EMPLOYEE_OWNER);
+            statement.setString(1, Role.ROLE_MANAGER.name());
+            statement.setLong(2, employeeId);
+            statement.setLong(3, addressId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if employee is owner of address :: " + addressId);
         }
     }
 

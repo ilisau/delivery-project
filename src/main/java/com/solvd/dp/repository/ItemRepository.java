@@ -12,20 +12,22 @@ import java.util.Optional;
 @Mapper
 public interface ItemRepository {
 
-    Optional<Item> findById(@Param("id") Long id);
+    Optional<Item> findById(Long id);
 
-    Map<Item, Long> getAllByCartId(@Param("cartId") Long cartId);
+    Map<Item, Long> getAllByCartId(Long cartId);
 
-    List<Item> getAllByType(@Param("type") ItemType type);
+    List<Item> getAllByType(ItemType type);
 
-    List<Item> getAllByRestaurantId(@Param("restaurantId") Long restaurantId);
+    List<Item> getAllByRestaurantId(Long restaurantId);
 
     List<Item> getAllByRestaurantIdAndType(@Param("restaurantId") Long restaurantId, @Param("type") ItemType type);
 
-    void update(@Param("item") Item item);
+    void update(Item item);
 
-    void create(@Param("item") Item item);
+    void create(Item item);
 
-    void delete(@Param("item") Long id);
+    Long getRestaurantIdByItemId(Long itemId);
+
+    void delete(Long id);
 
 }

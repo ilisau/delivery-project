@@ -46,23 +46,41 @@
 
     <update id="update" parameterType="com.solvd.dp.domain.user.Address">
         UPDATE addresses
-        SET street_name  = #{address.streetName},
-            house_number = #{address.houseNumber},
-            floor_number = #{address.floorNumber},
-            flat_number  = #{address.flatNumber}
+        SET street_name  = #{streetName},
+            house_number = #{houseNumber},
+            floor_number = #{floorNumber},
+            flat_number  = #{flatNumber}
         WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="address.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Address">
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.user.Address">
         INSERT INTO addresses (street_name,
                                house_number,
                                floor_number,
                                flat_number)
-        VALUES (#{address.streetName},
-                #{address.houseNumber},
-                #{address.floorNumber},
-                #{address.flatNumber})
+        VALUES (#{streetName},
+                #{houseNumber},
+                #{floorNumber},
+                #{flatNumber})
     </insert>
+
+    <select id="isUserOwner" resultType="boolean">
+        SELECT EXISTS(SELECT * FROM users_addresses WHERE user_id = #{userId} AND address_id = #{addressId})
+    </select>
+
+    <select id="isEmployeeOwner" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM employees_roles
+                                JOIN employees e on e.id = employees_roles.employee_id
+                                JOIN restaurants_employees re on e.id = re.employee_id
+                                JOIN restaurants_addresses ra on re.restaurant_id = ra.restaurant_id
+                                JOIN addresses a on a.id = ra.address_id
+                       WHERE role = 'ROLE_MANAGER'
+                         AND e.id = #{employeeId}
+                         AND a.id = #{addressId}
+                   )
+    </select>
 
     <delete id="delete" parameterType="Long">
         DELETE

@@ -9,13 +9,13 @@ import java.util.Optional;
 @Mapper
 public interface CartRepository {
 
-    Optional<Cart> findById(@Param("id") Long id);
+    Optional<Cart> findById(Long id);
 
-    Optional<Cart> findByUserId(@Param("userId") Long userId);
+    Optional<Cart> findByUserId(Long userId);
 
-    void create(@Param("cart") Cart cart);
+    void create(Cart cart);
 
-    void clear(@Param("id") Long id);
+    void clear(Long id);
 
     void setByUserId(@Param("cartId") Long cartId, @Param("userId") Long userId);
 
@@ -23,6 +23,6 @@ public interface CartRepository {
 
     void deleteItemById(@Param("cartId") Long cartId, @Param("itemId") Long itemId, @Param("quantity") long quantity);
 
-    void delete(@Param("id") Long id);
+    void delete(Long id);
 
 }

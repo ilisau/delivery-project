@@ -69,6 +69,10 @@ public class ItemRepositoryImpl implements ItemRepository {
                      LEFT JOIN items i ON restaurants_items.item_id = i.id
             WHERE restaurants_items.restaurant_id = ?
             AND type = ?""";
+    private static final String FIND_RESTAURANT_ID_BY_ITEM_ID = """
+            SELECT restaurant_id
+            FROM restaurants_items
+            WHERE item_id = ?""";
     private static final String SAVE_BY_ID = "UPDATE items SET name = ?, description = ?, price = ?, type = ?, available = ? WHERE id = ?";
     private static final String CREATE = "INSERT INTO items (name, description, price, type, available) VALUES (?, ?, ?, ?, ?)";
     private static final String DELETE_BY_ID = "DELETE FROM items WHERE id = ?";
@@ -178,6 +182,23 @@ public class ItemRepositoryImpl implements ItemRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating item :: " + item);
+        }
+    }
+
+    @Override
+    public Long getRestaurantIdByItemId(Long itemId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(FIND_RESTAURANT_ID_BY_ITEM_ID);
+            statement.setLong(1, itemId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong("restaurant_id");
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while getting restaurant id by item id :: " + itemId);
         }
     }
 

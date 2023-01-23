@@ -2,6 +2,7 @@ package com.solvd.dp.repository.mappers;
 
 import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.restaurant.EmployeePosition;
+import com.solvd.dp.domain.user.Role;
 import lombok.SneakyThrows;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -20,6 +21,7 @@ public abstract class EmployeeRowMapper implements RowMapper<Employee> {
             if (!resultSet.wasNull()) {
                 employee.setName(resultSet.getString("employee_name"));
                 employee.setPosition(EmployeePosition.valueOf(resultSet.getString("employee_position")));
+                employee.setRoles(Set.of(Role.valueOf(resultSet.getString("employee_role"))));
                 return employee;
             }
         }
@@ -35,6 +37,7 @@ public abstract class EmployeeRowMapper implements RowMapper<Employee> {
             if (!resultSet.wasNull()) {
                 employee.setName(resultSet.getString("employee_name"));
                 employee.setPosition(EmployeePosition.valueOf(resultSet.getString("employee_position")));
+                employee.setRoles(Set.of(Role.valueOf(resultSet.getString("employee_role"))));
                 employees.add(employee);
             }
         }

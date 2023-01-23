@@ -7,6 +7,8 @@ import com.solvd.dp.domain.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,6 +68,18 @@ public class ControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ExceptionBody handleIllegalStateException(IllegalStateException e) {
         return new ExceptionBody(e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ExceptionBody handleAuthenticationException() {
+        return new ExceptionBody("Incorrect credentials");
+    }
+
+    @ExceptionHandler({AccessDeniedException.class, com.solvd.dp.domain.exception.AccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ExceptionBody handleAccessDeniedException() {
+        return new ExceptionBody("Access denied");
     }
 
     @ExceptionHandler(Exception.class)

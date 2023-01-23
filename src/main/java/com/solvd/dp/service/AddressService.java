@@ -16,6 +16,10 @@ public interface AddressService {
 
     Address create(Address address);
 
+    boolean isUserOwner(Long addressId, Long userId);
+
+    boolean isEmployeeOwner(Long addressId, Long employeeId);
+
     void delete(Long id);
 
 }

@@ -91,6 +91,38 @@ public class OrderRepositoryImpl implements OrderRepository {
     private static final String UPDATE_STATUS = "UPDATE orders SET status = ? WHERE id = ?";
     private static final String SET_DELIVERED_AT = "UPDATE orders SET delivered_at = ? WHERE id = ?";
     private static final String ADD_ORDER = "INSERT INTO users_orders (user_id, order_id) VALUES (?, ?)";
+    private static final String IS_USER_OWNER = """
+            SELECT EXISTS(
+                           SELECT 1
+                           FROM orders o
+                           JOIN users_orders uo on o.id = uo.order_id
+                           JOIN users u on uo.user_id = u.id
+                           WHERE u.id = ?
+                           AND o.id = ?
+                       )""";
+    private static final String IS_COURIER_OWNER = """
+            SELECT EXISTS(
+                           SELECT 1
+                           FROM orders o
+                           JOIN couriers c on o.courier_id = c.id
+                           WHERE c.id = ?
+                           AND o.id = ?
+                       )""";
+    private static final String IS_EMPLOYEE_OWNER = """
+            SELECT EXISTS(
+                           SELECT 1
+                           FROM orders o
+                                    JOIN carts c on o.cart_id = c.id
+                                    JOIN carts_items ci on c.id = ci.cart_id
+                                    JOIN items i on ci.item_id = i.id
+                                    JOIN restaurants_items ri on i.id = ri.item_id
+                                    JOIN restaurants_employees re on ri.restaurant_id = re.restaurant_id
+                                    JOIN employees e on re.employee_id = e.id
+                                    JOIN employees_roles er on e.id = er.employee_id
+                           WHERE er.role = ?
+                             AND o.id = ?
+                             AND e.id = ?
+                       )""";
     private static final String DELETE_BY_ID = "DELETE FROM orders WHERE id = ?";
 
     @Override
@@ -294,6 +326,54 @@ public class OrderRepositoryImpl implements OrderRepository {
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while adding order to user with id :: " + userId);
+        }
+    }
+
+    @Override
+    public boolean isUserOwner(Long orderId, Long userId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_USER_OWNER);
+            statement.setLong(1, userId);
+            statement.setLong(2, orderId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if user is owner of order :: " + orderId);
+        }
+    }
+
+    @Override
+    public boolean isCourierOwner(Long orderId, Long courierId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_COURIER_OWNER);
+            statement.setLong(1, courierId);
+            statement.setLong(2, orderId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if courier is owner of order :: " + orderId);
+        }
+    }
+
+    @Override
+    public boolean isEmployeeOwner(Long orderId, Long employeeId) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(IS_EMPLOYEE_OWNER);
+            statement.setLong(1, orderId);
+            statement.setLong(2, employeeId);
+            try (ResultSet rs = statement.executeQuery()) {
+                rs.next();
+                return rs.getBoolean(1);
+            }
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while checking if employee is owner of order :: " + orderId);
         }
     }
 

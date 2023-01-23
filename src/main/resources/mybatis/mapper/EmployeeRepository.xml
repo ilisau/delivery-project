@@ -8,54 +8,105 @@
         <id property="id" column="employee_id" jdbcType="BIGINT"/>
         <result property="name" column="employee_name" jdbcType="VARCHAR"/>
         <result property="position" column="employee_position" jdbcType="VARCHAR"/>
+        <result property="email" column="employee_email" jdbcType="VARCHAR"/>
+        <result property="password" column="employee_password" jdbcType="VARCHAR"/>
+        <collection property="roles" ofType="com.solvd.dp.domain.user.Role" autoMapping="false">
+            <result property="name" column="employee_role" jdbcType="VARCHAR"/>
+        </collection>
     </resultMap>
 
     <select id="findById" resultMap="EmployeeResultMap" parameterType="Long">
         SELECT id       as employee_id,
                name     as employee_name,
-               position as employee_position
+               position as employee_position,
+               email    as employee_email,
+               password as employee_password,
+               er.role  as employee_role
         FROM employees
+                 JOIN employees_roles er on employees.id = er.employee_id
         WHERE id = #{id}
+    </select>
+
+    <select id="findByEmail" resultMap="EmployeeResultMap" parameterType="String">
+        SELECT id       as employee_id,
+               name     as employee_name,
+               position as employee_position,
+               email    as employee_email,
+               password as employee_password,
+               er.role  as employee_role
+        FROM employees
+                 JOIN employees_roles er on employees.id = er.employee_id
+        WHERE email = #{email}
     </select>
 
     <select id="getAllByRestaurantId" resultMap="EmployeeResultMap" parameterType="Long">
         SELECT employees.id       as employee_id,
                employees.name     as employee_name,
-               employees.position as employee_position
+               employees.position as employee_position,
+               employees.email    as employee_email,
+               employees.password as employee_password,
+               er.role            as employee_role
         FROM restaurants_employees
                  LEFT JOIN employees ON employee_id = employees.id
+                 JOIN employees_roles er on employees.id = er.employee_id
         WHERE restaurants_employees.restaurant_id = #{restaurantId}
     </select>
 
     <select id="getAllByRestaurantIdAndPosition" resultMap="EmployeeResultMap">
         SELECT employees.id       as employee_id,
                employees.name     as employee_name,
-               employees.position as employee_position
+               employees.position as employee_position,
+               employees.email    as employee_email,
+               employees.password as employee_password,
+               er.role            as employee_role
         FROM restaurants_employees
                  LEFT JOIN employees ON employee_id = employees.id
+                 JOIN employees_roles er on employees.id = er.employee_id
         WHERE restaurants_employees.restaurant_id = #{restaurantId}
           AND employees.position = #{position}
     </select>
 
     <update id="update" parameterType="com.solvd.dp.domain.restaurant.Employee">
         UPDATE employees
-        SET name     = #{employee.name},
-            position = #{employee.position}
-        WHERE id = #{employee.id}
+        SET name     = #{name},
+            position = #{position},
+            password = #{password},
+            email    = #{email}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="employee.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.restaurant.Employee">
-        INSERT INTO employees (name, position)
-        VALUES (#{employee.name}, #{employee.position})
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true"
+            parameterType="com.solvd.dp.domain.restaurant.Employee">
+        INSERT INTO employees (name, position, email, password)
+        VALUES (#{name}, #{position}, #{email}, #{password})
     </insert>
 
-    <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.restaurant.Employee">
+    <insert id="saveRoles">
+        <foreach collection="roles" item="role" separator=";">
+            INSERT INTO employees_roles (employee_id, role)
+            VALUES (#{id}, #{role})
+        </foreach>
+    </insert>
+
+    <select id="exists" resultType="boolean">
         SELECT EXISTS(
                        SELECT 1
                        FROM restaurants_employees re
                                 JOIN employees e on re.employee_id = e.id
                        WHERE e.name = #{employee.name}
                          AND re.restaurant_id = #{restaurantId}
+                   )
+    </select>
+
+    <select id="isManager" resultType="boolean">
+        SELECT EXISTS(
+                       SELECT 1
+                       FROM employees_roles
+                                JOIN employees e on e.id = employees_roles.employee_id
+                                JOIN restaurants_employees re on e.id = re.employee_id
+                       WHERE role = 'ROLE_MANAGER'
+                         AND restaurant_id = #{restaurantId}
+                         AND e.id = #{employeeId}
                    )
     </select>
 

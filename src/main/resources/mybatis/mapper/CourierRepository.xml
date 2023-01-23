@@ -12,76 +12,119 @@
         <result property="lastActiveAt" column="courier_last_active_at" jdbcType="TIMESTAMP"/>
         <result property="status" column="courier_status" jdbcType="VARCHAR"/>
         <result property="phoneNumber" column="courier_phone_number" jdbcType="VARCHAR"/>
+        <result property="email" column="courier_email" jdbcType="VARCHAR"/>
+        <result property="password" column="courier_password" jdbcType="VARCHAR"/>
+        <collection property="roles" ofType="com.solvd.dp.domain.user.Role" autoMapping="false">
+            <result property="name" column="role_name" jdbcType="VARCHAR"/>
+        </collection>
     </resultMap>
 
     <select id="findById" resultMap="CourierResultMap" parameterType="Long">
-        SELECT id             as courier_id,
-               first_name     as courier_first_name,
-               last_name      as courier_last_name,
-               created_at     as courier_created_at,
-               last_active_at as courier_last_active_at,
-               status         as courier_status,
-               phone_number   as courier_phone_number
-        FROM couriers
-        WHERE id = #{id}
-    </select>
-
-    <select id="findByOrderId" resultMap="CourierResultMap" parameterType="Long">
-        SELECT c.id            as courier_id,
+        SELECT c.id             as courier_id,
                c.first_name     as courier_first_name,
                c.last_name      as courier_last_name,
                c.phone_number   as courier_phone_number,
                c.created_at     as courier_created_at,
                c.last_active_at as courier_last_active_at,
-               c.status         as courier_status
+               c.status         as courier_status,
+               c.email          as courier_email,
+               c.password       as courier_password,
+               cr.role          as role_name
+        FROM couriers c
+                 JOIN couriers_roles cr ON c.id = cr.courier_id
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByEmail" resultMap="CourierResultMap" parameterType="String">
+        SELECT c.id             as courier_id,
+               c.first_name     as courier_first_name,
+               c.last_name      as courier_last_name,
+               c.phone_number   as courier_phone_number,
+               c.created_at     as courier_created_at,
+               c.last_active_at as courier_last_active_at,
+               c.status         as courier_status,
+               c.email          as courier_email,
+               c.password       as courier_password,
+               cr.role          as role_name
+        FROM couriers c
+                 JOIN couriers_roles cr ON c.id = cr.courier_id
+        WHERE c.email = #{email}
+    </select>
+
+    <select id="findByOrderId" resultMap="CourierResultMap" parameterType="Long">
+        SELECT c.id             as courier_id,
+               c.first_name     as courier_first_name,
+               c.last_name      as courier_last_name,
+               c.phone_number   as courier_phone_number,
+               c.created_at     as courier_created_at,
+               c.last_active_at as courier_last_active_at,
+               c.status         as courier_status,
+               c.email          as courier_email,
+               c.password       as courier_password,
+               cr.role          as role_name
         FROM couriers c
                  LEFT JOIN orders o on c.id = o.courier_id
+                 JOIN couriers_roles cr ON c.id = cr.courier_id
         WHERE o.id = #{orderId}
     </select>
 
     <select id="getAll" resultMap="CourierResultMap">
-        SELECT id             as courier_id,
-               first_name     as courier_first_name,
-               last_name      as courier_last_name,
-               created_at     as courier_created_at,
-               last_active_at as courier_last_active_at,
-               status         as courier_status,
-               phone_number   as courier_phone_number
-        FROM couriers
+        SELECT c.id             as courier_id,
+               c.first_name     as courier_first_name,
+               c.last_name      as courier_last_name,
+               c.created_at     as courier_created_at,
+               c.last_active_at as courier_last_active_at,
+               c.status         as courier_status,
+               c.phone_number   as courier_phone_number,
+               cr.role          as role_name
+        FROM couriers c
+                 JOIN couriers_roles cr on c.id = cr.courier_id
     </select>
 
     <select id="getAllByStatus" resultMap="CourierResultMap" parameterType="com.solvd.dp.domain.courier.CourierStatus">
-        SELECT id             as courier_id,
-               first_name     as courier_first_name,
-               last_name      as courier_last_name,
-               created_at     as courier_created_at,
-               last_active_at as courier_last_active_at,
-               status         as courier_status,
-               phone_number   as courier_phone_number
-        FROM couriers
+        SELECT c.id             as courier_id,
+               c.first_name     as courier_first_name,
+               c.last_name      as courier_last_name,
+               c.created_at     as courier_created_at,
+               c.last_active_at as courier_last_active_at,
+               c.status         as courier_status,
+               c.phone_number   as courier_phone_number,
+               cr.role          as role_name
+        FROM couriers c
+                 JOIN couriers_roles cr on c.id = cr.courier_id
         WHERE status = #{status}
     </select>
 
     <update id="update" parameterType="com.solvd.dp.domain.courier.Courier">
         UPDATE couriers
-        SET first_name   = #{courier.firstName},
-            last_name    = #{courier.lastName},
-            phone_number = #{courier.phoneNumber},
-            status       = #{courier.status}
-        WHERE id = #{courier.id}
+        SET first_name   = #{firstName},
+            last_name    = #{lastName},
+            phone_number = #{phoneNumber},
+            status       = #{status},
+            password     = #{password},
+            email        = #{email}
+        WHERE id = #{id}
     </update>
 
-    <insert id="create" keyProperty="courier.id" keyColumn="id" useGeneratedKeys="true" parameterType="com.solvd.dp.domain.courier.Courier">
-        INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number)
-        VALUES (#{courier.firstName}, #{courier.lastName}, #{courier.createdAt}, #{courier.lastActiveAt},
-                #{courier.status}, #{courier.phoneNumber})
+    <insert id="create" keyProperty="id" keyColumn="id" useGeneratedKeys="true"
+            parameterType="com.solvd.dp.domain.courier.Courier">
+        INSERT INTO couriers (first_name, last_name, created_at, last_active_at, status, phone_number, password, email)
+        VALUES (#{firstName}, #{lastName}, #{createdAt}, #{lastActiveAt},
+                #{status}, #{phoneNumber}, #{password}, #{email})
+    </insert>
+
+    <insert id="saveRoles">
+        <foreach collection="roles" item="role" separator=";">
+            INSERT INTO couriers_roles (courier_id, role)
+            VALUES (#{id}, #{role})
+        </foreach>
     </insert>
 
     <select id="exists" resultType="boolean" parameterType="com.solvd.dp.domain.courier.Courier">
         SELECT EXISTS(SELECT
                       FROM couriers
-                      WHERE (first_name = #{courier.firstName} and last_name = #{courier.lastName})
-                         or phone_number = #{courier.phoneNumber})
+                      WHERE (first_name = #{firstName} and last_name = #{lastName})
+                         or phone_number = #{phoneNumber})
     </select>
 
     <delete id="delete" parameterType="Long">

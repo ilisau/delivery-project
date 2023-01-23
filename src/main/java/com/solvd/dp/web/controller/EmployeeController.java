@@ -8,6 +8,7 @@ import com.solvd.dp.web.dto.validation.OnCreate;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.EmployeeMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +25,15 @@ public class EmployeeController {
     private final EmployeeMapper employeeMapper;
 
     @PutMapping
-    public void update(@Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
+    @PreAuthorize("canAccessEmployee(#restaurantId, #employeeDto.id)")
+    public void update(@PathVariable Long restaurantId,
+                       @Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
         employeeService.update(employee);
     }
 
     @PostMapping
+    @PreAuthorize("canCreateEmployee(#restaurantId)")
     public EmployeeDto create(@PathVariable Long restaurantId,
                               @Validated(OnCreate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employeeToBeCreated = employeeMapper.toEntity(employeeDto);
@@ -38,6 +42,7 @@ public class EmployeeController {
     }
 
     @GetMapping
+    @PreAuthorize("canAccessEmployees(#restaurantId)")
     public List<EmployeeDto> getAllByRestaurantId(@PathVariable Long restaurantId,
                                                   @RequestParam(required = false) EmployeePosition position) {
         List<Employee> employees;
@@ -50,13 +55,15 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public EmployeeDto getById(@PathVariable Long id) {
+    @PreAuthorize("canAccessEmployee(#restaurantId, #id)")
+    public EmployeeDto getById(@PathVariable Long restaurantId, @PathVariable Long id) {
         Employee employee = employeeService.getById(id);
         return employeeMapper.toDto(employee);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Long id) {
+    @PreAuthorize("canAccessEmployee(#restaurantId, #id)")
+    public void deleteById(@PathVariable Long restaurantId, @PathVariable Long id) {
         employeeService.delete(id);
     }
 

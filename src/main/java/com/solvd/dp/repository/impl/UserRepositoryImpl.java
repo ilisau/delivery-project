@@ -1,6 +1,7 @@
 package com.solvd.dp.repository.impl;
 
 import com.solvd.dp.domain.exception.ResourceMappingException;
+import com.solvd.dp.domain.user.Role;
 import com.solvd.dp.domain.user.User;
 import com.solvd.dp.repository.DataSourceConfig;
 import com.solvd.dp.repository.UserRepository;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.sql.*;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 //@Repository
 @RequiredArgsConstructor
@@ -18,52 +20,97 @@ public class UserRepositoryImpl implements UserRepository {
     private final DataSourceConfig dataSourceConfig;
 
     private static final String FIND_USER_BY_ID = """
-            SELECT u.id   as user_id,
-                   u.name as user_name,
-                   u.email as user_email,
-                   u.phone_number as user_phone_number,
-                   u.password as user_password,
-                   u.created_at as user_created_at,
-                   c.id   as cart_id,
-                   i.id   as item_id,
-                   i.name as item_name,
-                   i.description as item_description,
-                   i.type as item_type,
-                   i.price as item_price,
-                   i.available as item_available,
-                   ci.quantity as item_quantity,
-                   a.id as address_id,
-                   a.street_name as address_street_name,
-                   a.house_number as address_house_number,
-                   a.floor_number as address_floor_number,
-                   a.flat_number as address_flat_number
-            FROM users u
-                     LEFT JOIN carts c on u.cart_id = c.id
-                     LEFT JOIN carts_items ci on c.id = ci.cart_id
-                     LEFT JOIN items i on ci.item_id = i.id
-                     LEFT JOIN users_addresses ua on u.id = ua.user_id
-                     LEFT JOIN addresses a on ua.address_id = a.id
-            WHERE u.id = ?""";
+            SELECT u.id           as user_id,
+                           u.name         as user_name,
+                           u.email        as user_email,
+                           u.phone_number as user_phone_number,
+                           u.password     as user_password,
+                           u.created_at   as user_created_at,
+                           c.id           as cart_id,
+                           i.id           as item_id,
+                           i.name         as item_name,
+                           i.description  as item_description,
+                           i.type         as item_type,
+                           i.price        as item_price,
+                           i.available    as item_available,
+                           ci.quantity    as item_quantity,
+                           a.id           as address_id,
+                           a.street_name  as address_street_name,
+                           a.house_number as address_house_number,
+                           a.floor_number as address_floor_number,
+                           a.flat_number  as address_flat_number,
+                           ur.role        as role_name
+                    FROM users u
+                             LEFT JOIN carts c on u.cart_id = c.id
+                             LEFT JOIN carts_items ci on c.id = ci.cart_id
+                             LEFT JOIN items i on ci.item_id = i.id
+                             LEFT JOIN users_addresses ua on u.id = ua.user_id
+                             LEFT JOIN addresses a on ua.address_id = a.id
+                             LEFT JOIN users_roles ur on u.id = ur.user_id
+                    WHERE u.id = ?""";
     private static final String FIND_USER_BY_EMAIL = """
-            SELECT id as user_id,
-                   name as user_name,
-                   email as user_email,
-                   phone_number as user_phone_number,
-                   password as user_password,
-                   created_at as user_created_at
-            FROM users
-            WHERE email = ?""";
+            SELECT u.id           as user_id,
+                   u.name         as user_name,
+                   u.email        as user_email,
+                                          u.phone_number as user_phone_number,
+                                          u.password     as user_password,
+                                          u.created_at   as user_created_at,
+                                          c.id           as cart_id,
+                                          i.id           as item_id,
+                                          i.name         as item_name,
+                                          i.description  as item_description,
+                                          i.type         as item_type,
+                                          i.price        as item_price,
+                                          i.available    as item_available,
+                                          ci.quantity    as item_quantity,
+                                          a.id           as address_id,
+                                          a.street_name  as address_street_name,
+                                          a.house_number as address_house_number,
+                                          a.floor_number as address_floor_number,
+                                          a.flat_number  as address_flat_number,
+                                          ur.role        as role_name
+            FROM users u
+                LEFT JOIN carts c on u.cart_id = c.id
+                                            LEFT JOIN carts_items ci on c.id = ci.cart_id
+                                            LEFT JOIN items i on ci.item_id = i.id
+                                            LEFT JOIN users_addresses ua on u.id = ua.user_id
+                                            LEFT JOIN addresses a on ua.address_id = a.id
+                                            LEFT JOIN users_roles ur on u.id = ur.user_id
+                                   WHERE u.email = ?""";
     private static final String FIND_USER_BY_PHONE_NUMBER = """
-            SELECT id as user_id,
-                           name as user_name,
-                           email as user_email,
-                           phone_number as user_phone_number,
-                           password as user_password,
-                           created_at as user_created_at
-            FROM users
-            WHERE phone_number = ?""";
+            SELECT u.id           as user_id,
+                                                 u.name         as user_name,
+                                                 u.email        as user_email,
+                                                 u.phone_number as user_phone_number,
+                                                 u.password     as user_password,
+                                                 u.created_at   as user_created_at,
+                                                 c.id           as cart_id,
+                                                 i.id           as item_id,
+                                                 i.name         as item_name,
+                                                 i.description  as item_description,
+                                                 i.type         as item_type,
+                                                 i.price        as item_price,
+                                                 i.available    as item_available,
+                                                 ci.quantity    as item_quantity,
+                                                 a.id           as address_id,
+                                                 a.street_name  as address_street_name,
+                                                 a.house_number as address_house_number,
+                                                 a.floor_number as address_floor_number,
+                                                 a.flat_number  as address_flat_number,
+                                                 ur.role        as role_name
+                                          FROM users u
+                                                   LEFT JOIN carts c on u.cart_id = c.id
+                                                   LEFT JOIN carts_items ci on c.id = ci.cart_id
+                                                   LEFT JOIN items i on ci.item_id = i.id
+                                                   LEFT JOIN users_addresses ua on u.id = ua.user_id
+                                                   LEFT JOIN addresses a on ua.address_id = a.id
+                                                   LEFT JOIN users_roles ur on u.id = ur.user_id
+                                          WHERE u.phone_number = ?""";
     private static final String IS_EXISTS = "SELECT id FROM users WHERE email = ? or phone_number = ?";
-    private static final String CREATE = "INSERT INTO users (name, email, phone_number, password, created_at, cart_id) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String CREATE = """
+            INSERT INTO users (name, email, phone_number, password, created_at, cart_id)
+            VALUES (?, ?, ?, ?, ?, ?)""";
+    private static final String SAVE_ROLES = "INSERT INTO users_roles (user_id, role) VALUES (?, ?)";
     private static final String SAVE_BY_ID = "UPDATE users SET name = ?, email = ?, phone_number = ?, password = ? WHERE id = ?";
     private static final String ADD_ADDRESS = "INSERT INTO users_addresses (user_id, address_id) VALUES (?, ?)";
     private static final String DELETE_ADDRESS = "DELETE FROM users_addresses WHERE user_id = ? AND address_id = ?";
@@ -115,7 +162,6 @@ public class UserRepositoryImpl implements UserRepository {
     public void update(User user) {
         try {
             Connection connection = dataSourceConfig.getConnection();
-            //TODO set hashed password
             PreparedStatement statement = connection.prepareStatement(SAVE_BY_ID);
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
@@ -133,10 +179,6 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             Connection connection = dataSourceConfig.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
-            if (!user.getPassword().equals(user.getPasswordConfirmation())) {
-                throw new IllegalStateException("Password and password confirmation are not equal");
-            }
-            //TODO set hashed password
             statement.setString(1, user.getName());
             statement.setString(2, user.getEmail());
             statement.setString(3, user.getPhoneNumber());
@@ -150,6 +192,22 @@ public class UserRepositoryImpl implements UserRepository {
             }
         } catch (SQLException e) {
             throw new ResourceMappingException("Exception while creating user :: " + user.getId());
+        }
+    }
+
+    @Override
+    public void saveRoles(Long id, Set<Role> roles) {
+        try {
+            Connection connection = dataSourceConfig.getConnection();
+            PreparedStatement statement = connection.prepareStatement(SAVE_ROLES);
+            for (Role role : roles) {
+                statement.setLong(1, id);
+                statement.setString(2, role.name());
+                statement.addBatch();
+            }
+            statement.executeBatch();
+        } catch (SQLException e) {
+            throw new ResourceMappingException("Exception while saving roles for user :: " + id);
         }
     }
 

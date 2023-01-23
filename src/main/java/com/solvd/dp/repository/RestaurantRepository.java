@@ -12,13 +12,13 @@ public interface RestaurantRepository {
 
     List<Restaurant> getAll();
 
-    Optional<Restaurant> findById(@Param("id") Long id);
+    Optional<Restaurant> findById(Long id);
 
-    Optional<Restaurant> findByName(@Param("name") String name);
+    Optional<Restaurant> findByName(String name);
 
-    void update(@Param("restaurant") Restaurant restaurant);
+    void update(Restaurant restaurant);
 
-    void create(@Param("restaurant") Restaurant restaurant);
+    void create(Restaurant restaurant);
 
     void addEmployeeById(@Param("restaurantId") Long restaurantId, @Param("employeeId") Long employeeId);
 
@@ -32,10 +32,10 @@ public interface RestaurantRepository {
 
     void deleteAddressById(@Param("restaurantId") Long restaurantId, @Param("addressId") Long addressId);
 
-    boolean exists(@Param("restaurant") Restaurant restaurant);
+    boolean exists(Restaurant restaurant);
 
     boolean employeeExists(@Param("restaurantId") Long restaurantId, @Param("employeeId") Long employeeId);
 
-    void delete(@Param("id") Long id);
+    void delete(Long id);
 
 }

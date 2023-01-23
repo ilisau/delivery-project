@@ -9,5 +9,14 @@ spring:
       mode: always
 #      data-locations: classpath:demo_data.sql
       continue-on-error: false
+  liquibase:
+    change-log: classpath:liquibase/db.changelog.yaml
+    enabled: true
+    default-schema: delivery_project
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
+security:
+  jwt:
+    secret: c2VjcmV0aWdpdWhvaWhvdWpvaWpiZ2p5dnViamg=
+    access: 3600000
+    refresh: 2592000000

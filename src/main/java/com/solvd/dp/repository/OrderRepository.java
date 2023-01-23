@@ -11,32 +11,38 @@ import java.util.Optional;
 @Mapper
 public interface OrderRepository {
 
-    Optional<Order> findById(@Param("id") Long id);
+    Optional<Order> findById(Long id);
 
-    List<Order> getAllByUserId(@Param("userId") Long userId);
+    List<Order> getAllByUserId(Long userId);
 
-    List<Order> getAllByAddressId(@Param("addressId") Long addressId);
+    List<Order> getAllByAddressId(Long addressId);
 
-    List<Order> getAllByCourierId(@Param("courierId") Long courierId);
+    List<Order> getAllByCourierId(Long courierId);
 
-    List<Order> getAllByRestaurantId(@Param("restaurantId") Long restaurantId);
+    List<Order> getAllByRestaurantId(Long restaurantId);
 
     List<Order> getAllByRestaurantIdAndStatus(@Param("restaurantId") Long restaurantId, @Param("status") OrderStatus status);
 
-    void update(@Param("order") Order order);
+    void update(Order order);
 
-    void create(@Param("order") Order order);
+    void create(Order order);
 
-    boolean isOrderAssigned(@Param("id") Long id);
+    boolean isOrderAssigned(Long id);
 
     void assignOrder(@Param("orderId") Long orderId, @Param("courierId") Long courierId);
 
     void updateStatus(@Param("id") Long id, @Param("status") OrderStatus status);
 
-    void setDelivered(@Param("id") Long id);
+    void setDelivered(Long id);
 
     void addOrderById(@Param("orderId") Long orderId, @Param("userId") Long userId);
 
-    void delete(@Param("id") Long id);
+    boolean isUserOwner(@Param("orderId") Long orderId, @Param("userId") Long userId);
+
+    boolean isCourierOwner(@Param("orderId") Long orderId, @Param("courierId") Long courierId);
+
+    boolean isEmployeeOwner(@Param("orderId") Long orderId, @Param("employeeId") Long employeeId);
+
+    void delete(Long id);
 
 }

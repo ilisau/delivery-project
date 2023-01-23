@@ -7,6 +7,7 @@ import com.solvd.dp.web.dto.restaurant.ItemDto;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class ItemController {
     }
 
     @PutMapping
+    @PreAuthorize("canAccessItem(#dto.id)")
     public void update(@Validated(OnUpdate.class) @RequestBody ItemDto dto) {
         Item item = itemMapper.toEntity(dto);
         itemService.update(item);
@@ -41,6 +43,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("canAccessItem(#id)")
     public void deleteById(@PathVariable Long id) {
         itemService.delete(id);
     }

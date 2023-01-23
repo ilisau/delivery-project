@@ -67,6 +67,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Long getRestaurantIdByItemId(Long itemId) {
+        return itemRepository.getRestaurantIdByItemId(itemId);
+    }
+
+    @Override
     @Transactional
     public void delete(Long id) {
         itemRepository.delete(id);

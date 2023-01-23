@@ -114,6 +114,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    public boolean isUserOwner(Long orderId, Long userId) {
+        return orderRepository.isUserOwner(orderId, userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean isCourierOwner(Long orderId, Long courierId) {
+        return orderRepository.isCourierOwner(orderId, courierId);
+    }
+
+    @Override
+    @Transactional
+    public boolean isEmployeeOwner(Long orderId, Long employeeId) {
+        return orderRepository.isEmployeeOwner(orderId, employeeId);
+    }
+
+    @Override
+    @Transactional
     public void delete(Long id) {
         orderRepository.delete(id);
     }
