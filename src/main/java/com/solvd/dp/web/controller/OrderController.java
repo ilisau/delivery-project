@@ -7,6 +7,8 @@ import com.solvd.dp.service.OrderService;
 import com.solvd.dp.web.dto.user.OrderDto;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.OrderMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Order", description = "Order API")
 public class OrderController {
 
     private final OrderService orderService;
@@ -25,6 +28,7 @@ public class OrderController {
 
     @PutMapping
     @PreAuthorize("canAccessOrder(#dto.id)")
+    @Operation(summary = "Update order")
     public void update(@Validated(OnUpdate.class) @RequestBody OrderDto dto) {
         Order order = orderMapper.toEntity(dto);
         orderService.update(order);
@@ -32,6 +36,7 @@ public class OrderController {
 
     @GetMapping("/{id}")
     @PreAuthorize("canAccessOrder(#id)")
+    @Operation(summary = "Get order by id")
     public OrderDto getById(@PathVariable Long id) {
         Order order = orderService.getById(id);
         return orderMapper.toDto(order);
@@ -39,12 +44,14 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("canAccessOrder(#id)")
+    @Operation(summary = "Delete order by id")
     public void deleteById(@PathVariable Long id) {
         orderService.delete(id);
     }
 
     @PutMapping("/{id}/courier/{courierId}")
     @PreAuthorize("canAccessOrder(#id)")
+    @Operation(summary = "Assign courier to order")
     public void assign(@PathVariable Long id,
                        @PathVariable Long courierId) {
         courierService.assignOrder(courierId, id);
@@ -52,6 +59,7 @@ public class OrderController {
 
     @PutMapping("/{id}/status/{status}")
     @PreAuthorize("canAccessOrder(#id)")
+    @Operation(summary = "Update order status")
     public void updateStatus(@PathVariable Long id,
                              @PathVariable OrderStatus status) {
         orderService.updateStatus(id, status);

@@ -20,6 +20,8 @@ import com.solvd.dp.web.mapper.AddressMapper;
 import com.solvd.dp.web.mapper.ItemMapper;
 import com.solvd.dp.web.mapper.OrderMapper;
 import com.solvd.dp.web.mapper.RestaurantMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -31,6 +33,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Restaurants", description = "Restaurant API v1")
 public class RestaurantController {
 
     private final RestaurantService restaurantService;
@@ -44,6 +47,7 @@ public class RestaurantController {
     private final OrderMapper orderMapper;
 
     @GetMapping
+    @Operation(summary = "Get all restaurants")
     public List<RestaurantDto> getAll() {
         List<Restaurant> restaurants = restaurantService.getAll();
         return restaurantMapper.toDto(restaurants);
@@ -51,6 +55,7 @@ public class RestaurantController {
 
     @PutMapping
     @PreAuthorize("canAccessRestaurant(#dto.id)")
+    @Operation(summary = "Update restaurant")
     public void update(@Validated(OnUpdate.class) @RequestBody RestaurantDto dto) {
         Restaurant restaurant = restaurantMapper.toEntity(dto);
         restaurantService.update(restaurant);
@@ -58,6 +63,7 @@ public class RestaurantController {
 
     @PostMapping
     @PreAuthorize("canCreateRestaurant()")
+    @Operation(summary = "Create restaurant")
     public RestaurantDto create(@Validated(OnCreate.class) @RequestBody RestaurantDto restaurantDto) {
         Restaurant restaurantToBeCreated = restaurantMapper.toEntity(restaurantDto);
         Restaurant restaurant = restaurantService.create(restaurantToBeCreated);
@@ -65,6 +71,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}/items")
+    @Operation(summary = "Get all items of restaurant")
     public List<ItemDto> getAllItems(@PathVariable Long id,
                                      @RequestParam(required = false) ItemType type) {
         List<Item> items;
@@ -78,6 +85,7 @@ public class RestaurantController {
 
     @PostMapping("/{id}/items")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Create item in restaurant")
     public ItemDto createItem(@PathVariable Long id,
                               @Validated(OnCreate.class) @RequestBody ItemDto itemDto) {
         Item itemToBeCreated = itemMapper.toEntity(itemDto);
@@ -87,12 +95,14 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}/items/{itemId}")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Delete item from restaurant")
     public void deleteItemById(@PathVariable Long id,
                                @PathVariable Long itemId) {
         restaurantService.deleteItemById(id, itemId);
     }
 
     @GetMapping("/{id}/addresses")
+    @Operation(summary = "Get all addresses of restaurant")
     public List<AddressDto> getAllAddresses(@PathVariable Long id) {
         List<Address> addresses = addressService.getAllByRestaurantId(id);
         return addressMapper.toDto(addresses);
@@ -100,6 +110,7 @@ public class RestaurantController {
 
     @PostMapping("/{id}/addresses")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Create address in restaurant")
     public void addAddress(@PathVariable Long id,
                            @Validated(OnCreate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
@@ -108,12 +119,14 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}/addresses/{addressId}")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Delete address from restaurant")
     public void deleteAddressById(@PathVariable Long id, @PathVariable Long addressId) {
         restaurantService.deleteAddressById(id, addressId);
     }
 
     @GetMapping("/{id}/orders")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Get all orders of restaurant")
     public List<OrderDto> getAllOrders(@PathVariable Long id,
                                        @RequestParam(required = false) OrderStatus status) {
         List<Order> orders;
@@ -126,6 +139,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get restaurant by id")
     public RestaurantDto getById(@PathVariable Long id) {
         Restaurant restaurant = restaurantService.getById(id);
         return restaurantMapper.toDto(restaurant);
@@ -133,6 +147,7 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("canAccessRestaurant(#id)")
+    @Operation(summary = "Delete restaurant by id")
     public void deleteById(@PathVariable Long id) {
         restaurantService.delete(id);
     }

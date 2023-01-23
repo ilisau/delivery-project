@@ -1,4 +1,4 @@
-package com.solvd.dp.security;
+package com.solvd.dp.web.security;
 
 import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.restaurant.Employee;

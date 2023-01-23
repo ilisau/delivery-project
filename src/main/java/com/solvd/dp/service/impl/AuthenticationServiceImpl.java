@@ -3,7 +3,7 @@ package com.solvd.dp.service.impl;
 import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.restaurant.Employee;
 import com.solvd.dp.domain.user.User;
-import com.solvd.dp.security.JwtTokenProvider;
+import com.solvd.dp.web.security.JwtTokenProvider;
 import com.solvd.dp.service.AuthenticationService;
 import com.solvd.dp.service.CourierService;
 import com.solvd.dp.service.EmployeeService;
@@ -80,7 +80,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 jwtRequest.getUsername(),
                 employee.getRoles().stream()
                         .map(Enum::name).collect(Collectors.toList())));
-        jwtResponse.setRefreshToken(jwtTokenProvider.createCourierRefreshToken(employee.getId(), jwtRequest.getUsername()));
+        jwtResponse.setRefreshToken(jwtTokenProvider.createEmployeeRefreshToken(employee.getId(), jwtRequest.getUsername()));
         jwtResponse.setEntityId(employee.getId());
         return jwtResponse;
     }

@@ -7,6 +7,8 @@ import com.solvd.dp.web.dto.restaurant.EmployeeDto;
 import com.solvd.dp.web.dto.validation.OnCreate;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.EmployeeMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Employee", description = "Employee API")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -26,6 +29,7 @@ public class EmployeeController {
 
     @PutMapping
     @PreAuthorize("canAccessEmployee(#restaurantId, #employeeDto.id)")
+    @Operation(summary = "Update employee")
     public void update(@PathVariable Long restaurantId,
                        @Validated(OnUpdate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employee = employeeMapper.toEntity(employeeDto);
@@ -34,6 +38,7 @@ public class EmployeeController {
 
     @PostMapping
     @PreAuthorize("canCreateEmployee(#restaurantId)")
+    @Operation(summary = "Create employee")
     public EmployeeDto create(@PathVariable Long restaurantId,
                               @Validated(OnCreate.class) @RequestBody EmployeeDto employeeDto) {
         Employee employeeToBeCreated = employeeMapper.toEntity(employeeDto);
@@ -43,6 +48,7 @@ public class EmployeeController {
 
     @GetMapping
     @PreAuthorize("canAccessEmployees(#restaurantId)")
+    @Operation(summary = "Get all employees")
     public List<EmployeeDto> getAllByRestaurantId(@PathVariable Long restaurantId,
                                                   @RequestParam(required = false) EmployeePosition position) {
         List<Employee> employees;
@@ -56,6 +62,7 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     @PreAuthorize("canAccessEmployee(#restaurantId, #id)")
+    @Operation(summary = "Get employee by id")
     public EmployeeDto getById(@PathVariable Long restaurantId, @PathVariable Long id) {
         Employee employee = employeeService.getById(id);
         return employeeMapper.toDto(employee);
@@ -63,6 +70,7 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("canAccessEmployee(#restaurantId, #id)")
+    @Operation(summary = "Delete employee by id")
     public void deleteById(@PathVariable Long restaurantId, @PathVariable Long id) {
         employeeService.delete(id);
     }

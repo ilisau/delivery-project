@@ -1,4 +1,4 @@
-package com.solvd.dp.security;
+package com.solvd.dp.web.security;
 
 import com.solvd.dp.domain.exception.ResourceNotFoundException;
 import jakarta.servlet.FilterChain;
@@ -23,10 +23,13 @@ public class JwtTokenFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)
             throws IOException, ServletException {
-        String token = jwtTokenProvider.resolveToken((HttpServletRequest) req);
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        String bearerToken = ((HttpServletRequest) req).getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            bearerToken = bearerToken.substring(7);
+        }
+        if (bearerToken != null && jwtTokenProvider.validateToken(bearerToken)) {
             try {
-                Authentication auth = jwtTokenProvider.getAuthentication(token);
+                Authentication auth = jwtTokenProvider.getAuthentication(bearerToken);
                 if (auth != null) {
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }

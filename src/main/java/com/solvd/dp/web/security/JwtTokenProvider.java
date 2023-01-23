@@ -1,4 +1,4 @@
-package com.solvd.dp.security;
+package com.solvd.dp.web.security;
 
 import com.solvd.dp.domain.courier.Courier;
 import com.solvd.dp.domain.exception.AccessDeniedException;
@@ -15,7 +15,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -243,14 +242,6 @@ public class JwtTokenProvider {
                 .getBody()
                 .get("roles")
                 .toString();
-    }
-
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
     }
 
     public boolean validateToken(String token) {

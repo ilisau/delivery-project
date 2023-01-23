@@ -1,4 +1,4 @@
-package com.solvd.dp.security.expressions;
+package com.solvd.dp.web.security.expressions;
 
 import com.solvd.dp.service.*;
 import org.aopalliance.intercept.MethodInvocation;
