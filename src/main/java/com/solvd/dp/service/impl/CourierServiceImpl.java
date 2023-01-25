@@ -63,7 +63,7 @@ public class CourierServiceImpl implements CourierService {
     @Transactional
     public Courier update(Courier courier) {
         if (courierRepository.exists(courier)) {
-            throw new ResourceNotFoundException("Courier not found for this id :: " + courier.getId());
+            throw new ResourceAlreadyExistsException("Courier with such email or phone already exists :: " + courier);
         }
         courier.setPassword(passwordEncoder.encode(courier.getPassword()));
         courierRepository.update(courier);

@@ -42,6 +42,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void setEmptyByUserId(Long userId) {
         Cart cart = new Cart();
+        cart.setItems(new HashMap<>());
         cartRepository.create(cart);
         cartRepository.setByUserId(cart.getId(), userId);
     }

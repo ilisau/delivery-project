@@ -2,6 +2,7 @@ package com.solvd.dp.domain.user;
 
 import com.solvd.dp.domain.restaurant.CartItem;
 import com.solvd.dp.domain.restaurant.Item;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
+@AllArgsConstructor
 public class Cart {
 
     private Long id;
