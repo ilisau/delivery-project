@@ -36,7 +36,7 @@ class RestaurantServiceImplTest {
     void getAll() {
         restaurantService.getAll();
 
-        verify(restaurantRepository, times(1)).getAll();
+        verify(restaurantRepository).getAll();
     }
 
     @Test
@@ -49,7 +49,7 @@ class RestaurantServiceImplTest {
                 .thenReturn(Optional.of(restaurant));
 
         assertEquals(restaurant, restaurantService.getById(id));
-        verify(restaurantRepository, times(1)).findById(id);
+        verify(restaurantRepository).findById(id);
     }
 
     @Test
@@ -60,7 +60,7 @@ class RestaurantServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> restaurantService.getById(id));
-        verify(restaurantRepository, times(1)).findById(id);
+        verify(restaurantRepository).findById(id);
     }
 
     @Test
@@ -73,7 +73,7 @@ class RestaurantServiceImplTest {
                 .thenReturn(Optional.of(restaurant));
 
         assertEquals(restaurant, restaurantService.getByName(name));
-        verify(restaurantRepository, times(1)).findByName(name);
+        verify(restaurantRepository).findByName(name);
     }
 
     @Test
@@ -84,7 +84,7 @@ class RestaurantServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> restaurantService.getByName(name));
-        verify(restaurantRepository, times(1)).findByName(name);
+        verify(restaurantRepository).findByName(name);
     }
 
     @Test
@@ -97,30 +97,31 @@ class RestaurantServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> restaurantService.update(restaurant));
-        verify(restaurantRepository, times(1)).exists(restaurant);
-        verify(restaurantRepository, times(0)).update(restaurant);
+        verify(restaurantRepository).exists(restaurant);
+        verify(restaurantRepository, never()).update(restaurant);
     }
 
     @Test
     void updateNotExistingRestaurant() {
+        String name = "Restaurant";
         Restaurant restaurant = new Restaurant();
         restaurant.setId(1L);
-        restaurant.setName("Restaurant");
+        restaurant.setName(name);
 
         when(restaurantRepository.exists(restaurant))
                 .thenReturn(false);
 
         doAnswer(invocation -> {
             Restaurant restaurant1 = invocation.getArgument(0);
-            restaurant1.setName("Restaurant");
+            restaurant1.setName(name);
             return restaurant1;
         }).when(restaurantRepository).update(restaurant);
 
         restaurantService.update(restaurant);
 
-        assertEquals("Restaurant", restaurant.getName());
-        verify(restaurantRepository, times(1)).exists(restaurant);
-        verify(restaurantRepository, times(1)).update(restaurant);
+        assertEquals(name, restaurant.getName());
+        verify(restaurantRepository).exists(restaurant);
+        verify(restaurantRepository).update(restaurant);
     }
 
     @Test
@@ -132,10 +133,10 @@ class RestaurantServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> restaurantService.create(restaurant));
-        verify(restaurantRepository, times(1)).exists(restaurant);
-        verify(restaurantRepository, times(0)).create(restaurant);
-        verify(addressService, times(0)).create(any(Address.class));
-        verify(restaurantRepository, times(0)).addAddressById(anyLong(), anyLong());
+        verify(restaurantRepository).exists(restaurant);
+        verify(restaurantRepository, never()).create(restaurant);
+        verify(addressService, never()).create(any(Address.class));
+        verify(restaurantRepository, never()).addAddressById(anyLong(), anyLong());
     }
 
     @Test
@@ -165,12 +166,12 @@ class RestaurantServiceImplTest {
 
         restaurantService.create(restaurant);
 
-        verify(restaurantRepository, times(1)).exists(restaurant);
-        verify(restaurantRepository, times(1)).create(restaurant);
-        verify(addressService, times(1)).create(restaurant.getAddresses().get(0));
-        verify(addressService, times(1)).create(restaurant.getAddresses().get(1));
-        verify(restaurantRepository, times(1)).addAddressById(restaurantId, 1L);
-        verify(restaurantRepository, times(1)).addAddressById(restaurantId, 2L);
+        verify(restaurantRepository).exists(restaurant);
+        verify(restaurantRepository).create(restaurant);
+        verify(addressService).create(restaurant.getAddresses().get(0));
+        verify(addressService).create(restaurant.getAddresses().get(1));
+        verify(restaurantRepository).addAddressById(restaurantId, 1L);
+        verify(restaurantRepository).addAddressById(restaurantId, 2L);
     }
 
     @Test
@@ -182,8 +183,8 @@ class RestaurantServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> restaurantService.addEmployeeById(restaurantId, employeeId));
-        verify(restaurantRepository, times(1)).employeeExists(restaurantId, employeeId);
-        verify(restaurantRepository, times(0)).addEmployeeById(restaurantId, employeeId);
+        verify(restaurantRepository).employeeExists(restaurantId, employeeId);
+        verify(restaurantRepository, never()).addEmployeeById(restaurantId, employeeId);
     }
 
     @Test
@@ -195,8 +196,8 @@ class RestaurantServiceImplTest {
                 .thenReturn(false);
 
         restaurantService.addEmployeeById(restaurantId, employeeId);
-        verify(restaurantRepository, times(1)).employeeExists(restaurantId, employeeId);
-        verify(restaurantRepository, times(1)).addEmployeeById(restaurantId, employeeId);
+        verify(restaurantRepository).employeeExists(restaurantId, employeeId);
+        verify(restaurantRepository).addEmployeeById(restaurantId, employeeId);
     }
 
     @Test
@@ -205,7 +206,7 @@ class RestaurantServiceImplTest {
         Long employeeId = 1L;
         restaurantService.deleteEmployeeById(restaurantId, employeeId);
 
-        verify(restaurantRepository, times(1)).deleteEmployeeById(restaurantId, employeeId);
+        verify(restaurantRepository).deleteEmployeeById(restaurantId, employeeId);
     }
 
     @Test
@@ -214,7 +215,7 @@ class RestaurantServiceImplTest {
         Long itemId = 1L;
         restaurantService.addItemById(restaurantId, itemId);
 
-        verify(restaurantRepository, times(1)).addItemById(restaurantId, itemId);
+        verify(restaurantRepository).addItemById(restaurantId, itemId);
     }
 
     @Test
@@ -223,7 +224,7 @@ class RestaurantServiceImplTest {
         Long itemId = 1L;
         restaurantService.deleteItemById(restaurantId, itemId);
 
-        verify(restaurantRepository, times(1)).deleteItemById(restaurantId, itemId);
+        verify(restaurantRepository).deleteItemById(restaurantId, itemId);
     }
 
     @Test
@@ -239,8 +240,8 @@ class RestaurantServiceImplTest {
 
         restaurantService.addAddress(restaurantId, address);
 
-        verify(addressService, times(1)).create(address);
-        verify(restaurantRepository, times(1)).addAddressById(restaurantId, address.getId());
+        verify(addressService).create(address);
+        verify(restaurantRepository).addAddressById(restaurantId, address.getId());
     }
 
     @Test
@@ -249,7 +250,7 @@ class RestaurantServiceImplTest {
         Long addressId = 1L;
         restaurantService.deleteAddressById(restaurantId, addressId);
 
-        verify(restaurantRepository, times(1)).deleteAddressById(restaurantId, addressId);
+        verify(restaurantRepository).deleteAddressById(restaurantId, addressId);
     }
 
     @Test
@@ -257,6 +258,6 @@ class RestaurantServiceImplTest {
         Long id = 1L;
         restaurantService.delete(id);
 
-        verify(restaurantRepository, times(1)).delete(id);
+        verify(restaurantRepository).delete(id);
     }
 }

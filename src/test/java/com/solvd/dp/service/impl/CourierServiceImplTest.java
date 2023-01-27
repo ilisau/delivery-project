@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,7 +47,7 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.of(courier));
 
         assertEquals(courier, courierService.getById(id));
-        verify(courierRepository, times(1)).findById(id);
+        verify(courierRepository).findById(id);
     }
 
     @Test
@@ -57,7 +58,7 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> courierService.getById(id));
-        verify(courierRepository, times(1)).findById(id);
+        verify(courierRepository).findById(id);
     }
 
     @Test
@@ -70,7 +71,7 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.of(courier));
 
         assertEquals(courier, courierService.getByEmail(email));
-        verify(courierRepository, times(1)).findByEmail(email);
+        verify(courierRepository).findByEmail(email);
     }
 
     @Test
@@ -81,7 +82,7 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> courierService.getByEmail(email));
-        verify(courierRepository, times(1)).findByEmail(email);
+        verify(courierRepository).findByEmail(email);
     }
 
     @Test
@@ -95,7 +96,7 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.of(courier));
 
         assertEquals(courier, courierService.getByOrderId(orderId));
-        verify(courierRepository, times(1)).findByOrderId(orderId);
+        verify(courierRepository).findByOrderId(orderId);
     }
 
     @Test
@@ -109,67 +110,75 @@ class CourierServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> courierService.getByOrderId(orderId));
-        verify(courierRepository, times(1)).findByOrderId(orderId);
+        verify(courierRepository).findByOrderId(orderId);
     }
 
     @Test
     void getAll() {
         List<Courier> couriers = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Courier courier = new Courier();
-            courier.setId((long) i);
-            couriers.add(courier);
-        }
+        Stream.iterate(1L, i -> i + 1)
+                .limit(10)
+                .forEach(i -> {
+                    Courier courier = new Courier();
+                    courier.setId(i);
+                    couriers.add(courier);
+                });
 
         when(courierRepository.getAll())
                 .thenReturn(couriers);
 
         assertEquals(couriers, courierService.getAll());
-        verify(courierRepository, times(1)).getAll();
+        verify(courierRepository).getAll();
     }
 
     @Test
     void getAllByStatus() {
+        CourierStatus status = CourierStatus.AVAILABLE;
         List<Courier> couriers = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Courier courier = new Courier();
-            courier.setId((long) i);
-            courier.setStatus(CourierStatus.AVAILABLE);
-            couriers.add(courier);
-        }
+        Stream.iterate(1L, i -> i + 1)
+                .limit(10)
+                .forEach(i -> {
+                    Courier courier = new Courier();
+                    courier.setId(i);
+                    courier.setStatus(status);
+                    couriers.add(courier);
+                });
 
-        when(courierRepository.getAllByStatus(CourierStatus.AVAILABLE))
+        when(courierRepository.getAllByStatus(status))
                 .thenReturn(couriers);
 
-        assertEquals(couriers, courierService.getAllByStatus(CourierStatus.AVAILABLE));
-        verify(courierRepository, times(1)).getAllByStatus(CourierStatus.AVAILABLE);
+        assertEquals(couriers, courierService.getAllByStatus(status));
+        verify(courierRepository).getAllByStatus(status);
     }
 
     @Test
     void updateNotExisting() {
+        String firstName = "John";
+        String lastName = "Doe";
+        String password = "123456";
         Courier courier = new Courier();
         courier.setId(1L);
-        courier.setFirstName("John");
-        courier.setLastName("Doe");
-        courier.setPassword("123456");
+        courier.setFirstName(firstName);
+        courier.setLastName(lastName);
+        courier.setPassword(password);
 
         when(courierRepository.exists(courier))
                 .thenReturn(false);
 
         doAnswer(invocation -> {
             Courier courier1 = invocation.getArgument(0);
-            courier.setFirstName("John");
-            courier.setLastName("Doe");
+            courier.setFirstName(firstName);
+            courier.setLastName(lastName);
             return courier1;
         }).when(courierRepository).update(courier);
 
         courierService.update(courier);
 
-        assertEquals("John", courier.getFirstName());
-        assertEquals("Doe", courier.getLastName());
-        assertTrue(passwordEncoder.matches("123456", courier.getPassword()));
-        verify(courierRepository, times(1)).exists(courier);
-        verify(courierRepository, times(1)).update(courier);
+        assertEquals(firstName, courier.getFirstName());
+        assertEquals(lastName, courier.getLastName());
+        assertTrue(passwordEncoder.matches(password, courier.getPassword()));
+        verify(courierRepository).exists(courier);
+        verify(courierRepository).update(courier);
     }
 
     @Test
@@ -184,18 +193,19 @@ class CourierServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> courierService.update(courier));
-        verify(courierRepository, times(1)).exists(courier);
-        verify(courierRepository, times(0)).update(courier);
+        verify(courierRepository).exists(courier);
+        verify(courierRepository, never()).update(courier);
 
     }
 
     @Test
     void createNotExisting() {
+        String password = "123456";
         Courier courier = new Courier();
         courier.setFirstName("John");
         courier.setLastName("Doe");
         courier.setPassword("123456");
-        courier.setPasswordConfirmation("123456");
+        courier.setPasswordConfirmation(password);
 
         when(courierRepository.exists(courier))
                 .thenReturn(false);
@@ -210,11 +220,11 @@ class CourierServiceImplTest {
 
         assertTrue(courier.getRoles().contains(Role.ROLE_COURIER));
         assertEquals(courier.getStatus(), CourierStatus.AVAILABLE);
-        assertTrue(passwordEncoder.matches("123456", courier.getPassword()));
+        assertTrue(passwordEncoder.matches(password, courier.getPassword()));
         assertNotNull(courier.getCreatedAt());
-        verify(courierRepository, times(1)).exists(courier);
-        verify(courierRepository, times(1)).create(courier);
-        verify(courierRepository, times(1)).saveRoles(courier.getId(), courier.getRoles());
+        verify(courierRepository).exists(courier);
+        verify(courierRepository).create(courier);
+        verify(courierRepository).saveRoles(courier.getId(), courier.getRoles());
     }
 
     @Test
@@ -229,8 +239,8 @@ class CourierServiceImplTest {
                 .thenReturn(false);
 
         assertThrows(IllegalStateException.class, () -> courierService.create(courier));
-        verify(courierRepository, times(0)).create(courier);
-        verify(courierRepository, times(0)).saveRoles(anyLong(), anySet());
+        verify(courierRepository, never()).create(courier);
+        verify(courierRepository, never()).saveRoles(anyLong(), anySet());
     }
 
     @Test
@@ -245,9 +255,9 @@ class CourierServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> courierService.create(courier));
-        verify(courierRepository, times(1)).exists(courier);
-        verify(courierRepository, times(0)).create(courier);
-        verify(courierRepository, times(0)).saveRoles(anyLong(), anySet());
+        verify(courierRepository).exists(courier);
+        verify(courierRepository, never()).create(courier);
+        verify(courierRepository, never()).saveRoles(anyLong(), anySet());
     }
 
     @Test
@@ -260,8 +270,8 @@ class CourierServiceImplTest {
 
         courierService.assignOrder(courierId, orderId);
 
-        verify(orderService, times(1)).isOrderAssigned(orderId);
-        verify(orderService, times(1)).assignOrder(orderId, courierId);
+        verify(orderService).isOrderAssigned(orderId);
+        verify(orderService).assignOrder(orderId, courierId);
     }
 
     @Test
@@ -273,8 +283,8 @@ class CourierServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> courierService.assignOrder(courierId, orderId));
-        verify(orderService, times(1)).isOrderAssigned(orderId);
-        verify(orderService, times(0)).assignOrder(orderId, courierId);
+        verify(orderService).isOrderAssigned(orderId);
+        verify(orderService, never()).assignOrder(orderId, courierId);
     }
 
     @Test
@@ -282,6 +292,6 @@ class CourierServiceImplTest {
         Long id = 1L;
         courierService.delete(id);
 
-        verify(courierRepository, times(1)).delete(id);
+        verify(courierRepository).delete(id);
     }
 }

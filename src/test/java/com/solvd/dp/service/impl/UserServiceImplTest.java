@@ -53,7 +53,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         assertEquals(user, userService.getById(id));
-        verify(userRepository, times(1)).findById(id);
+        verify(userRepository).findById(id);
     }
 
     @Test
@@ -64,7 +64,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getById(id));
-        verify(userRepository, times(1)).findById(id);
+        verify(userRepository).findById(id);
     }
 
     @Test
@@ -77,7 +77,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         assertEquals(user, userService.getByEmail(email));
-        verify(userRepository, times(1)).findByEmail(email);
+        verify(userRepository).findByEmail(email);
     }
 
     @Test
@@ -88,7 +88,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getByEmail(email));
-        verify(userRepository, times(1)).findByEmail(email);
+        verify(userRepository).findByEmail(email);
     }
 
     @Test
@@ -101,7 +101,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.of(user));
 
         assertEquals(user, userService.getByPhoneNumber(phoneNumber));
-        verify(userRepository, times(1)).findByPhoneNumber(phoneNumber);
+        verify(userRepository).findByPhoneNumber(phoneNumber);
     }
 
     @Test
@@ -112,7 +112,7 @@ class UserServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getByPhoneNumber(phoneNumber));
-        verify(userRepository, times(1)).findByPhoneNumber(phoneNumber);
+        verify(userRepository).findByPhoneNumber(phoneNumber);
     }
 
     @Test
@@ -126,44 +126,52 @@ class UserServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.update(user));
-        verify(userRepository, times(1)).exists(user);
-        verify(userRepository, times(0)).update(user);
+        verify(userRepository).exists(user);
+        verify(userRepository, never()).update(user);
     }
 
     @Test
     void updateNotExistingUser() {
+        String name = "John";
+        String email = "john@gmail.com";
+        String password = "123456";
+
         User user = new User();
         user.setId(1L);
-        user.setName("John");
-        user.setEmail("john@gmail.com");
-        user.setPassword("123456");
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
 
         when(userRepository.exists(user))
                 .thenReturn(false);
 
         doAnswer(invocation -> {
             User u = invocation.getArgument(0);
-            u.setName("John");
-            u.setEmail("john@gmail.com");
+            u.setName(name);
+            u.setEmail(email);
             return u;
         }).when(userRepository).update(user);
 
         userService.update(user);
 
-        assertEquals("John", user.getName());
-        assertEquals("john@gmail.com", user.getEmail());
-        assertTrue(passwordEncoder.matches("123456", user.getPassword()));
-        verify(userRepository, times(1)).exists(user);
-        verify(userRepository, times(1)).update(user);
+        assertEquals(name, user.getName());
+        assertEquals(email, user.getEmail());
+        assertTrue(passwordEncoder.matches(password, user.getPassword()));
+        verify(userRepository).exists(user);
+        verify(userRepository).update(user);
     }
 
     @Test
     void createNotExistingUser() {
+        String name = "John";
+        String email = "john@gmail.com";
+        String password = "123456";
+
         User user = new User();
-        user.setName("John");
-        user.setEmail("john@gmail.com");
-        user.setPassword("123456");
-        user.setPasswordConfirmation("123456");
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setPasswordConfirmation(password);
 
         Cart cart = new Cart();
 
@@ -179,15 +187,15 @@ class UserServiceImplTest {
         userService.create(user);
 
         assertTrue(user.getRoles().contains(Role.ROLE_USER));
-        assertTrue(passwordEncoder.matches("123456", user.getPassword()));
+        assertTrue(passwordEncoder.matches(password, user.getPassword()));
         assertNotNull(user.getCart());
         assertNotNull(user.getOrders());
         assertNotNull(user.getAddresses());
         assertNotNull(user.getCreatedAt());
-        verify(userRepository, times(1)).exists(user);
-        verify(cartService, times(1)).create(cart);
-        verify(userRepository, times(1)).create(user, cart.getId());
-        verify(userRepository, times(1)).saveRoles(user.getId(), user.getRoles());
+        verify(userRepository).exists(user);
+        verify(cartService).create(cart);
+        verify(userRepository).create(user, cart.getId());
+        verify(userRepository).saveRoles(user.getId(), user.getRoles());
     }
 
     @Test
@@ -199,10 +207,10 @@ class UserServiceImplTest {
         user.setPasswordConfirmation("1234567");
 
         assertThrows(IllegalStateException.class, () -> userService.create(user));
-        verify(userRepository, times(1)).exists(user);
-        verify(cartService, times(0)).create(any(Cart.class));
-        verify(userRepository, times(0)).create(any(User.class), anyLong());
-        verify(userRepository, times(0)).saveRoles(anyLong(), anySet());
+        verify(userRepository).exists(user);
+        verify(cartService, never()).create(any(Cart.class));
+        verify(userRepository, never()).create(any(User.class), anyLong());
+        verify(userRepository, never()).saveRoles(anyLong(), anySet());
     }
 
     @Test
@@ -215,9 +223,9 @@ class UserServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.create(user));
-        verify(userRepository, times(1)).exists(user);
-        verify(userRepository, times(0)).create(eq(user), any());
-        verify(userRepository, times(0)).saveRoles(any(), any());
+        verify(userRepository).exists(user);
+        verify(userRepository, never()).create(eq(user), any());
+        verify(userRepository, never()).saveRoles(any(), any());
     }
 
     @Test
@@ -234,8 +242,8 @@ class UserServiceImplTest {
         }).when(addressService).create(address);
 
         userService.addAddress(userId, address);
-        verify(addressService, times(1)).create(address);
-        verify(userRepository, times(1)).addAddressById(userId, address.getId());
+        verify(addressService).create(address);
+        verify(userRepository).addAddressById(userId, address.getId());
     }
 
     @Test
@@ -244,7 +252,7 @@ class UserServiceImplTest {
         Long addressId = 1L;
         userService.deleteAddressById(userId, addressId);
 
-        verify(userRepository, times(1)).deleteAddressById(userId, addressId);
+        verify(userRepository).deleteAddressById(userId, addressId);
     }
 
     @Test
@@ -252,6 +260,6 @@ class UserServiceImplTest {
         Long id = 1L;
         userService.delete(id);
 
-        verify(userRepository, times(1)).delete(id);
+        verify(userRepository).delete(id);
     }
 }

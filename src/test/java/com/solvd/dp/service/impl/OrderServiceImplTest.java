@@ -53,7 +53,7 @@ class OrderServiceImplTest {
                 .thenReturn(Optional.of(order));
 
         assertEquals(order, orderService.getById(id));
-        verify(orderRepository, times(1)).findById(id);
+        verify(orderRepository).findById(id);
     }
 
     @Test
@@ -64,7 +64,7 @@ class OrderServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> orderService.getById(id));
-        verify(orderRepository, times(1)).findById(id);
+        verify(orderRepository).findById(id);
     }
 
     @Test
@@ -72,7 +72,7 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.getAllByUserId(id);
 
-        verify(orderRepository, times(1)).getAllByUserId(id);
+        verify(orderRepository).getAllByUserId(id);
     }
 
     @Test
@@ -80,7 +80,7 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.getAllByAddressId(id);
 
-        verify(orderRepository, times(1)).getAllByAddressId(id);
+        verify(orderRepository).getAllByAddressId(id);
     }
 
     @Test
@@ -88,7 +88,7 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.getAllByCourierId(id);
 
-        verify(orderRepository, times(1)).getAllByCourierId(id);
+        verify(orderRepository).getAllByCourierId(id);
     }
 
     @Test
@@ -96,7 +96,7 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.getAllByRestaurantId(id);
 
-        verify(orderRepository, times(1)).getAllByRestaurantId(id);
+        verify(orderRepository).getAllByRestaurantId(id);
     }
 
     @Test
@@ -105,7 +105,7 @@ class OrderServiceImplTest {
         OrderStatus status = OrderStatus.PREPARING;
         orderService.getAllByRestaurantIdAndStatus(id, status);
 
-        verify(orderRepository, times(1)).getAllByRestaurantIdAndStatus(id, status);
+        verify(orderRepository).getAllByRestaurantIdAndStatus(id, status);
     }
 
     @Test
@@ -122,7 +122,7 @@ class OrderServiceImplTest {
 
         orderService.update(order);
         assertEquals(OrderStatus.PREPARING, order.getStatus());
-        verify(orderRepository, times(1)).update(order);
+        verify(orderRepository).update(order);
     }
 
     @Test
@@ -135,8 +135,8 @@ class OrderServiceImplTest {
                 .thenReturn(cart);
 
         assertThrows(IllegalStateException.class, () -> orderService.create(order, 1L));
-        verify(cartService, times(1)).getByUserId(1L);
-        verify(orderRepository, times(0)).create(order);
+        verify(cartService).getByUserId(1L);
+        verify(orderRepository, never()).create(order);
     }
 
     @Test
@@ -168,13 +168,13 @@ class OrderServiceImplTest {
 
         assertEquals(order.getStatus(), OrderStatus.ORDERED);
         assertNotNull(order.getCreatedAt());
-        verify(cartService, times(1)).getByUserId(1L);
-        verify(orderRepository, times(1)).create(order);
-        verify(orderRepository, times(1)).addOrderById(1L, 1L);
-        verify(cartService, times(1)).setEmptyByUserId(1L);
-        verify(orderRepository, times(1)).findById(1L);
-        verify(addressService, times(0)).create(address);
-        verify(userService, times(0)).addAddress(1L, address);
+        verify(cartService).getByUserId(1L);
+        verify(orderRepository).create(order);
+        verify(orderRepository).addOrderById(1L, 1L);
+        verify(cartService).setEmptyByUserId(1L);
+        verify(orderRepository).findById(1L);
+        verify(addressService, never()).create(address);
+        verify(userService, never()).addAddress(1L, address);
     }
 
     @Test
@@ -182,9 +182,8 @@ class OrderServiceImplTest {
         Order order = new Order();
         Cart cart = new Cart();
         cart.setId(1L);
-        List<CartItem> cartItems = new ArrayList<>();
-        cartItems.add(new CartItem(1L, "Burger", "Delicious", new BigDecimal("1.5"), ItemType.BURGER, true, 1L));
-        cartItems.add(new CartItem(2L, "Soup", "So Delicious", new BigDecimal("2.5"), ItemType.SOUP, true, 1L));
+        List<CartItem> cartItems = List.of(new CartItem(1L, "Burger", "Delicious", new BigDecimal("1.5"), ItemType.BURGER, true, 1L),
+                new CartItem(2L, "Soup", "So Delicious", new BigDecimal("2.5"), ItemType.SOUP, true, 1L));
         cart.setCartItems(cartItems);
         Address address = new Address();
         address.setStreetName("Mogilevskaya");
@@ -213,13 +212,13 @@ class OrderServiceImplTest {
 
         assertEquals(order.getStatus(), OrderStatus.ORDERED);
         assertNotNull(order.getCreatedAt());
-        verify(cartService, times(1)).getByUserId(1L);
-        verify(orderRepository, times(1)).create(order);
-        verify(orderRepository, times(1)).addOrderById(1L, 1L);
-        verify(cartService, times(1)).setEmptyByUserId(1L);
-        verify(orderRepository, times(1)).findById(1L);
-        verify(addressService, times(1)).create(address);
-        verify(userService, times(1)).addAddress(1L, address);
+        verify(cartService).getByUserId(1L);
+        verify(orderRepository).create(order);
+        verify(orderRepository).addOrderById(1L, 1L);
+        verify(cartService).setEmptyByUserId(1L);
+        verify(orderRepository).findById(1L);
+        verify(addressService).create(address);
+        verify(userService).addAddress(1L, address);
     }
 
     @Test
@@ -227,7 +226,7 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.isOrderAssigned(id);
 
-        verify(orderRepository, times(1)).isOrderAssigned(id);
+        verify(orderRepository).isOrderAssigned(id);
     }
 
     @Test
@@ -236,7 +235,7 @@ class OrderServiceImplTest {
         Long courierId = 1L;
         orderService.assignOrder(orderId, courierId);
 
-        verify(orderRepository, times(1)).assignOrder(orderId, courierId);
+        verify(orderRepository).assignOrder(orderId, courierId);
     }
 
     @Test
@@ -245,7 +244,7 @@ class OrderServiceImplTest {
         OrderStatus status = OrderStatus.PREPARING;
         orderService.updateStatus(id, status);
 
-        verify(orderRepository, times(1)).updateStatus(id, status);
+        verify(orderRepository).updateStatus(id, status);
     }
 
     @Test
@@ -254,8 +253,8 @@ class OrderServiceImplTest {
         OrderStatus status = OrderStatus.DELIVERED;
         orderService.updateStatus(id, status);
 
-        verify(orderRepository, times(1)).updateStatus(id, status);
-        verify(orderRepository, times(1)).setDelivered(id);
+        verify(orderRepository).updateStatus(id, status);
+        verify(orderRepository).setDelivered(id);
     }
 
     @Test
@@ -264,7 +263,7 @@ class OrderServiceImplTest {
         Long userId = 1L;
         orderService.isUserOwner(orderId, userId);
 
-        verify(orderRepository, times(1)).isUserOwner(orderId, userId);
+        verify(orderRepository).isUserOwner(orderId, userId);
     }
 
     @Test
@@ -273,7 +272,7 @@ class OrderServiceImplTest {
         Long courierId = 1L;
         orderService.isCourierOwner(orderId, courierId);
 
-        verify(orderRepository, times(1)).isCourierOwner(orderId, courierId);
+        verify(orderRepository).isCourierOwner(orderId, courierId);
     }
 
     @Test
@@ -282,7 +281,7 @@ class OrderServiceImplTest {
         Long employeeId = 1L;
         orderService.isEmployeeOwner(orderId, employeeId);
 
-        verify(orderRepository, times(1)).isEmployeeOwner(orderId, employeeId);
+        verify(orderRepository).isEmployeeOwner(orderId, employeeId);
     }
 
     @Test
@@ -290,6 +289,6 @@ class OrderServiceImplTest {
         Long id = 1L;
         orderService.delete(id);
 
-        verify(orderRepository, times(1)).delete(id);
+        verify(orderRepository).delete(id);
     }
 }

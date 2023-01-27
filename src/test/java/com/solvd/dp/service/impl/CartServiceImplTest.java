@@ -35,7 +35,7 @@ class CartServiceImplTest {
                 .thenReturn(Optional.of(cart));
 
         assertEquals(cart, cartService.getById(id));
-        verify(cartRepository, times(1)).findById(id);
+        verify(cartRepository).findById(id);
     }
 
     @Test
@@ -48,7 +48,7 @@ class CartServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> cartService.getById(id));
-        verify(cartRepository, times(1)).findById(id);
+        verify(cartRepository).findById(id);
     }
 
     @Test
@@ -62,7 +62,7 @@ class CartServiceImplTest {
                 .thenReturn(Optional.of(cart));
 
         assertEquals(cart, cartService.getByUserId(userId));
-        verify(cartRepository, times(1)).findByUserId(userId);
+        verify(cartRepository).findByUserId(userId);
     }
 
     @Test
@@ -76,7 +76,7 @@ class CartServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> cartService.getByUserId(userId));
-        verify(cartRepository, times(1)).findByUserId(userId);
+        verify(cartRepository).findByUserId(userId);
     }
 
     @Test
@@ -91,7 +91,7 @@ class CartServiceImplTest {
 
         assertEquals(cart, cartService.create(cart));
         assertNotNull(cart.getItems());
-        verify(cartRepository, times(1)).create(cart);
+        verify(cartRepository).create(cart);
     }
 
     @Test
@@ -109,15 +109,15 @@ class CartServiceImplTest {
         cartService.setEmptyByUserId(userId);
 
         assertNotNull(cart.getItems());
-        verify(cartRepository, times(1)).create(any());
-        verify(cartRepository, times(1)).setByUserId(cartId, userId);
+        verify(cartRepository).create(any());
+        verify(cartRepository).setByUserId(cartId, userId);
     }
 
     @Test
     void clearById() {
         Long id = 1L;
         cartService.clearById(id);
-        verify(cartRepository, times(1)).clear(id);
+        verify(cartRepository).clear(id);
     }
 
     @Test
@@ -137,8 +137,8 @@ class CartServiceImplTest {
 
         cartService.addItemById(userId, itemId, null);
 
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(1)).addItemById(cartId, itemId, 1L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository).addItemById(cartId, itemId, 1L);
     }
 
     @Test
@@ -158,8 +158,8 @@ class CartServiceImplTest {
 
         cartService.addItemById(userId, itemId, 5L);
 
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(1)).addItemById(cartId, itemId, 5L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository).addItemById(cartId, itemId, 5L);
     }
 
     @Test
@@ -178,8 +178,8 @@ class CartServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> cartService.addItemById(userId, itemId, 5L));
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(0)).addItemById(cartId, itemId, 5L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository, never()).addItemById(cartId, itemId, 5L);
     }
 
     @Test
@@ -189,8 +189,8 @@ class CartServiceImplTest {
         Long itemId = 1L;
 
         assertThrows(IllegalArgumentException.class, () -> cartService.addItemById(userId, itemId, -5L));
-        verify(cartRepository, times(0)).findByUserId(userId);
-        verify(cartRepository, times(0)).addItemById(cartId, itemId, 5L);
+        verify(cartRepository, never()).findByUserId(userId);
+        verify(cartRepository, never()).addItemById(cartId, itemId, 5L);
     }
 
     @Test
@@ -210,8 +210,8 @@ class CartServiceImplTest {
 
         cartService.deleteItemById(userId, itemId, null);
 
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(1)).deleteItemById(cartId, itemId, 1L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository).deleteItemById(cartId, itemId, 1L);
     }
 
     @Test
@@ -231,8 +231,8 @@ class CartServiceImplTest {
 
         cartService.deleteItemById(userId, itemId, 5L);
 
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(1)).deleteItemById(cartId, itemId, 5L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository).deleteItemById(cartId, itemId, 5L);
     }
 
     @Test
@@ -251,8 +251,8 @@ class CartServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> cartService.deleteItemById(userId, itemId, 5L));
-        verify(cartRepository, times(1)).findByUserId(userId);
-        verify(cartRepository, times(0)).deleteItemById(cartId, itemId, 5L);
+        verify(cartRepository).findByUserId(userId);
+        verify(cartRepository, never()).deleteItemById(cartId, itemId, 5L);
     }
 
     @Test
@@ -261,8 +261,8 @@ class CartServiceImplTest {
         Long itemId = 1L;
 
         assertThrows(IllegalArgumentException.class, () -> cartService.deleteItemById(userId, itemId, -5L));
-        verify(cartRepository, times(0)).findByUserId(userId);
-        verify(cartRepository, times(0)).deleteItemById(any(), eq(userId), eq(5L));
+        verify(cartRepository, never()).findByUserId(userId);
+        verify(cartRepository, never()).deleteItemById(any(), eq(userId), eq(5L));
     }
 
     @Test
@@ -270,6 +270,6 @@ class CartServiceImplTest {
         Long id = 1L;
         cartService.delete(id);
 
-        verify(cartRepository, times(1)).delete(id);
+        verify(cartRepository).delete(id);
     }
 }

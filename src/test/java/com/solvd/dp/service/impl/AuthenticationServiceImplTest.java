@@ -56,16 +56,16 @@ class AuthenticationServiceImplTest {
 
         authenticationService.loginUser(jwtRequest);
 
-        verify(userService, times(1)).getByEmail(jwtRequest.getUsername());
-        verify(jwtTokenProvider, times(1)).createUserToken(eq(user.getId()), eq(jwtRequest.getUsername()), anyList());
-        verify(jwtTokenProvider, times(1)).createUserRefreshToken(eq(user.getId()), eq(jwtRequest.getUsername()));
+        verify(userService).getByEmail(jwtRequest.getUsername());
+        verify(jwtTokenProvider).createUserToken(eq(user.getId()), eq(jwtRequest.getUsername()), anyList());
+        verify(jwtTokenProvider).createUserRefreshToken(eq(user.getId()), eq(jwtRequest.getUsername()));
     }
 
     @Test
     void refreshUserTokens() {
         authenticationService.refreshUserTokens("token");
 
-        verify(jwtTokenProvider, times(1)).refreshUserTokens(eq("token"));
+        verify(jwtTokenProvider).refreshUserTokens(eq("token"));
     }
 
     @Test
@@ -83,16 +83,16 @@ class AuthenticationServiceImplTest {
 
         authenticationService.loginCourier(jwtRequest);
 
-        verify(courierService, times(1)).getByEmail(jwtRequest.getUsername());
-        verify(jwtTokenProvider, times(1)).createCourierToken(eq(courier.getId()), eq(jwtRequest.getUsername()), anyList());
-        verify(jwtTokenProvider, times(1)).createCourierRefreshToken(eq(courier.getId()), eq(jwtRequest.getUsername()));
+        verify(courierService).getByEmail(jwtRequest.getUsername());
+        verify(jwtTokenProvider).createCourierToken(eq(courier.getId()), eq(jwtRequest.getUsername()), anyList());
+        verify(jwtTokenProvider).createCourierRefreshToken(eq(courier.getId()), eq(jwtRequest.getUsername()));
     }
 
     @Test
     void refreshCourierTokens() {
         authenticationService.refreshCourierTokens("token");
 
-        verify(jwtTokenProvider, times(1)).refreshCourierTokens(eq("token"));
+        verify(jwtTokenProvider).refreshCourierTokens(eq("token"));
     }
 
     @Test
@@ -110,15 +110,15 @@ class AuthenticationServiceImplTest {
 
         authenticationService.loginEmployee(jwtRequest);
 
-        verify(employeeService, times(1)).getByEmail(jwtRequest.getUsername());
-        verify(jwtTokenProvider, times(1)).createEmployeeToken(eq(employee.getId()), eq(jwtRequest.getUsername()), anyList());
-        verify(jwtTokenProvider, times(1)).createEmployeeRefreshToken(eq(employee.getId()), eq(jwtRequest.getUsername()));
+        verify(employeeService).getByEmail(jwtRequest.getUsername());
+        verify(jwtTokenProvider).createEmployeeToken(eq(employee.getId()), eq(jwtRequest.getUsername()), anyList());
+        verify(jwtTokenProvider).createEmployeeRefreshToken(eq(employee.getId()), eq(jwtRequest.getUsername()));
     }
 
     @Test
     void refreshEmployeeTokens() {
         authenticationService.refreshEmployeeTokens("token");
 
-        verify(jwtTokenProvider, times(1)).refreshEmployeeTokens(eq("token"));
+        verify(jwtTokenProvider).refreshEmployeeTokens(eq("token"));
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -46,7 +47,7 @@ class EmployeeServiceImplTest {
                 .thenReturn(Optional.of(employee));
 
         assertEquals(employee, employeeService.getById(id));
-        verify(employeeRepository, times(1)).findById(id);
+        verify(employeeRepository).findById(id);
     }
 
     @Test
@@ -57,7 +58,7 @@ class EmployeeServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> employeeService.getById(id));
-        verify(employeeRepository, times(1)).findById(id);
+        verify(employeeRepository).findById(id);
     }
 
     @Test
@@ -70,7 +71,7 @@ class EmployeeServiceImplTest {
                 .thenReturn(Optional.of(employee));
 
         assertEquals(employee, employeeService.getByEmail(email));
-        verify(employeeRepository, times(1)).findByEmail(email);
+        verify(employeeRepository).findByEmail(email);
     }
 
     @Test
@@ -81,24 +82,26 @@ class EmployeeServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> employeeService.getByEmail(email));
-        verify(employeeRepository, times(1)).findByEmail(email);
+        verify(employeeRepository).findByEmail(email);
     }
 
     @Test
     void getAllByRestaurantId() {
         Long id = 1L;
         List<Employee> employees = new ArrayList<>();
-        for(int i = 0; i < 5; i++) {
-            Employee employee = new Employee();
-            employee.setId((long) i);
-            employees.add(employee);
-        }
+        Stream.iterate(1, i -> i + 1)
+                .limit(5)
+                .forEach(i -> {
+                    Employee employee = new Employee();
+                    employee.setId((long) i);
+                    employees.add(employee);
+                });
 
         when(employeeRepository.getAllByRestaurantId(id))
                 .thenReturn(employees);
 
         assertEquals(employees, employeeService.getAllByRestaurantId(id));
-        verify(employeeRepository, times(1)).getAllByRestaurantId(id);
+        verify(employeeRepository).getAllByRestaurantId(id);
     }
 
     @Test
@@ -106,39 +109,42 @@ class EmployeeServiceImplTest {
         Long id = 1L;
         EmployeePosition position = EmployeePosition.COOK;
         List<Employee> employees = new ArrayList<>();
-        for(int i = 0; i < 5; i++) {
-            Employee employee = new Employee();
-            employee.setId((long) i);
-            employee.setPosition(position);
-            employees.add(employee);
-        }
+        Stream.iterate(1, i -> i + 1)
+                .limit(5)
+                .forEach(i -> {
+                    Employee employee = new Employee();
+                    employee.setId((long) i);
+                    employees.add(employee);
+                });
 
         when(employeeRepository.getAllByRestaurantIdAndPosition(id, position))
                 .thenReturn(employees);
 
         assertEquals(employees, employeeService.getAllByRestaurantIdAndPosition(id, position));
-        verify(employeeRepository, times(1)).getAllByRestaurantIdAndPosition(id, position);
+        verify(employeeRepository).getAllByRestaurantIdAndPosition(id, position);
     }
 
     @Test
     void update() {
+        String password = "123456";
         Employee employee = new Employee();
         employee.setId(1L);
         employee.setEmail("john@gmail.com");
-        employee.setPassword("123456");
+        employee.setPassword(password);
 
         employeeService.update(employee);
 
-        assertTrue(passwordEncoder.matches("123456", employee.getPassword()));
-        verify(employeeRepository, times(1)).update(employee);
+        assertTrue(passwordEncoder.matches(password, employee.getPassword()));
+        verify(employeeRepository).update(employee);
     }
 
     @Test
     void createNotExisting() {
+        String password = "123456";
         Employee employee = new Employee();
         employee.setName("John");
-        employee.setPassword("123456");
-        employee.setPasswordConfirmation("123456");
+        employee.setPassword(password);
+        employee.setPasswordConfirmation(password);
 
         when(employeeRepository.exists(employee, 1L))
                 .thenReturn(false);
@@ -152,11 +158,11 @@ class EmployeeServiceImplTest {
         employeeService.create(employee, 1L);
 
         assertTrue(employee.getRoles().contains(Role.ROLE_EMPLOYEE));
-        assertTrue(passwordEncoder.matches("123456", employee.getPassword()));
-        verify(employeeRepository, times(1)).exists(employee, 1L);
-        verify(employeeRepository, times(1)).create(employee);
-        verify(employeeRepository, times(1)).saveRoles(employee.getId(), employee.getRoles());
-        verify(restaurantService, times(1)).addEmployeeById(1L, employee.getId());
+        assertTrue(passwordEncoder.matches(password, employee.getPassword()));
+        verify(employeeRepository).exists(employee, 1L);
+        verify(employeeRepository).create(employee);
+        verify(employeeRepository).saveRoles(employee.getId(), employee.getRoles());
+        verify(restaurantService).addEmployeeById(1L, employee.getId());
     }
 
     @Test
@@ -170,10 +176,10 @@ class EmployeeServiceImplTest {
                 .thenReturn(false);
 
         assertThrows(IllegalStateException.class, () -> employeeService.create(employee, 1L));
-        verify(employeeRepository, times(1)).exists(employee, 1L);
-        verify(employeeRepository, times(0)).create(employee);
-        verify(employeeRepository, times(0)).saveRoles(employee.getId(), employee.getRoles());
-        verify(restaurantService, times(0)).addEmployeeById(1L, employee.getId());
+        verify(employeeRepository).exists(employee, 1L);
+        verify(employeeRepository, never()).create(employee);
+        verify(employeeRepository, never()).saveRoles(employee.getId(), employee.getRoles());
+        verify(restaurantService, never()).addEmployeeById(1L, employee.getId());
     }
 
     @Test
@@ -187,10 +193,10 @@ class EmployeeServiceImplTest {
                 .thenReturn(true);
 
         assertThrows(ResourceAlreadyExistsException.class, () -> employeeService.create(employee, 1L));
-        verify(employeeRepository, times(1)).exists(employee, 1L);
-        verify(employeeRepository, times(0)).create(employee);
-        verify(employeeRepository, times(0)).saveRoles(employee.getId(), employee.getRoles());
-        verify(restaurantService, times(0)).addEmployeeById(1L, employee.getId());
+        verify(employeeRepository).exists(employee, 1L);
+        verify(employeeRepository, never()).create(employee);
+        verify(employeeRepository, never()).saveRoles(employee.getId(), employee.getRoles());
+        verify(restaurantService, never()).addEmployeeById(1L, employee.getId());
     }
 
     @Test
@@ -207,8 +213,8 @@ class EmployeeServiceImplTest {
                 .thenReturn(true);
 
         assertTrue(employeeService.exists(employeeId, restaurantId));
-        verify(employeeRepository, times(1)).findById(employeeId);
-        verify(employeeRepository, times(1)).exists(employee, restaurantId);
+        verify(employeeRepository).findById(employeeId);
+        verify(employeeRepository).exists(employee, restaurantId);
     }
 
     @Test
@@ -222,7 +228,7 @@ class EmployeeServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> employeeService.exists(employeeId, restaurantId));
-        verify(employeeRepository, times(1)).findById(employeeId);
+        verify(employeeRepository).findById(employeeId);
     }
 
     @Test
@@ -234,7 +240,7 @@ class EmployeeServiceImplTest {
                 .thenReturn(true);
 
         assertTrue(employeeService.isManager(employeeId, restaurantId));
-        verify(employeeRepository, times(1)).isManager(employeeId, restaurantId);
+        verify(employeeRepository).isManager(employeeId, restaurantId);
     }
 
     @Test
@@ -242,6 +248,6 @@ class EmployeeServiceImplTest {
         Long id = 1L;
 
         employeeService.delete(id);
-        verify(employeeRepository, times(1)).delete(id);
+        verify(employeeRepository).delete(id);
     }
 }

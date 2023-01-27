@@ -38,7 +38,7 @@ class ItemServiceImplTest {
                 .thenReturn(Optional.of(item));
 
         assertEquals(item, itemService.getById(id));
-        verify(itemRepository, times(1)).findById(id);
+        verify(itemRepository).findById(id);
     }
 
     @Test
@@ -49,7 +49,7 @@ class ItemServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> itemService.getById(id));
-        verify(itemRepository, times(1)).findById(id);
+        verify(itemRepository).findById(id);
     }
 
     @Test
@@ -57,7 +57,7 @@ class ItemServiceImplTest {
         Long id = 1L;
         itemService.getAllByCartId(id);
 
-        verify(itemRepository, times(1)).getAllByCartId(id);
+        verify(itemRepository).getAllByCartId(id);
     }
 
     @Test
@@ -65,7 +65,7 @@ class ItemServiceImplTest {
         ItemType itemType = ItemType.BURGER;
         itemService.getAllByType(itemType);
 
-        verify(itemRepository, times(1)).getAllByType(itemType);
+        verify(itemRepository).getAllByType(itemType);
     }
 
     @Test
@@ -73,7 +73,7 @@ class ItemServiceImplTest {
         Long id = 1L;
         itemService.getAllByRestaurantId(id);
 
-        verify(itemRepository, times(1)).getAllByRestaurantId(id);
+        verify(itemRepository).getAllByRestaurantId(id);
     }
 
     @Test
@@ -82,28 +82,30 @@ class ItemServiceImplTest {
         ItemType type = ItemType.DRINK;
         itemService.getAllByRestaurantIdAndType(id, type);
 
-        verify(itemRepository, times(1)).getAllByRestaurantIdAndType(id, type);
+        verify(itemRepository).getAllByRestaurantIdAndType(id, type);
     }
 
     @Test
     void update() {
+        String name = "Burger";
+        String description = "Burger with cheese";
         Item item = new Item();
         item.setId(1L);
-        item.setName("Burger");
-        item.setDescription("Burger with cheese");
+        item.setName(name);
+        item.setDescription(description);
 
         doAnswer(invocation -> {
             Item item1 = invocation.getArgument(0);
-            item1.setName("Burger");
-            item1.setDescription("Burger with cheese");
+            item1.setName(name);
+            item1.setDescription(description);
             return item1;
         }).when(itemRepository).update(item);
 
         itemService.update(item);
 
-        assertEquals("Burger", item.getName());
-        assertEquals("Burger with cheese", item.getDescription());
-        verify(itemRepository, times(1)).update(item);
+        assertEquals(name, item.getName());
+        assertEquals(description, item.getDescription());
+        verify(itemRepository).update(item);
     }
 
     @Test
@@ -119,8 +121,8 @@ class ItemServiceImplTest {
         itemService.create(item, 1L);
 
         assertEquals(1L, item.getId());
-        verify(itemRepository, times(1)).create(item);
-        verify(restaurantService, times(1)).addItemById(1L, item.getId());
+        verify(itemRepository).create(item);
+        verify(restaurantService).addItemById(1L, item.getId());
 
     }
 
@@ -129,13 +131,13 @@ class ItemServiceImplTest {
         Long id = 1L;
 
         itemService.getRestaurantIdByItemId(id);
-        verify(itemRepository, times(1)).getRestaurantIdByItemId(id);
+        verify(itemRepository).getRestaurantIdByItemId(id);
     }
 
     @Test
     void delete() {
         Long id = 1L;
         itemService.delete(id);
-        verify(itemRepository, times(1)).delete(id);
+        verify(itemRepository).delete(id);
     }
 }

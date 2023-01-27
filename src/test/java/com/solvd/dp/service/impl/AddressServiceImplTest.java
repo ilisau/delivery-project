@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -35,7 +36,7 @@ class AddressServiceImplTest {
                 .thenReturn(Optional.of(address));
 
         assertEquals(address, addressService.getById(id));
-        verify(addressRepository, times(1)).findById(id);
+        verify(addressRepository).findById(id);
     }
 
     @Test
@@ -46,41 +47,48 @@ class AddressServiceImplTest {
                 .thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> addressService.getById(id));
-        verify(addressRepository, times(1)).findById(id);
+        verify(addressRepository).findById(id);
     }
 
     @Test
     void getAllByUserId() {
         Long id = 1L;
         List<Address> addresses = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Address address = new Address();
-            address.setId((long) i);
-            addresses.add(address);
-        }
+        Stream.iterate(1, i -> i + 1)
+                .limit(10)
+                .forEach(i -> {
+                    Address address = new Address();
+                    address.setId((long) i);
+                    addresses.add(address);
+                });
 
         when(addressRepository.getAllByUserId(id))
                 .thenReturn(addresses);
 
         assertEquals(addresses, addressService.getAllByUserId(id));
-        verify(addressRepository, times(1)).getAllByUserId(id);
+        verify(addressRepository).getAllByUserId(id);
     }
 
     @Test
     void getAllByRestaurantId() {
         Long id = 1L;
         List<Address> addresses = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            Address address = new Address();
-            address.setId((long) i);
-            addresses.add(address);
-        }
+        Stream.iterate(1, i -> i + 1)
+                .limit(5)
+                .forEach(i -> {
+                    Address address = new Address();
+                    address.setId((long) i);
+                    addresses.add(address);
+                });
+
+        when(addressRepository.getAllByRestaurantId(id))
+                .thenReturn(addresses);
 
         when(addressRepository.getAllByRestaurantId(id))
                 .thenReturn(addresses);
 
         assertEquals(addresses, addressService.getAllByRestaurantId(id));
-        verify(addressRepository, times(1)).getAllByRestaurantId(id);
+        verify(addressRepository).getAllByRestaurantId(id);
     }
 
     @Test
@@ -101,7 +109,7 @@ class AddressServiceImplTest {
 
         assertEquals("Mogilevskaya", address.getStreetName());
         assertEquals(1, address.getHouseNumber());
-        verify(addressRepository, times(1)).update(address);
+        verify(addressRepository).update(address);
     }
 
     @Test
@@ -119,7 +127,7 @@ class AddressServiceImplTest {
         addressService.create(address);
 
         assertEquals(1L, address.getId());
-        verify(addressRepository, times(1)).create(address);
+        verify(addressRepository).create(address);
     }
 
     @Test
@@ -131,7 +139,7 @@ class AddressServiceImplTest {
                 .thenReturn(true);
 
         assertTrue(addressService.isUserOwner(addressId, userId));
-        verify(addressRepository, times(1)).isUserOwner(addressId, userId);
+        verify(addressRepository).isUserOwner(addressId, userId);
     }
 
     @Test
@@ -143,7 +151,7 @@ class AddressServiceImplTest {
                 .thenReturn(true);
 
         assertTrue(addressService.isEmployeeOwner(addressId, employeeId));
-        verify(addressRepository, times(1)).isEmployeeOwner(addressId, employeeId);
+        verify(addressRepository).isEmployeeOwner(addressId, employeeId);
     }
 
     @Test
@@ -151,7 +159,7 @@ class AddressServiceImplTest {
         Long id = 1L;
         addressService.delete(id);
 
-        verify(addressRepository, times(1)).delete(id);
+        verify(addressRepository).delete(id);
     }
 
 }

@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+    container_name: delivery-project
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/delivery_project?currentSchema=delivery_project
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    ports:
+      - '8080:8080'
+
+  db:
+    image: 'postgres:15.1-alpine'
+    container_name: postgres
+    volumes:
+      - ./src/main/resources/db-init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=delivery_project
