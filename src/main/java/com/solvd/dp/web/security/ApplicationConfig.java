@@ -1,12 +1,16 @@
-package com.solvd.dp.config;
+package com.solvd.dp.web.security;
 
-import com.solvd.dp.security.JwtConfigurer;
-import com.solvd.dp.security.JwtTokenProvider;
-import com.solvd.dp.security.expressions.CustomSecurityExpressionHandler;
+import com.solvd.dp.web.security.expressions.CustomSecurityExpressionHandler;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,12 +22,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class ApplicationConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final ApplicationContext applicationContext;
@@ -48,6 +53,26 @@ public class SecurityConfig {
     }
 
     @Bean
+    public OpenAPI openAPI() {
+        final String securitySchemeName = "bearerAuth";
+        return new OpenAPI()
+                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .components(
+                        new Components()
+                                .addSecuritySchemes(securitySchemeName,
+                                        new SecurityScheme()
+                                                .name(securitySchemeName)
+                                                .type(SecurityScheme.Type.HTTP)
+                                                .scheme("bearer")
+                                                .bearerFormat("JWT")
+                                )
+                ).info(new Info()
+                        .title("Delivery Project API")
+                        .description("Demo project of food delivery service")
+                        .version("v1"));
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
@@ -56,6 +81,16 @@ public class SecurityConfig {
                 .httpBasic().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint((request, response, exception) -> {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.getWriter().write("Unauthorized");
+                })
+                .accessDeniedHandler((request, response, exception) -> {
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.getWriter().write("Forbidden");
+                })
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/users/**").authenticated()
@@ -66,7 +101,8 @@ public class SecurityConfig {
                 .and()
                 .anonymous()
                 .disable()
-                .apply(new JwtConfigurer(jwtTokenProvider));
+                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

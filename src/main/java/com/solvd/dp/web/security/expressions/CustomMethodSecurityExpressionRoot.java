@@ -1,7 +1,7 @@
-package com.solvd.dp.security.expressions;
+package com.solvd.dp.web.security.expressions;
 
 import com.solvd.dp.domain.user.Role;
-import com.solvd.dp.security.JwtEntity;
+import com.solvd.dp.web.security.JwtEntity;
 import com.solvd.dp.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;

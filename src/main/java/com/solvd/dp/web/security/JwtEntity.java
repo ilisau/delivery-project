@@ -1,4 +1,4 @@
-package com.solvd.dp.security;
+package com.solvd.dp.web.security;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;

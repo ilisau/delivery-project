@@ -5,6 +5,8 @@ import com.solvd.dp.service.AddressService;
 import com.solvd.dp.web.dto.user.AddressDto;
 import com.solvd.dp.web.dto.validation.OnUpdate;
 import com.solvd.dp.web.mapper.AddressMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "Address", description = "Address API")
 public class AddressController {
 
     private final AddressService addressService;
@@ -22,6 +25,7 @@ public class AddressController {
 
     @PutMapping
     @PreAuthorize("canAccessAddress(#addressDto.id)")
+    @Operation(summary = "Update address")
     public void update(@Validated(OnUpdate.class) @RequestBody AddressDto addressDto) {
         Address address = addressMapper.toEntity(addressDto);
         addressService.update(address);
@@ -29,6 +33,7 @@ public class AddressController {
 
     @GetMapping("/{id}")
     @PreAuthorize("canAccessAddress(#id)")
+    @Operation(summary = "Get address by id")
     public AddressDto getById(@PathVariable Long id) {
         Address address = addressService.getById(id);
         return addressMapper.toDto(address);
@@ -36,6 +41,7 @@ public class AddressController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("canAccessAddress(#id)")
+    @Operation(summary = "Delete address by id")
     public void deleteById(@PathVariable Long id) {
         addressService.delete(id);
     }
